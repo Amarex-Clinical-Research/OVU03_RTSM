@@ -1,0 +1,582 @@
+﻿@model PMmodel
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+
+    @section scripts{
+        <link href="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.css" rel="stylesheet" type="text/css">
+        <script src="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.js"></script>
+        <script src="~/js/FlexSites.js"></script>
+
+        <link href="~/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet" />
+        <script src="~/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+    }
+
+
+</head>
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<!--Randomization-->
+<script>
+    function OpenModal(key) {
+        $.get("@Url.Action("GetUpdateClin","ProjectManagement")/" + "?PIKEY=" +key,
+                function (data) {
+                    $('#EditModalBody').html(data);
+                });
+
+        $("#myModal").modal("show");
+    }
+
+</script>
+<!--Screen-->
+<script>
+    function OpenModalScreen(key) {
+        $.get("@Url.Action("GetUpdateScreen", "ProjectManagement")/" + "?PIKEY=" +key,
+                function (data) {
+                    $('#EditScreenModalBody').html(data);
+                });
+
+        $("#ScreenModal").modal("show");
+    }
+
+</script>
+
+<!--Stop rand at-->
+
+<script>
+    function OpenStopModal(key) {
+        $.get("@Url.Action("GetUpdateScrnStop", "ProjectManagement")/" + "?PIKEY=" +key,
+                function (data) {
+                    $('#EditStopModalBody').html(data);
+                });
+
+        $("#StopModal").modal("show");
+    }
+
+</script>
+
+<!--Site Rand -->
+<script>
+    function OpenSiteRandModal(key) {
+        $.get("@Url.Action("GetUpdateSiteRand","ProjectManagement")/" + "?PIKEY=" +key,
+                function (data) {
+                    $('#EditSiteRandModalBody').html(data);
+                });
+
+        $("#mySiteRandModal").modal("show");
+    }
+
+</script>
+
+<!--Site Screen-->
+
+<script>
+    function OpenSiteScreenModal(key) {
+        $.get("@Url.Action("GetUpdateSiteScreen","ProjectManagement")/" + "?PIKEY=" +key,
+                function (data) {
+                    $('#EditSiteScreenModalBody').html(data);
+                });
+
+        $("#mySiteScreenModal").modal("show");
+    }
+
+</script>
+
+<!--Stop Screen at-->
+
+<script>
+    function OpenStopScreenModal(key) {
+        $.get("@Url.Action("GetUpdateStopScrn", "ProjectManagement")/" + "?PIKEY=" +key,
+                function (data) {
+                    $('#EditStopScreenModalBody').html(data);
+                });
+
+        $("#StopScreenModal").modal("show");
+    }
+
+</script>
+
+<!--Randomization Request Status Modal-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="UpdateRandStatus" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Randomization Request Status</h4>
+
+                </div>
+
+                <div class="modal-body" id="EditModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn" value="Update" style="background-color: #e95420; color: white;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;position:relative; float:left; color: white;">Cancel</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+<!--Screen Request Status Modal-->
+<div class="modal fade" id="ScreenModal" tabindex="-1" role="dialog" aria-labelledby="ScreenModal1Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="UpdateRandStatus" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="ScreenModal1Label">Screen Request Status</h4>
+
+                </div>
+
+                <div class="modal-body" id="EditScreenModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn" value="Update" style="background-color: #e95420; color: white;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;position:relative; float:left; color: white;">Cancel</button>
+                </div>
+
+            </form>
+
+
+
+        </div>
+    </div>
+</div>
+<!--Stop At  Modal-->
+<div class="modal fade" id="StopModal" tabindex="-1" role="dialog" aria-labelledby="StopModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="UpdateRandStatus" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="StopModalLabel">Stop Randomization At</h4>
+
+                </div>
+
+                <div class="modal-body" id="EditStopModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn" value="Update" style="background-color: #e95420; color: white;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;position:relative; float:left; color: white;">Cancel</button>
+                </div>
+
+            </form>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<!--Stop Screen At  Modal-->
+<div class="modal fade" id="StopScreenModal" tabindex="-1" role="dialog" aria-labelledby="StopScreenModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="UpdateRandStatus" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="StopModalLabel">Stop Screening At</h4>
+
+                </div>
+
+                <div class="modal-body" id="EditStopScreenModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn" value="Update" style="background-color: #e95420; color: white;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;position:relative; float:left; color: white;">Cancel</button>
+                </div>
+
+            </form>
+
+
+
+        </div>
+    </div>
+</div>
+
+<!--Site Rand-->
+<div class="modal fade" id="mySiteRandModal" tabindex="-1" role="dialog" aria-labelledby="mySiteRandModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="UpdateSiteRand" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="mySiteRandModalLabel">Site Randomization Status</h4>
+
+                </div>
+
+                <div class="modal-body" id="EditSiteRandModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn" value="Update" style="background-color: #e95420; color: white;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;position:relative; float:left; color: white;">Cancel</button>
+                </div>
+
+            </form>
+
+
+
+        </div>
+    </div>
+</div>
+
+<!--Site Screen-->
+<div class="modal fade" id="mySiteScreenModal" tabindex="-1" role="dialog" aria-labelledby="mySiteScreenModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="UpdateSiteScreen" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="mySiteScreenModalLabel">Site Screening Status</h4>
+
+                </div>
+
+                <div class="modal-body" id="EditSiteScreenModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn" value="Update" style="background-color: #e95420; color: white;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;position:relative; float:left; color: white;">Cancel</button>
+                </div>
+
+            </form>
+
+
+
+        </div>
+    </div>
+</div>
+
+<h1 style="color: #e95420;"> <i class="bi bi-clipboard-data" style="color:black;"></i> Project Management: Screen/Randomization Settings </h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<ul class="nav nav-tabs" id="StudyTabs">
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#rand">Randomization Request Status</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#screen">Screen Request Status</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#info">Stop Randomization/Screening At</a>
+    </li>
+
+</ul>
+
+<div class="tab-content">
+    <div id="rand" class="tab-pane fade show active">
+        <br />
+        <h4>Study Randomization Status</h4>
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th style="display: none;">PIKEY</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th style="display: none;">Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.randreq.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.randreq[i].PIKEY"></td>
+                            <td>@Model.randreq[i].PIDesc</td>
+                            <td>@Model.randreq[i].PIDet</td>
+                            <td style="display: none;">@Model.randreq[i].PIType</td>
+
+                            <td>
+
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenModal(@Model.randreq[i].PIKEY)">View/Edit</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <br />
+        <h4>Site Randomization Status</h4>
+        <div class="search-table-outter wrapper">
+            <p>Click in the box below to add one or more Sites.</p>
+            <form asp-action="SiteRand">
+                <input class="form-control flexdatalist" name="SiteID" required />
+                <br />
+                <input type="submit" class="btn" value="Add" />
+            </form>
+            <br />
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+
+                        <th style="display: none;">PIKEY</th>
+                        <th>Site ID</th>
+                        <th>Status</th>
+                        <th style="display: none;">Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.SiteRand.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;">@Model.SiteRand[i].PIKEY</td>
+                            <td>@Model.SiteRand[i].PIDet</td>
+                            <td>@Model.SiteRand[i].PIDesc</td>
+                            <td style="display: none;">Type</td>
+                            <td>
+
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenSiteRandModal(@Model.SiteRand[i].PIKEY)">View/Edit</a>
+                                    </div>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    <div id="screen" class="tab-pane fade">
+        <br />
+        <h4>Study Screening Status</h4>
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th style="display: none;">PIKEY</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th style="display: none;">Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.screenreq.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.screenreq[i].PIKEY"></td>
+                            <td>@Model.screenreq[i].PIDesc</td>
+                            <td>@Model.screenreq[i].PIDet</td>
+                            <td style="display: none;">@Model.screenreq[i].PIType</td>
+
+                            <td>
+
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenModalScreen(@Model.screenreq[i].PIKEY)">View/Edit</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+        <h4>Site Screening Status</h4>
+        <div class="search-table-outter wrapper">
+            <p>Click in the box below to add one or more Sites.</p>
+            <form asp-action="SiteScreen">
+                <input class="form-control flexdatalist" name="SiteID" required />
+                <br />
+                <input type="submit" class="btn" value="Add" />
+            </form>
+            <br />
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+
+                        <th style="display: none;">PIKEY</th>
+                        <th>Site ID</th>
+                        <th>Status</th>
+                        <th style="display: none;">Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.SiteScreen.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;">@Model.SiteScreen[i].PIKEY</td>
+                            <td>@Model.SiteScreen[i].PIDet</td>
+                            <td>@Model.SiteScreen[i].PIDesc</td>
+                            <td style="display: none;">Type</td>
+                            <td>
+
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenSiteScreenModal(@Model.SiteScreen[i].PIKEY)">View/Edit</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    <div id="info" class="tab-pane fade">
+        <br />
+        <h4>Total number of subjects to be randomized</h4>
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th style="display: none;">PIKEY</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th style="display: none;">Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.stopat.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.stopat[i].PIKEY"></td>
+                            <td>@Model.stopat[i].PIDesc</td>
+                            <td>@Model.stopat[i].PIDet</td>
+                            <td style="display: none;">@Model.stopat[i].PIType</td>
+
+                            <td>
+
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+
+
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenStopModal(@Model.stopat[i].PIKEY)">View/Edit</a>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+        <h4>Total number of subjects to be screened</h4>
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th style="display: none;">PIKEY</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th style="display: none;">Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.StopScreenAt.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.StopScreenAt[i].PIKEY"></td>
+                            <td>@Model.StopScreenAt[i].PIDesc</td>
+                            <td>@Model.StopScreenAt[i].PIDet</td>
+                            <td style="display: none;">@Model.StopScreenAt[i].PIType</td>
+
+                            <td>
+
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+
+
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenStopScreenModal(@Model.StopScreenAt[i].PIKEY)">View/Edit</a>
+                                    </div>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+<style>
+
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+</style>

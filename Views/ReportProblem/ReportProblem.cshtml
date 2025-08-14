@@ -1,0 +1,160 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Reportproblem
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="color: #e95420;"> <i class="bi bi-shield-exclamation" style="color:black;"></i>Report Problem</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+<div class="container" id="form">
+    <form id="myForm" asp-action="ReportProblemPost">
+        <table>
+            <tr>
+                <td>
+
+                  
+                    <div class="form-group">
+                        <label>Site ID <span style="color: red;"> *</span> </label> <br />
+                        <input class="CustomInput" type="text" id="SiteID" asp-for="@Model.SITEID" style="width:500px; padding:.375rem .75rem;" required />
+                        @*<input class="CustomInput"  id="SiteID" type="text" value="@ViewBag.siteid" name="SITEID" style="width:500px; padding:.375rem .75rem;" readonly />*@
+
+                    </div>
+                    <div class="form-group" style="position:relative; top:20px; left:30px;">
+                        <label>Check if Site ID is not Applicable </label><br />
+                        <label class="switch">
+                            <input type="checkbox" id="SiteNA" asp-for="@Model.SiteNA" name="SiteNA" />
+                            <div class="slider round">
+                            </div>
+                        </label>
+                    </div>
+                    <br />
+
+                    <div class="form-group">
+                        <label>Subject ID (please enter the subject screening number XXX-XXXX)<span style="color: red;"> *</span> </label> <br />
+                        <input class="CustomInput" id="Subjid" asp-for="@Model.SUBJID" type="text" style="width:500px; padding:.375rem .75rem;" required />
+                    </div>
+                    <div class="form-group" style="position:relative; top:20px; left:30px;">
+                        <label>Check if Subject ID is not Applicable </label><br />
+                        <label class="switch">
+                            <input type="checkbox" id="NA" asp-for="@Model.NotApp" name="NotApp" />
+                            <div class="slider round">
+                            </div>
+                        </label>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Provide all the available details<span style="color: red;"> *</span> </label> <br />
+                        <textarea class="CustomInput" asp-for="@Model.PROBLEM_DESC" type="text" style=" width: 500px; padding: .375rem .75rem; height: 230px;" required></textarea>
+                    </div>
+
+
+
+                </td>
+            </tr>
+        </table>
+        <!-- Add a button to trigger the modal -->
+        <br />
+        <br />
+
+        <!-- Define the modal -->
+        <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+        <button class="btn" onclick="cancelForm()" style="background-color: #e95420; color: white; ">Cancel</button>
+        <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("Index","Home")'" style="background-color: #007bff; color: White;" />    <!-- Define the modal -->
+
+    </form>
+</div>
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+<script>
+    function cancelForm() {
+        // Reset the form and hide the username and password fields
+        document.getElementById('myForm').reset();
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        var notDoneCheckbox = $("#NA");
+
+        if (notDoneCheckbox.prop("checked")) {
+            // If "notdone" is checked, make datepicker readonly and empty
+            $("#Subjid").prop("readonly", true).val("");
+        } else {
+            // If "notdone" is not checked, make datepicker editable
+            $("#Subjid").prop("readonly", false);
+        }
+
+        notDoneCheckbox.change(function () {
+
+            if (notDoneCheckbox.prop("checked")) {
+                // If "notdone" is checked, make datepicker readonly and empty
+                $("#Subjid").prop("readonly", true).val("");
+            } else {
+                // If "notdone" is not checked, make datepicker editable
+                $("#Subjid").prop("readonly", false);
+            }
+        });
+
+        var SitenotDoneCheckbox = $("#SiteNA");
+
+        if (SitenotDoneCheckbox.prop("checked")) {
+            // If "notdone" is checked, make datepicker readonly and empty
+            $("#SiteID").prop("readonly", true).val("");
+        } else {
+            // If "notdone" is not checked, make datepicker editable
+            $("#SiteID").prop("readonly", false);
+        }
+
+        SitenotDoneCheckbox.change(function () {
+
+            if (SitenotDoneCheckbox.prop("checked")) {
+                // If "notdone" is checked, make datepicker readonly and empty
+                $("#SiteID").prop("readonly", true).val("");
+            } else {
+                // If "notdone" is not checked, make datepicker editable
+                $("#SiteID").prop("readonly", false);
+            }
+        });
+    });
+
+
+
+</script>

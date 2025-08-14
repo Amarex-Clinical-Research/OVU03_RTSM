@@ -1,0 +1,496 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IPReporting
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<h1 style="text-align:left; color: black;"> <i class="bi bi-truck" style="color:black;"></i> Receive IP</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css">
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/css/dataTables.checkboxes.css" rel="stylesheet" />
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#approvedate").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            //    $("#modalButton").click(function () {
+            //        if (validateForm()) {
+            //            $('#loginModal').modal('show');
+            //        }
+            //    });
+            //    // Function to update the hidden input with selected items
+            //    function updateSelectedItems() {
+            //        var selectedItems = [];
+
+            //        $('input[name="SelectedItems"]:checked').each(function () {
+            //            selectedItems.push($(this).val());
+            //        });
+
+            //        // Update the hidden input
+            //        $('#selectedItems').val(selectedItems.join());
+            //    }
+            //});
+
+            $('#modalButton').on('click', function () {
+                if (validateForm()) {
+                    // Debugging line
+                    $('#loginModal').modal('show');
+                }
+            });
+
+
+        });
+
+    </script>
+}
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<form id="myForm" asp-action="IPReceiptReporting" method="post" onsubmit="return validateForm();">
+    <label id="Errormessage" style="font-size: 13px; display:none; color:red">Please complete all required fields</label><br />
+    <div class="form-group">
+        <label>Site ID</label> <br />
+        <input class="CustomInput" type="text" value="@ViewBag.SiteID" name="SITEID" style=" width:500px; padding:.375rem .75rem;" readonly />
+
+    </div>
+    <div class="form-group">
+        <label>Shipment Key</label> <br />
+        <input class="CustomInput" type="text" value="@ViewBag.KITSET" name="KITSET" style=" width:500px; padding:.375rem .75rem;" readonly />
+
+    </div>
+
+    <div class="form-group">
+        <label>Date of Shipment</label> <br />
+        <input class="CustomInput" type="text" id="SendDate" value="@ViewBag.SENDDATE" name="SENDDATE" style=" width:500px; padding:.375rem .75rem;" readonly />
+
+    </div>
+
+    <div class="form-group">
+        <label>Date Received<span style="color: red;"> *</span></label><span id="recError" class="text-danger" style="display: none;"></span> <br />
+        <input class="CustomInput" type="text" id="datepicker" asp-format="{0:d MMM yyyy}" name="RECVDDATE" asp-for="@Model.RECVDDATE" style="width:500px; padding:.375rem .75rem;" />
+    </div>
+
+    <div class="form-group">
+        <label>Any temperature excursions?<span style="color: red;"> *</span></label> <br />
+        <select id="temperatureExcursionSelect" class="CustomInput" asp-for="@Model.isExcrusion" style="width: 500px; padding: .375rem .75rem">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+    <div class="form-group" id="IsApproved" style="display: none">
+        <label>Sponsor approved the use of quarantined IP after temperature excursion?<span style="color: red;"> *</span></label> <br />
+        <select id="Isapproved" class="CustomInput" asp-for="@Model.Isapproved" style="width: 500px; padding: .375rem .75rem">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+    <div class="form-group" id="sponsorDateField" style="display: none">
+        <label>Date Of Sponsor Approval<span style="color: red;"> *</span></label> <span id="spError" class="text-danger" style="display: none;"></span> <br />
+        <input id="approvedate" class="CustomInput" type="text" asp-for="@Model.SPAPDTC" style="width:500px; padding:.375rem .75rem;" />
+
+    </div>
+
+
+    <div class="search-table-outter wrapper" id="Tablediv" style="display:none">
+        <p><b>Please select the kits received in acceptable condition.</b></p>
+        <table class="table table-striped" id="Table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Kit Key</th>
+                    <th>Kit Number</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.ShipIP.Count(); i++)
+                {
+                    <tr>
+                        <td></td>
+                        <td>@Model.ShipIP[i].KITKEY</td>
+                        <td>@Model.ShipIP[i].KitNumber</td>
+                        <td>@Model.ShipIP[i].KITSTAT</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+    <input type="hidden" id="selectedKitKeysInput" name="SelectedKitKeys" />
+    @*<button type="button" class="btn btn-primary" id="submitSelectedKitKeys">Submit Selected KitKeys</button>
+
+        <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>*@
+    <button type="button" class="btn" id="openModalAndSubmit">Submit</button>
+
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ReceiveIPTabs","SupplyManagement")'" style="background-color: #007bff; color: White;" />
+
+
+    <!-- Define the modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add the username and password fields to the modal body -->
+                    <form id="loginForm">
+                        @*<span>Allowed file types: .pdf</span>
+                            <div class="form-group1">
+                                <label for="username">Please upload Packaging List:</label>
+                                <input class="fill-void" type="file" name="PackageFile" >
+                            </div>
+                            <br />
+                            <br />
+                            <div class="form-group1">
+                                <label for="password">Please upload Temperature Log:</label>
+                                <input class="fill-void" type="file" name="LogFile" >
+                            </div>
+                            <br />
+                            <br />
+                            <p style="Font-Size:18px"><b>Please enter User Name and Password</b></p>*@
+                        <div class="form-group1">
+                            <label for="username">Username<span style="color: red;"> *</span></label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="form-group1">
+                            <label for="password">Password<span style="color: red;"> *</span></label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                    </form>
+                    <!-- <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<script>
+    $(document).ready(function () {
+        if ($('#temperatureExcursionSelect').val() === "Yes") {
+            $("#IsApproved").show();
+            /*$("#KitReceived, #reasonField").hide();*/
+        } else /*($('#temperatureExcursionSelect').val() === "No")*/
+            $("#IsApproved").hide();
+
+        if ($('#Isapproved').val() === "Yes") {
+            $("#sponsorDateField").show();
+            $("#Tablediv").show();
+        } else {
+            $("#sponsorDateField").hide();
+            $("#Tablediv").hide();
+
+        }
+
+        // When temperatureExcursionSelect changes
+        $("#temperatureExcursionSelect").change(function () {
+            var selectedValue = $(this).val();
+            if (selectedValue === "Yes") {
+                $("#IsApproved").show();
+            } else if (selectedValue === "No") {
+                $("#IsApproved, #sponsorDateField, #Tablediv").hide();
+                $("#Isapproved, #approvedate").val('');
+            }
+        });
+
+        // When Isapproved changes
+        $("#Isapproved").change(function () {
+            var selectedValue = $(this).val();
+            if (selectedValue === "Yes") {
+                $("#sponsorDateField").show();
+                $("#Tablediv").show();
+            } else if (selectedValue === "No") {
+                $("#sponsorDateField").hide();
+                $("#approvedate").val('');
+                $("#Tablediv").hide();
+
+            }
+        });
+
+        var dataTable = $('#Table').DataTable({
+            "language": {
+                search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                searchPlaceholder: 'Type to Search'
+            },
+            'columnDefs': [
+                {
+                    'targets': 0,
+                    'checkboxes': {
+                        'selectRow': true
+                    }
+                }
+            ],
+            "select": {
+                style: 'multi',
+                selector: 'td:first-child',
+
+            },
+            "order": [[1, 'asc']]
+        });
+
+        /*$("#IsApproved, #sponsorDateField, #KitReceived, #reasonField").hide();*/
+
+        $('#openModalAndSubmit').click(function () {
+            // Validate the form
+            if (validateForm()) {
+                // Log the raw data of the selected rows
+                var selectedRowsData = dataTable.rows({ selected: true }).data().toArray();
+                console.log('Selected Rows Data:', selectedRowsData);
+
+                // Extract KitKeys from the selected rows
+                var selectedKitKeys = selectedRowsData.map(function (row) {
+                    return row[1]; // Assuming KitKey is in the second column (index 1)
+                });
+
+                console.log('Selected Kit Keys:', selectedKitKeys);
+
+                // Set the value of the hidden input
+                $('#selectedKitKeysInput').val(selectedKitKeys.join(','));
+
+                // Show the modal
+                $('#loginModal').modal('show');
+            }
+        });
+
+        // Your existing validateForm function
+        function validateForm() {
+            var isValid = true;
+
+            var icdtDateStr = $("#datepicker").val();
+            var recdtc = new Date(icdtDateStr);
+            var Senddate = new Date($("#SendDate").val());
+
+
+            var currentDate = new Date();
+            var approvedate = $("#approvedate").val();
+            var approveDate = new Date(approvedate);
+            // Check if the datepicker field is empty
+            if ($("#datepicker").val() === "") {
+                isValid = false;
+                $("#datepicker").addClass("is-invalid");
+            } else {
+                if (recdtc < Senddate) { // Check if received date is before send date
+                    isValid = false;
+                    $("#datepicker").addClass("is-invalid");
+                    $("#recError").show().text(" Date should be on or after Send Date");
+                }
+                else if (recdtc > currentDate) {
+                    isValid = false;
+                    $("#datepicker").addClass("is-invalid");
+                    $("#recError").show().text(" Date can not be in the future.");
+                }
+                else {
+                    $("#datepicker").removeClass("is-invalid");
+                    $("#recError").hide();
+                }
+
+            }
+
+            var selectValue = document.getElementById("temperatureExcursionSelect").value;
+            var approved = document.getElementById("Isapproved").value;
+            var approvedDate = document.getElementById("approvedate").value;
+
+            if (selectValue === "") {
+                isValid = false;
+                $("#temperatureExcursionSelect").addClass("is-invalid");
+            } else if (selectValue === "Yes") {
+                $("#temperatureExcursionSelect").removeClass("is-invalid");
+
+                if (approved === "") {
+                    isValid = false;
+                    $("#Isapproved").addClass("is-invalid");
+                } else {
+                    $("#Isapproved").removeClass("is-invalid");
+
+                    if (approved === "Yes") {
+                        if (approvedDate === "") {
+                            isValid = false;
+                            $("#approvedate").addClass("is-invalid");
+                        } else {
+                            if (approveDate < recdtc) {
+                                isValid = false;
+                                $("#approvedate").addClass("is-invalid");
+                                $("#spError").show().text("Date should be on or after received date");
+                            }
+                           else if (approveDate > currentDate) {
+                                isValid = false;
+                                $("#approvedate").addClass("is-invalid");
+                                $("#spError").show().text("Date can not be in the future");
+                            }
+                            else {
+                                $("#approvedate").removeClass("is-invalid");
+                                $("#spError").hide();
+                            }
+                            /*$("#approvedate").removeClass("is-invalid");*/
+                        }
+
+                    }
+                }
+            }
+            else { // selectValue is "No"
+                $("#temperatureExcursionSelect").removeClass("is-invalid");
+                $("#approvedate").removeClass("is-invalid");
+                $("#Isapproved").removeClass("is-invalid");
+
+            }
+
+
+            // Check other required fields
+
+            $(".form-group input[required], .form-group select[required]").each(function () {
+                if ($(this).val().trim() === "") {
+                    isValid = false;
+                    $(this).addClass("is-invalid");
+                } else {
+                    $(this).removeClass("is-invalid");
+                }
+            });
+
+            if (!isValid) {
+                /*alert('Please fill in all required fields.');*/
+                $("#Errormessage").show()
+            }
+            else {
+                $("#Errormessage").hide()
+            }
+            return isValid;
+        }
+    });
+</script>
+@*<script>
+        function validateForm() {
+            var isValid = true;
+
+            // Check if the required fields are empty
+            $(".form-group input[type='text']").each(function () {
+                if ($(this).val() === "") {
+                    isValid = false;
+                    $(this).addClass("is-invalid");
+                } else {
+                    $(this).removeClass("is-invalid");
+                }
+            });
+
+            $(".form-group select").each(function () {
+                if ($(this).val() === "") {
+                    isValid = false;
+                    $(this).addClass("is-invalid");
+                } else {
+                    $(this).removeClass("is-invalid");
+                }
+            });
+
+            if (!isValid) {
+                /*alert('Please fill in all required fields.');*/
+            }
+
+            return isValid;
+        }
+    </script>*@
+
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 500px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+</style>
+
+
+

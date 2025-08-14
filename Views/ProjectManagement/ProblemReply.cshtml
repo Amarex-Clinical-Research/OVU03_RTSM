@@ -1,0 +1,91 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<Reportproblem>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+
+</head>
+<h1 style="color: #e95420;"> <i class="bi bi-clipboard-data" style="color:black;"></i> Project Management: Problem Reply </h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+
+
+
+<div id="rand">
+
+    @*<br />
+    <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("ReportProblemExcel","ProjectManagement")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+
+    <br />*@<br />
+    <div class="search-table-outter wrapper">
+        <table class="table table-striped" id="aeTable">
+            <thead>
+                <tr>
+                    <th style="display: none;">PRBLMKEY</th>
+                    <th>Site ID</th>
+                    <th>Subject ID</th>
+                    <th>Description</th>
+                    <th>Reported by</th>
+                    <th>Date Reported</th>
+                    <th>Email Sent</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var subject in Model)
+                {
+                    <tr>
+                        <td style="display: none;">@subject.PRBLMKEY</td>
+                        <td>@subject.SITEID</td>
+                        <td>@subject.SUBJID</td>
+                        <td>@subject.PROBLEM_DESC</td>
+                        <td>@subject.ADDUSER</td>
+                        <td>@subject.DateReport</td>
+                        <td>@subject.EMAIL_SENT</td>
+                        <td>@subject.PROBLEM_STATUS</td>
+
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                    <form action="ProblemResponse">
+                                        <input type="submit" class="btn" value="View/Edit" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@subject.PRBLMKEY" name="PRBLMKEY" />
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+}

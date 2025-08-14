@@ -1,0 +1,596 @@
+﻿@model Visits
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="text-align:left; color: black">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-prescription2" viewBox="0 0 16 16">
+        <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2V6Z" />
+        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1V1Zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4H4ZM3 3h10V1H3v2Z" />
+    </svg> Assignment of subsequent dispensation
+</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+
+    <script>
+        $("#birthYearInput").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years"
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        //$(document).ready(function () {
+        //    var ifchecked = $("#ViewHistory");
+        //    ifchecked.change(function () {
+
+        //        if (ifchecked.prop("checked")) {
+
+        //            $("#rand").show();
+        //        } else {
+
+        //            $("#rand").hide();
+        //        }
+        //    });
+        //});
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+    <script>
+            $(document).ready(function () {
+                var ifchecked = $("#ViewVisit");
+                ifchecked.change(function () {
+
+                    if (ifchecked.prop("checked")) {
+
+                        $("#Table2").show();
+                    } else {
+
+                        $("#Table2").hide();
+                    }
+                });
+            });
+
+        </script>
+
+
+}
+
+<form id="myForm" asp-action="SubDispenseIP" method="post" onsubmit="return validateForm();">
+    <label id="Errormessage" style="font-size: 13px; display:none; color:red">Please complete all required fields</label>
+    <table>
+        <tr>
+            <td>
+                <div class="form-group" style="display: none">
+                    <label>SPkey</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SPKEY" name="SPKEY" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group" style="display: none">
+                    <label>ROWKEY</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.ROW_KEY" name="ROW_KEY" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group">
+                    <label>Site ID</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SITEID" name="SITEID" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+
+                <div class="form-group">
+                    <label>Subject ID</label> <span id="SubjIDError" class="text-danger" style="display: none;">Please enter a 3-digit number.</span><br />
+                    <input id="SubjID" class="CustomInput" type="text" asp-for="@Model.SUBJID" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+
+                <div class="form-group">
+                    <label>Year of Birth<span style="color: red;"> *</span></label> <br />
+                    <input id="birthYearInput" class="CustomInput" asp-for="@Model.BRTHDTC" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Sex<span style="color: red;"> *</span></label> <br />
+                    <select id="genderSelect" class="CustomInput" asp-for="@Model.SEX" style="width: 500px; padding: .375rem .75rem" required>
+                        <option value=""></option>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Treatment Visit<span style="color: red;"> *</span></label> <br />
+                    <select id="visit" class="CustomInput" asp-for="@Model.VISITID" style="width: 500px; padding: .375rem .75rem" required>
+                        <option value=""></option>
+                        <option value="Visit 4">Visit 4</option>
+                        <option value="Visit 6">Visit 6</option>
+                        <option value="Visit 8">Visit 8</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="form-group">
+                        <label>Visit Date<span style="color: red;"> *</span></label><span id="visitError" class="text-danger" style="display: none;"></span> <br />
+                        <input class="CustomInput" id="datepicker" type="text" asp-for="@Model.VISITDTC" style="width:500px; padding:.375rem .75rem;" />
+                    </div>
+                    <div class="form-group" style="position:relative; top:20px; left:10px;">
+                        <label>Is visit not done?<span style="color: red;"> *</span> </label><br />
+                        <label class="switch">
+                            <input type="checkbox" id="notdone" asp-for="@Model.notdone" name="notdone" />
+                            <div class="slider round">
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>IP Dispensed<span style="color: red;"> *</span></label> <span id="error" class="text-danger" style="display: none;"></span><br />
+                    <select id="isEligible" class="CustomInput" asp-for="@Model.ELIGIP" style="width: 500px; padding: .375rem .75rem" required>
+                        <option value=""></option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <br />
+                <div class="form-group" style="display: none" id="reason1">
+                    <label>Please provide the reason, if IP is not dispensed <span style="color: red;"> *</span></label> <br />
+                    <textarea id="reason" class="CustomInput" asp-for="@Model.ReaNo" style="width: 700px; padding: .375rem .75rem; height: 230px;"></textarea>
+                </div>
+                <div class="form-group" style="display: none" id="reason2">
+                    <label>Please provide the reason, if IP is dispensed<span style="color: red;"> *</span></label> <br />
+                    <textarea id="reasonVal" class="CustomInput" asp-for="@Model.ReaYes" style="width: 700px; padding: .375rem .75rem; height: 230px;"></textarea>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <!---
+        <button type="button" class="btn" data-toggle="modal" data-target="#loginModal" style="background-color: #e95420; color: white;">Submit</button>-->
+    <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("SubsequentDispensationHome","SubsequentDispensation")'" style="background-color: #007bff; color: White;" />
+
+    <!--Credential Model-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Username<span style="color: red;"> *</span></label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password<span style="color: red;"> *</span></label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+@*<div class="form-group" style="position:relative; top:20px">
+    <label><b>View IP Dispensation History</b> </label><br />
+    <label class="switch">
+        <input type="checkbox" id="ViewHistory" />
+        <div class="slider round">
+        </div>
+    </label>
+</div>*@
+
+<!--<div id="VisitHistory" style="display:none">-->@*  *@
+
+<div id="rand">
+    <div class="form-group" style="position:relative; top:20px">
+            <label><b>View IP Not Dispensed Visits</b> </label><br />
+            <label class="switch">
+                <input type="checkbox" id="ViewVisit" />
+                <div class="slider round">
+                </div>
+            </label>
+        </div>
+
+    <table class="table table-striped" id="Table2" style="display:none">
+        <thead>
+            <tr>
+                <th style="display: none;">VISITKEY</th>
+                <th>Site ID</th>
+                <th>Subject ID</th>
+                <th>Visit</th>
+                <th>IP Dispensed</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Visit.Count(); i++)
+            {
+                <tr>
+                    <td style="display: none;">@Model.Visit[i].VISITKEY</td>
+                    <td>@Model.Visit[i].SITEID</td>
+                    <td>@Model.Visit[i].SUBJID</td>
+                    <td>@Model.Visit[i].VISITID</td>
+                    <td>@Model.Visit[i].ELIGIP</td>
+
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="search-table-outter wrapper">
+        <table class="table table-striped" id="aeTable">
+            <thead>
+                <tr>
+                    <th style="display: none;">ROWKEY</th>
+                    <th>Site ID</th>
+                    <th>Subject ID</th>
+                    <th>Visit</th>
+                    <th>Kit Number</th>
+                    <th>Dispensed Date</th>
+                    <th>Requested By</th>
+                    <th>Expiry</th>
+                    <th>Lot Number</th>
+                    <th>Replacement For</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.IPVisit.Count(); i++)
+                {
+                    <tr>
+                        <td style="display: none;">@Model.IPVisit[i].ROW_KEY</td>
+                        <td>@Model.IPVisit[i].SITEID</td>
+                        <td>@Model.IPVisit[i].SUBJID</td>
+                        <td>@Model.IPVisit[i].VISIT</td>
+                        <td>@Model.IPVisit[i].KitNumber</td>
+                        <td>@Model.IPVisit[i].Dispense</td>
+                        <td>@Model.IPVisit[i].ASSIGNED_BY</td>
+                        <td>@Model.IPVisit[i].IPLblShipExpiryDate</td>
+                        <td>@Model.IPVisit[i].IPLblShipLotNo</td>
+                        <td>@Model.IPVisit[i].KitRepled</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+@*</div>*@
+
+<script>
+
+
+    $(document).ready(function () {
+        var isEligibleSelect = $("#isEligible");
+        var reason1Div = $("#reason1");
+        var reason2Div = $("#reason2");
+        var notDoneCheckbox = $("#notdone");
+
+        if (isEligibleSelect.val() === "No" && !notDoneCheckbox.prop("checked")) {
+            reason1Div.show();
+
+            reason2Div.hide();
+
+
+        } else if (isEligibleSelect.val() === "Yes" && notDoneCheckbox.prop("checked")) {
+            reason1Div.hide();
+            reason2Div.show();
+
+        } else {
+            reason1Div.hide();
+            reason2Div.hide();
+
+        }
+
+        function checkSelection() {
+            // Clear all values
+            $("#reasonVal").val("");
+            $("#reason").val("");
+            if (isEligibleSelect.val() === "No" && !notDoneCheckbox.prop("checked")) {
+                reason1Div.show();
+                $("#reasonVal").val("");
+                reason2Div.hide();
+
+
+            } else if (isEligibleSelect.val() === "Yes" && notDoneCheckbox.prop("checked")) {
+                reason1Div.hide();
+                reason2Div.show();
+                $("reason").val("");
+            } else {
+                reason1Div.hide();
+                reason2Div.hide();
+                $("reasonVal").val("");
+                $("reason").val("");
+            }
+        }
+
+        if (notDoneCheckbox.prop("checked")) {
+            // If "notdone" is checked, make datepicker readonly and empty
+            $("#datepicker").prop("readonly", true).val("");
+        } else {
+            // If "notdone" is not checked, make datepicker editable
+            $("#datepicker").prop("readonly", false);
+        }
+
+        // Check the selected value when the page is loaded
+        //checkSelection();
+
+        // Add an event listener for the change event on the dropdown
+        isEligibleSelect.change(function () {
+            checkSelection();
+        });
+
+        // Add an event listener for the change event on the "notdone" checkbox
+        //notDoneCheckbox.change(function () {
+        //    checkSelection();
+        //    if (notDoneCheckbox.prop("checked")) {
+        //        // If "notdone" is checked, make datepicker readonly and empty
+        //        $("#datepicker").prop("readonly", true).val("");
+        //    } else {
+        //        // If "notdone" is not checked, make datepicker editable
+        //        $("#datepicker").prop("readonly", false);
+        //    }
+        //});
+        notDoneCheckbox.change(function () {
+            checkSelection();
+            if (notDoneCheckbox.prop("checked")) {
+                // If "notdone" is checked, make datepicker readonly and empty
+                $("#datepicker").prop("readonly", true).val("").datepicker("destroy");
+            } else {
+                // If "notdone" is not checked, make datepicker editable
+                $("#datepicker").prop("readonly", false).datepicker();
+            }
+        });
+
+
+    });
+
+
+
+
+
+
+    function validateForm() {
+        var isValid = true;
+        var count = 0;
+
+        // Check if the required fields are empty
+        if ($("#birthYearInput").val() === "") {
+            isValid = false;
+            $("#birthYearInput").addClass("is-invalid");
+        } else {
+            $("#birthYearInput").removeClass("is-invalid");
+        }
+
+        var genderValue = $("#genderSelect").val();
+        console.log("Gender value:", genderValue);
+        if ($("#genderSelect").val() === "") {
+            isValid = false;
+            $("#genderSelect").addClass("is-invalid");
+        } else {
+
+            $("#genderSelect").removeClass("is-invalid");
+        }
+        var VisitValue = $("#visit").val();
+        console.log("Visit value:", VisitValue);
+        if ($("#visit").val() === "") {
+            isValid = false;
+            $("#visit").addClass("is-invalid");
+        } else {
+
+            $("#visit").removeClass("is-invalid");
+        }
+
+        var visitDtcValue = $("#datepicker").val();
+        var notDoneChecked = $("#notdone").prop("checked");
+        var EligibleValue = $("#isEligible").val();
+        console.log("Eligible value:", EligibleValue);
+        if (EligibleValue === "") {
+            isValid = false;
+            $("#isEligible").addClass("is-invalid");
+            $("#reason").removeClass("is-invalid");
+        } else if ($("#isEligible").val() === "No" && notDoneChecked) {
+            $("#isEligible").removeClass("is-invalid");
+        }
+        else if ($("#isEligible").val() === "No") {
+            $("#isEligible").removeClass("is-invalid");
+
+            if ($("#reason").val() === "") {
+                isValid = false;
+                $("#reason").addClass("is-invalid");
+            } else
+                $("#reason").removeClass("is-invalid");
+        }
+        else {
+            $("#isEligible").removeClass("is-invalid");
+            $("#reason").removeClass("is-invalid");
+        }
+
+        //var visitDtcValue = $("#datepicker").val();
+        //var notDoneChecked = $("#notdone").prop("checked");
+
+        if (!notDoneChecked && visitDtcValue === "") {
+            // VisitDtc is required if NotDone is not checked
+            isValid = false;
+            $("#datepicker").addClass("is-invalid");
+        } else {
+            $("#datepicker").removeClass("is-invalid");
+        }
+
+        // If NotDone is checked, ensure VisitDtc is blank
+        if (notDoneChecked && visitDtcValue !== "") {
+            $("#datepicker").val(""); // Clear VisitDtc "
+            $("#datepicker").removeClass("is-invalid");
+        }
+        var eligible = $(isEligible).val();
+        if (notDoneChecked && eligible === "Yes") {
+            if ($("#reasonVal").val() === "") {
+                isValid = false;
+                $("#reasonVal").addClass("is-invalid");
+            } else {
+                $("#reasonVal").removeClass("is-invalid");
+            }
+        }
+        if (!notDoneChecked) {
+            var icdtDateStr = $("#datepicker").val();
+            var visitdtc = new Date(icdtDateStr);
+            var currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
+
+            // Check if the selected date matches the current date
+            if ($("#datepicker").val() === "") {
+                isValid = false;
+                $("#datepicker").addClass("is-invalid");
+            } else {
+
+
+                if (visitdtc.getTime() === currentDate.getTime()) {
+                    // Date matches the current date
+                    $("#datepicker").removeClass("is-invalid");
+                    $("#visitError").hide();
+                    console.log("Selected date is the current system date.");
+                } else {
+                    // Date is not the current date
+                    isValid = false;
+                    $("#datepicker").addClass("is-invalid");
+                    $("#visitError").show().text("Date should be set to the current date.");
+                    console.log("Selected date is not the current system date.");
+                }
+            }
+        } else {
+
+            $("#datepicker").removeClass("is-invalid");
+            $("#visitError").hide();
+        }
+
+        //if (visitdtc > currentDate) {
+        //    isValid = false;
+        //    $("#datepicker").addClass("is-invalid");
+        //    $("#visitError").show().text("The Visit Date is after current date.");
+        //}
+        //else {
+        //    $("#datepicker").removeClass("is-invalid");
+        //    $("#visitError").hide();
+        //}
+
+        $(".form-group input[type='text'], .form-group select").each(function () {
+            if ($(this).val() !== "") {
+                $(this).removeClass("is-invalid");
+            }
+        });
+        console.log("count:", count);
+        if (!isValid) {
+            /*alert('Please fill in all required fields.');*/
+            $("#Errormessage").show()
+        }
+        else {
+            $("#Errormessage").hide()
+        }
+        return isValid;
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#modalButton").click(function () {
+            if (validateForm()) {
+                $('#loginModal').modal('show');
+            }
+        });
+    });
+</script>
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+</style>
+
+
+
+
+
+
+
+

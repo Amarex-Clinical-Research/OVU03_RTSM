@@ -1,0 +1,428 @@
+﻿@model Email_Notifications
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+
+</head>
+
+<script>
+    function OpenModalEmail(key) {
+        $.get("@Url.Action("GetUpdateEmail", "ProjectManagement")/" + "?KEYID=" +key,
+                function (data) {
+                    $('#EditEmailModalBody').html(data);
+                });
+
+        $("#EmailModal").modal("show");
+    }
+
+</script>
+<div class="modal fade" id="EmailModal" tabindex="-1" role="dialog" aria-labelledby="ScreenModal1Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="EditEmail" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="ScreenModal1Label">Edit Email Address</h4>
+
+                </div>
+
+                <div class="modal-body" id="EditEmailModalBody">
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn" value="Update" style="background-color: #e95420; color: white;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;position:relative; float:left; color: white;">Cancel</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+<h1 style="color: #e95420;"> <i class="bi bi-clipboard-data" style="color:black;"></i> Project Management: Notification Settings </h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<br />
+
+<ul class="nav nav-tabs" id="StudyTabs">
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#randSettings">Randomization Emails</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#shipSettings">IP Depot/Labelling</a>
+    </li>
+
+    @*<li class="nav-item" style="font-weight:500;">
+            <a class="nav-link" data-toggle="tab" href="#IPBio">Biometrics/Randomization List Upload</a>
+        </li>*@
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#Reg">Regulatory</a>
+    </li>
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#Emer">Emergency Unblinding</a>
+    </li>
+
+
+
+</ul>
+
+
+<div class="tab-content">
+
+    <div id="randSettings" class="tab-pane fade show active">
+        <p>Click in the box below to select one or multiple emails, then click the "Add" button. If an email is not listed, it can be entered manually</p>
+        <form asp-action="PostRandEmail">
+            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" required />
+            <br />
+            <input type="submit" class="btn" value="Add" />
+        </form>
+        <br />
+        <br />
+        <table class="table" id="aeTable">
+            <thead>
+                <tr>
+
+                    <th>Email Address</th>
+                    <th>Date Added</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.randemail.Count(); i++)
+                {
+                    <tr>
+
+                        <td>@Model.randemail[i].PIDet</td>
+                        <td>@Model.randemail[i].ADDDATE</td>
+
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                    <form asp-action="RemoveEmail">
+                                        <input type="submit" class="btn" value="Remove" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.randemail[i].KEYID" name="KEYID" />
+
+                                        <br />
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenModalEmail(@Model.randemail[i].KEYID)">Edit</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                        @*<td>
+                                <form asp-action="RemoveEmail">
+                                    <input asp-for="@Model.randemail[i].KEYID" name="KEYID" hidden readonly />
+                                    <input type="submit" class="btn" value="Remove" />
+                                </form>
+                            </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="shipSettings" class="tab-pane fade">
+        <p>Click in the box below to select one or multiple emails. Then, using the dropdown, select a notification type and click the "Add" button. If an email is not listed, it can be entered manually</p>
+        <form asp-action="PostIP">
+            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" required />
+            <br />
+            <select name="type" style="width:450px;" class="CustomInput" required>
+                <option value="" disabled selected>Please select a notification type</option>
+                <option value="IPDepot.IP Depot">IP Depot</option>
+                <option value="PMIPLblRel.IP Labeling release/ship">IP Labeling Release/Ship</option>
+                <option value="PMIPLblRelUpdt.IP Labeling release updated">IP Labeling Release Updated</option>
+
+            </select>
+            <input type="submit" class="btn" value="Add" />
+        </form>
+        <br />
+        <br />
+        <table class="table" id="aeTable1">
+            <thead>
+                <tr>
+                    <th>Email Address</th>
+                    <th>Type</th>
+                    <th>Date Added</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.shipemail.Count; i++)
+                {
+                    <tr>
+
+                        <td>@Model.shipemail[i].PIDet</td>
+                        <td>@Model.shipemail[i].PIDESC</td>
+                        <td>@Model.shipemail[i].ADDDATE</td>
+                        @*<td>
+                                <form asp-action="RemoveEmail">
+                                    <input asp-for="@Model.shipemail[i].KEYID" name="KEYID" hidden readonly />
+                                    <input type="submit" class="btn" value="Remove" />
+                                </form>
+                            </td>*@
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                    <form asp-action="RemoveEmail">
+                                        <input type="submit" class="btn" value="Remove" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.shipemail[i].KEYID" name="KEYID" />
+
+                                        <br />
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenModalEmail(@Model.shipemail[i].KEYID)">Edit</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="IPBio" class="tab-pane fade">
+        <p>Click in the box below to select one or multiple emails, then click the "Add" button. If an email is not listed, it can be entered manually</p>
+        <form asp-action="PostIPBio">
+            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" required />
+            <br />
+            <input type="submit" class="btn" value="Add" />
+        </form>
+        <br />
+        <br />
+        <table class="table" id="aeTable3">
+            <thead>
+                <tr>
+                    <th>Email Address</th>
+                    <th>Date Added</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Bioemail.Count; i++)
+                {
+                    <tr>
+
+                        <td>@Model.Bioemail[i].PIDet</td>
+                        <td>@Model.Bioemail[i].ADDDATE</td>
+                        @*<td>
+                                <form asp-action="RemoveEmail">
+                                    <input asp-for="@Model.Bioemail[i].KEYID" name="KEYID" hidden readonly />
+                                    <input type="submit" class="btn" value="Remove" />
+                                </form>
+                            </td>*@
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                    <form asp-action="RemoveEmail">
+                                        <input type="submit" class="btn" value="Remove" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.Bioemail[i].KEYID" name="KEYID" />
+
+                                        <br />
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenModalEmail(@Model.Bioemail[i].KEYID)">Edit</a>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="Reg" class="tab-pane fade">
+        <p>Click in the box below to select one or multiple emails, then click the "Add" button. If an email is not listed, it can be entered manually</p>
+        <form asp-action="PostReg">
+            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" required />
+            <br />
+            <input type="submit" class="btn" value="Add" />
+        </form>
+        <br />
+        <br />
+        <table class="table" id="aeTable3">
+            <thead>
+                <tr>
+                    <th>Email Address</th>
+                    <th>Date Added</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Regulatory.Count; i++)
+                {
+                    <tr>
+
+                        <td>@Model.Regulatory[i].PIDet</td>
+                        <td>@Model.Regulatory[i].ADDDATE</td>
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                    <form asp-action="RemoveEmail">
+                                        <input type="submit" class="btn" value="Remove" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.Regulatory[i].KEYID" name="KEYID" />
+
+                                        <br />
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenModalEmail(@Model.Regulatory[i].KEYID)">Edit</a>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="Emer" class="tab-pane fade">
+
+        <p>Click in the box below to select one or multiple emails, then click the "Add" button. If an email is not listed, it can be entered manually</p>
+        <form asp-action="PostEmerEmail">
+            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" required />
+            <br />
+            <input type="submit" class="btn" value="Add" />
+        </form>
+        <br />
+        <br />
+        <table class="table" id="aeTable3">
+            <thead>
+                <tr>
+                    <th>Email Address</th>
+                    <th>Date Added</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.EmergencyUnblind.Count; i++)
+                {
+                    <tr>
+
+                        <td>@Model.EmergencyUnblind[i].PIDet</td>
+                        <td>@Model.EmergencyUnblind[i].ADDDATE</td>
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                    <form asp-action="RemoveEmail">
+                                        <input type="submit" class="btn" value="Remove" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.EmergencyUnblind[i].KEYID" name="KEYID" />
+
+                                        <br />
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenModalEmail(@Model.EmergencyUnblind[i].KEYID)">Edit</a>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.css" rel="stylesheet" type="text/css">
+    <script src="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.js"></script>
+    <script src="~/js/FlexEmails.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable1').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#aeTable3').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+
+}
+
+<style>
+
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+
+    .btn {
+        background-color: #e95420;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px 6px 12px;
+        text-decoration: none;
+    }
+
+        .btn:hover {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0 0);
+            color: white;
+        }
+</style>

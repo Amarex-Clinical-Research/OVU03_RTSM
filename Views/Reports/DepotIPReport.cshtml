@@ -1,0 +1,65 @@
+﻿@model System.Data.DataTable
+
+<h1 style="color:black">IP Depot</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ReportsHome", "Reports")'" style="background-color: #007bff; color: White;" />
+@*<input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("Index", "Home")'" style="background-color: #007bff; color: White;" />*@
+<button class="btn" type="button" onclick="window.location='@Url.Action("DepotIPReportExcel", "Reports")'" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+
+<br />
+<br />
+<table class="table table-striped" id="table">
+    <thead>
+        <tr>
+            @foreach (System.Data.DataColumn col in Model.Columns)
+            {
+                <th>@col.Caption</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+
+
+
+        @foreach (System.Data.DataRow row in Model.Rows)
+        {
+            <tr>
+                @foreach (var cell in row.ItemArray)
+                {
+                    <td>@cell.ToString()</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
+    <link type="text/css" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.css" rel="stylesheet">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
+    <script>
+        $('#table').DataTable({
+            responsive: true,
+            "language": {
+                search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                searchPlaceholder: 'Type to Search'
+            },
+
+            //scrollY: 600,
+            scrollX: true,
+
+        });
+    </script>
+
+}
+
+
+<style>
+    .container {
+        max-width: 90%;
+    }
+</style>

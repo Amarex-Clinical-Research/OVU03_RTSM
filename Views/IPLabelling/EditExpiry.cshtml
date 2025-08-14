@@ -1,0 +1,391 @@
+﻿@model IPShip
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="text-align:left; color: black;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" class="bi bi-prescription2" viewBox="0 0 16 16">
+        <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2V6Z" />
+        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1V1Zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4H4ZM3 3h10V1H3v2Z" style="color: black;" />
+    </svg> IP Shipment
+</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+<br />
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        //function format(value) {
+
+        //    return '<div>Start Range - End Range: ' + value + '</div>';
+
+        //}
+        function format(value) {
+            var ranges = value.split(";");
+            var formattedString = '<div>';
+
+            // Add bold heading for Shipped Kit Range
+            formattedString += '<b>Shipped Kit Range</b><br>';
+
+            // Corrected variable name from "shiprange" to "shipRanges"
+            var shipRanges = ranges[0].split(",");
+
+            for (var i = 0; i < shipRanges.length; i++) {
+                var range = shipRanges[i];
+                formattedString += 'Start Range - End Range: ' + range + '<br>';
+
+            }
+            // Add bold heading for Received Kit Range
+            formattedString += '<br><b>Received Kit Range</b><br>';
+
+            // Corrected variable name from "RecRanges" to "recRanges"
+            var recRanges = ranges[1].split(",");
+            for (var i = 0; i < recRanges.length; i++) {
+                var range = recRanges[i];
+                // Corrected square brackets to parentheses for splitting
+                var values = range.split("$");
+                // Appended received date to the next line
+
+                formattedString += 'Start Range - End Range: ' + values[0] + '<br>';
+                formattedString += 'Received Date: '
+                if (values.length == 3)
+                    formattedString += values[1];
+                formattedString += '<br>';
+                formattedString += 'Received By:'
+                if (values.length == 3)
+                    formattedString += values[2] + '<br>';
+            }
+            formattedString += '</div>';
+
+            return formattedString;
+        }
+
+        $(document).ready(function () {
+            // Initialize DataTable only once
+            var table = $('#Table2').DataTable({
+                searching: false,
+                lengthChange: false,
+                paging: false
+            });
+
+            // Add event listener for opening and closing details
+            $('#Table2 tbody tr').each(function () {
+                var tr = $(this);
+                var rowData = tr.data('child-value');
+
+                // Check if rowData exists
+                if (rowData) {
+                    // Show the child row
+                    var childContent = format(rowData);
+                    var row = table.row(tr);
+                    if (row.child && !row.child.isShown()) {
+                        row.child(childContent).show();
+                        tr.addClass('shown');
+                    }
+                }
+            });
+
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker1").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $("#birthYearInput").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years"
+        });
+    </script>
+}
+
+<form id="myForm" asp-action="EditExpiry" method="post" onsubmit="return validateForm();">
+    <label id="Errormessage" style="font-size: 13px; display:none; color:red">Please complete all required fields</label>
+    <table>
+        <tr>
+            <td>
+                <div class="form-group" style="display:none">
+                    <label>ILSKEY</label> <br />
+                    <input class="CustomInput" type="text"  asp-for="@Model.ILSKEY" name="ILSKEY" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Date of IP Shipment<span style="color: red;"> *</span></label> <br />
+                    <input class="CustomInput" type="text" id="datepicker" asp-for="@Model.IPLblShipDTC" name="IPLblShipDTC" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Courier(Fedex, UPS)<span style="color: red;"> *</span></label> <br />
+                    <input id="IP" list="courier" class="CustomInput" type="text" asp-for="@Model.Courier" name="Courier" style="width:500px; padding:.375rem .75rem;" readonly />
+                    @*<input type="text" list="cars" />*@
+                    <datalist id="courier">
+                        <option>UPS</option>
+                        <option>FedEx</option>
+                        <option>USPS</option>
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label>Tracking Number<span style="color: red;"> *</span></label><br />
+                    <input id="Tracking" class="CustomInput" type="text" asp-for="@Model.TrackNo" name="TrackNo" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date<span style="color: red;"> *</span></label><span id="expiryError" class="text-danger" style="display: none;"></span> <br />
+                    <input class="CustomInput" type="text" id="datepicker1" asp-for="@Model.ExpiryDate" name="ExpiryDate" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+                <div class="form-group">
+                    <label>Lot Number<span style="color: red;"> *</span></label> <br />
+                    <input id="LotNum" class="CustomInput" type="text" asp-for="@Model.LotNo" name="LotNo" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <!---
+        <button type="button" class="btn" data-toggle="modal" data-target="#loginModal" style="background-color: #e95420; color: white;">Submit</button>-->
+    <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("IPLabellingHome","IPLabelling")'" style="background-color: #007bff; color: White;" />
+
+    <!--Credential Model-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="form-group1">
+                            <label for="username">Username<span style="color: red;"> *</span></label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="form-group1">
+                            <label for="password">Password<span style="color: red;"> *</span></label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+<br />
+<br />
+
+<table class="table table-striped" id="Table2">
+    <thead>
+        <tr>
+            <th></th>
+            <th style="display: none;">ILSKEY</th>
+            <th>Courier</th>
+            <th>Tracking Number</th>
+            <th>Lot Number</th>
+            <th>Expiry Date</th>
+            <th>Shipping Date</th>
+            <th>Sent By</th>
+
+            @*<th>Range</th>*@
+
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Model.IPDetails.Count(); i++)
+        {
+            <tr data-child-value="@Model.IPDetails[i].RangeStrEnd; @Model.IPDetails[i].DepotRangeStrEnd">
+                <td class="details-control"></td>
+                <td style="display: none;">@Model.IPDetails[i].ILSKEY</td>
+                <td>@Model.IPDetails[i].Courier</td>
+                <td>@Model.IPDetails[i].TrackNo</td>
+                <td>@Model.IPDetails[i].LotNo</td>
+                <td>@Model.IPDetails[i].ExpiryDate</td>
+                <td>@Model.IPDetails[i].IPLblShipDTC</td>
+                <td>@Model.IPDetails[i].ADDUSER</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+
+<script>
+    function validateForm() {
+        var isValid = true;
+
+        // Check if the required fields are empty
+        $(".form-group input[type='text']").each(function () {
+            if ($(this).val() === "") {
+                isValid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        $(".form-group select").each(function () {
+            if ($(this).val() === "") {
+                isValid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        var shipmentDate = $("#datepicker").val();
+        var expiryDate = $("#datepicker1").val();
+
+        if (!shipmentDate) {
+            // Handle if shipment date is not selected
+            isValid = false;
+            $("#datepicker").addClass("is-invalid");
+        } else if (!expiryDate) {
+            // Handle if expiry date is not selected
+            isValid = false;
+            $("#datepicker1").addClass("is-invalid");
+        } else {
+            var shipDate = new Date(shipmentDate);
+            var expiry = new Date(expiryDate);
+            var currentDate = new Date();
+
+            // Calculate the date 6 months from the shipment date
+            var sixMonthsFromShipDate = new Date(shipDate);
+            sixMonthsFromShipDate.setMonth(shipDate.getMonth() + 6);
+
+            if (expiry <= currentDate || expiry < sixMonthsFromShipDate) {
+                // Handle invalid expiry date
+                isValid = false;
+                $("#datepicker1").addClass("is-invalid");
+                $("#expiryError").show().text(" Expiry date should be at least 6 months from the shipment date.");
+            } else {
+                // Handle valid expiry date
+                $("#datepicker1").removeClass("is-invalid");
+                $("#expiryError").hide();
+            }
+        }
+
+        if (!isValid) {
+            /*alert('Please fill in all required fields.');*/
+            $("#Errormessage").show()
+        }
+        else {
+            $("#Errormessage").hide()
+        }
+        return isValid;
+    }
+</script>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#modalButton").click(function () {
+            if (validateForm()) {
+                $('#loginModal').modal('show');
+            }
+        });
+    });
+</script>
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+
+    .btn {
+        background-color: #e95420;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px 6px 12px;
+        text-decoration: none;
+    }
+
+    tr.shown td.details-control::before {
+        content: '\25B2'; /*Unicode code for a down arrow */
+    }
+
+    .dataTables_info {
+        display: none;
+    }
+</style>
+
+
+
+
+
+
+

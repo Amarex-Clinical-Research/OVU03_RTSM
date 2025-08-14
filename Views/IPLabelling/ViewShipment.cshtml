@@ -1,0 +1,106 @@
+﻿@model IPShip
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<h1 style="text-align:left; color: black;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" class="bi bi-prescription2" viewBox="0 0 16 16">
+        <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2V6Z" />
+        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1V1Zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4H4ZM3 3h10V1H3v2Z" style="color: black;" />
+    </svg> IP Shipment
+</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+<br />
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+
+}
+
+<form>
+    <table>
+        <tr>
+            <td>
+                <div class="form-group" style="display:none">
+                    <label>ILSKEY</label> <br />
+                    <input class="CustomInput" type="text" id="datepicker" asp-for="@Model.ILSKEY" name="ILSKEY" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Date of IP Shipment</label> <br />
+                    <input class="CustomInput" type="text" id="datepicker" asp-for="@Model.IPLblShipDTC" name="IPLblShipDTC" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Courier(Fedex, UPS):</label> <br />
+                    <input id="IP" list="courier" class="CustomInput" type="text" asp-for="@Model.Courier" name="Courier" style="width:500px; padding:.375rem .75rem;" readonly />
+                    @*<input type="text" list="cars" />*@
+                    <datalist id="courier">
+                        <option>UPS</option>
+                        <option>FedEx</option>
+                        <option>USPS</option>
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label>Tracking Number:</label><br />
+                    <input id="Tracking" class="CustomInput" type="text" asp-for="@Model.TrackNo" name="TrackNo" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date:</label> <br />
+                    <input class="CustomInput" type="text" id="datepicker1" asp-for="@Model.ExpiryDate" name="ExpiryDate" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Lot Number:</label> <br />
+                    <input id="LotNum" class="CustomInput" type="text" asp-for="@Model.LotNo" name="LotNo" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+<br />
+<br />
+<table class="table table-striped" id="Table1">
+    <thead>
+        <tr>
+            <th style="display: none;">TELKEY</th>
+            <th>Range from</th>
+            <th>Range to</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Model.IPReq.Count(); i++)
+        {
+            <tr>
+                <td style="display: none;"><input type="hidden" value="@Model.IPReq[i].TELKEY"></td>
+                <td>@Model.IPReq[i].RangeStr</td>
+                <td>@Model.IPReq[i].RangeEnd</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("IPLabellingHome","IPLabelling")'" style="background-color: #007bff; color: White;" />
+
+
+
+
+
+
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+
+
+
+
+

@@ -1,0 +1,353 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<Webview_IRT.Models.RandSubj1>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContext
+@{
+}
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+</head>
+<script>
+    $(document).ready(function () {
+        var error =  @((TempData["ErrorMessage1"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<h1 style="color: #e95420;"> <i class="bi bi-person-plus" style="color:black;"></i>Enrollment</h1>
+<ul class="nav nav-tabs" id="StudyTabs">
+
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#subj">Enroll Subject</a>
+    </li>
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#stat">Enrollment Status</a>
+    </li>
+    @{
+        var styleClass = ViewData["Style"];
+        var chkAll = ViewData["chkAll"];
+        var disRand = ViewData["disRand"];
+    }
+
+
+</ul>
+<div class="tab-content">
+    <div id="subj" class="tab-pane fade show active">
+
+        <br />
+        <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("RandList","Enrollment")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+        @if (ViewBag.Rand == null && ViewBag.SiteRand == null)
+        {
+
+            @*<div style="color: red; display: inline;">Stop Randomization has been set. Contact the PM or CRA.</div>*@
+
+        }
+        else
+        {
+            <div style="color: red; display: inline;">Stop Randomization has been set. Contact the PM or CRA.</div>
+        }
+        <br /><br />
+        <table class="table table-striped" id="Table">
+            <thead>
+                <tr>
+                    @*<th style="display: none;">ROW_KEY</th>*@
+                    <th>Subject ID</th>
+                    <th>Informed Consent Date</th>
+                    <th>Screened Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    @if (_httpContext.HttpContext.Session.Get("sesCenter") != null)
+                    {
+                        @if (chkAll.ToString() == "(All)")
+                        {
+                            @if (item.STATUS_INFO == "Screened")
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SUBJID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ICDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SCRNDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.STATUS_INFO)
+                                    </td>
+                                    <td>
+                                        @*<input type="submit" class="btn" value="Randomize" @disRand style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("VPEDEForm2","Rand", new {ROW_KEY = item.ROW_KEY})', '_parent')" />*@
+                                        @if (ViewBag.Rand == null && ViewBag.SiteRand == null)
+                                        {
+
+                                            <input type="submit" class="btn" value="Enroll" @disRand style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("EnrollReg","Enrollment", new {ROW_KEY = item.ROW_KEY})', '_parent')" />
+
+                                        }
+                                        else
+                                        {
+                                            <input type="submit" class="btn" value="Enroll" style="background-color: #e95420; color: white; pointer-events: none; opacity: 0.6;" />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            @if ((item.STATUS_INFO == "Screened") && (item.SITEID == _httpContext.HttpContext.Session.GetString("sesCenter").ToString()))
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SUBJID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ICDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SCRNDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.STATUS_INFO)
+                                    </td>
+                                    <td>
+                                        @if (ViewBag.Rand == null && ViewBag.SiteRand == null)
+                                        {
+
+                                            <input type="submit" class="btn" value="Enroll" @disRand style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("EnrollReg","Enrollment", new {ROW_KEY = item.ROW_KEY})', '_parent')" />
+
+                                        }
+                                        else
+                                        {
+                                            <input type="submit" class="btn" value="Enroll" style="background-color: #e95420; color: white; pointer-events: none; opacity: 0.6;" />
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="stat" class="tab-pane fade">
+
+        <br />
+        <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("RandList","Enrollment")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+        <br /><br />
+
+        <table class="table table-striped" id="Table1">
+            <thead>
+                <tr>
+                    <th>Subject ID</th>
+                    <th>Year of Birth</th>
+                    <th>Sex</th>
+                    <th>Informed Consent Date</th>
+                    <th>Screened Date</th>
+                    <th>Status</th>
+                    <th>Randomized By</th>
+                    <th>Randomization Date&Time(EST)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    @if (_httpContext.HttpContext.Session.Get("sesCenter") != null)
+                    {
+                        @if (chkAll.ToString() == "(All)")
+                        {
+                            @if (item.STATUS_INFO == "Randomized")
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SUBJID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BRTHDTC)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SEX)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ICDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SCRNDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.STATUS_INFO)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RANDBY)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DATERAND)
+                                    </td>
+                                    <td>
+                                        <input type="submit" class="btn" value="View" style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("Enrollconfirm","Enrollment", new {ROW_KEY = item.ROW_KEY})', '_parent')" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            @if ((item.STATUS_INFO == "Randomized") && (item.SITEID == _httpContext.HttpContext.Session.GetString("sesCenter").ToString()))
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SUBJID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BRTHDTC)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SEX)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ICDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SCRNDTCstr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.STATUS_INFO)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RANDBY)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DATERAND)
+                                    </td>
+                                    <td>
+                                        <input type="submit" class="btn" value="View" style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("Enrollconfirm","Enrollment", new {ROW_KEY = item.ROW_KEY})', '_parent')" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+
+        $('#Table').DataTable({
+            "language": {
+                search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                searchPlaceholder: 'Type to Search'
+            },
+
+            "order": [[0, 'asc']],
+            "columnDefs": [
+                { "type": "string", "targets": 0 },
+                { "type": "date", "targets": 1 },
+                { "type": "date", "targets": 2 },
+
+            ],
+        });
+
+    </script>
+
+    <script>
+
+        $('#Table1').DataTable({
+            "language": {
+                search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                searchPlaceholder: 'Type to Search'
+            },
+            "order": [[0, 'asc']],
+            "columnDefs": [
+                { "type": "string", "targets": 0 },
+                { "type": "date", "targets": 3 },
+                { "type": "date", "targets": 4 },
+                { "type": "date", "targets": 7 },
+
+
+            ],
+        });
+
+    </script>
+
+    @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+                "order": [[1, 'asc']],//order column in descending order.
+                "columnDefs": [
+                    { "type": "date", "targets": 1 },
+
+                ],
+
+            });
+        </script>*@
+
+
+}
+
+<style>
+
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+</style>

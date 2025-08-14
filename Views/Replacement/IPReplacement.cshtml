@@ -1,0 +1,233 @@
+﻿@model Visits
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="text-align:center; color: black;">Assignment of IP Replacement</h1>
+<h1 style="text-align:center; display:none;">Subject ID:  @TempData["SUBJID"]</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+
+    <script>
+        $("#birthYearInput").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years"
+        });
+    </script>
+}
+
+<form id="myForm" asp-action="IPReplacement" method="post" onsubmit="return validateForm();">
+    <label id="Errormessage" style="font-size: 13px; display:none; color:red">Please complete all required fields</label>
+    <table>
+        <tr>
+            <td>
+                <div class="form-group" style="display: none">
+                    <label>SPkey</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SPKEY" name="SPKEY" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group" style="display: none">
+                    <label>ROWKEY</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.ROW_KEY" name="ROW_KEY" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group">
+                    <label>Site ID</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SITEID" name="SITEID" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+
+                <div class="form-group">
+                    <label>Subject ID</label> <span id="SubjIDError" class="text-danger" style="display: none;">Please enter a 3-digit number.</span><br />
+                    <input id="SubjID" class="CustomInput" type="text" asp-for="@Model.SUBJID" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+
+                <div class="form-group">
+                    <label>Year of Birth<span style="color: red;"> *</span></label> <br />
+                    <input id="birthYearInput" class="CustomInput" asp-for="@Model.BRTHDTC" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Sex<span style="color: red;"> *</span></label> <br />
+                    <select id="genderSelect" class="CustomInput" asp-for="@Model.SEX" style="width: 500px; padding: .375rem .75rem" required>
+                        <option value=""></option>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                    </select>
+
+                </div>
+                <div class="form-group">
+                    <label>Visit</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.VISIT" name="VISIT" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group">
+                    <label>Kit Number</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.KitNumber" name="KitNumber" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <br />
+                <label>Please state the reason for requesting a kit for the same visit<span style="color: red;"> *</span></label> <br />
+                <textarea class="CustomInput" asp-for="@Model.ReasonRep" id="Reason" style=" width: 92%; padding: .375rem .75rem; height: 230px;"></textarea>
+
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <!---
+        <button type="button" class="btn" data-toggle="modal" data-target="#loginModal" style="background-color: #e95420; color: white;">Submit</button>-->
+    <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("SubjectVisits","Replacement", new { ROW_KEY = TempData["ROW_KEY"], SUBJID = TempData["SUBJID"] })'" style="background-color: #007bff; color: White;" />
+
+    <!--Credential Model-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Username<span style="color: red;"> *</span></label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password<span style="color: red;"> *</span></label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+<script>
+
+    function validateForm() {
+        var isValid = true;
+
+
+        // Check if the required fields are empty
+        if ($("#birthYearInput").val() === "") {
+            isValid = false;
+            $("#birthYearInput").addClass("is-invalid");
+        } else {
+            $("#birthYearInput").removeClass("is-invalid");
+        }
+
+        var genderValue = $("#genderSelect").val();
+        console.log("Gender value:", genderValue);
+        if ($("#genderSelect").val() === "") {
+            isValid = false;
+            $("#genderSelect").addClass("is-invalid");
+        } else {
+
+            $("#genderSelect").removeClass("is-invalid");
+        }
+        if ($("#Reason").val() === "") {
+            isValid = false;
+            $("#Reason").addClass("is-invalid");
+        } else {
+            $("#Reason").removeClass("is-invalid");
+        }
+
+        $(".form-group input[type='text'], .form-group select").each(function () {
+            if ($(this).val() !== "") {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        if (!isValid) {
+            /*alert('Please fill in all required fields.');*/
+            $("#Errormessage").show()
+        }
+        else {
+            $("#Errormessage").hide()
+        }
+        return isValid;
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#modalButton").click(function () {
+            if (validateForm()) {
+                $('#loginModal').modal('show');
+            }
+        });
+    });
+</script>
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+</style>
+
+
+
+
+
+
+
+

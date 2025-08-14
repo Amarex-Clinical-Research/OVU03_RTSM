@@ -1,0 +1,35 @@
+﻿@model Randstat
+
+
+
+<table id="infoTable" class="table">
+    <tbody>
+        <tr style="display: none;">
+            <th style="display: none;">PIKEY</th>
+            <td style="display: none;"><input type="text" asp-for="@Model.PIKEY" name="PIKEY" style="height:auto; width:auto" readonly hidden /></td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Model.PIDesc</td>
+        </tr>
+        
+        <tr>
+            <th>Status</th>
+            <td>
+                <select asp-for="@Model.PIDet" name="PIDet">
+                <option value="Rand Enabled">Rand Enabled</option>
+                <option value="Rand Disabled">Rand Disabled</option>
+                
+            </select>
+                
+            </td>
+        </tr>
+        <tr>
+            <th style="display: none;">Type</th>
+            <td style="display: none;">@Model.PIType</td>
+        </tr>
+        
+    </tbody>
+
+</table>
+

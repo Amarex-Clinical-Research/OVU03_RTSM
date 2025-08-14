@@ -1,0 +1,486 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ShipIP
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<h1 style="text-align:left; color: black;"> <i class="bi bi-truck" style="color:black;"></i> Receive IP</h1>
+<hr />
+<br />
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+
+    
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#approvedate").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#modalButton").click(function () {
+                if (validateForm()) {
+                    $('#loginModal').modal('show');
+                }
+            });
+        });
+    </script>
+}
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<form id="myForm" asp-action="ReceiptReporting" method="post" onsubmit="return validateForm();">
+    <table>
+        <tr>
+            <td>
+                <div class="form-group" style="display: none;">
+                    <label>Kit Key:</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.KITKEY" name="KITKEY" style=" width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+                <div class="form-group">
+                    <label>Site ID:</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SITEID" name="SITEID" style=" width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+
+                <div class="form-group">
+                    <label>Kit Number:</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.KitNumber" name="KitNumber" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label>Treatment Group:</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.TreatmentGroup" name="TreatmentGroup" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label>Date Received:</label><span id="recError" class="text-danger" style="display: none;"></span> <br />
+                    <input class="CustomInput" type="text" id="datepicker" asp-format="{0:d MMM yyyy}" name="RECVDDATE" asp-for="@Model.RECVDDATE" style="width:500px; padding:.375rem .75rem;" />
+                </div>
+
+                @*<div class="form-group">
+            <label>Any temperature excursions?</label> <br />
+            <input class="CustomInput" type="text" style="width:500px; padding:.375rem .75rem;" required />
+        </div>*@
+
+                <div class="form-group">
+                    <label>Any temperature excursions?</label> <br />
+                    <select id="temperatureExcursionSelect" class="CustomInput" asp-for="@Model.isExcrusion" style="width: 500px; padding: .375rem .75rem">
+                        <option value=""></option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group" id="IsApproved" style="display: none">
+                    <label>Sponsor approved the use of quarantined IP after temperature excursion?</label> <br />
+                    <select id="Isapproved" class="CustomInput" asp-for="@Model.Isapproved" style="width: 500px; padding: .375rem .75rem">
+                        <option value=""></option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group" id="sponsorDateField" style="display: none" >
+                    <label>Date Of Sponsor Approval:</label> <span id="spError" class="text-danger" style="display: none;"></span> <br />
+                    <input id="approvedate" class="CustomInput" type="text" asp-for="@Model.SPAPDTC" style="width:500px; padding:.375rem .75rem;" />
+                </div>
+                <div class="form-group" id="KitReceived" style="display: none">
+                    <label>Is Kit Received in Acceptable Condition?</label> <br />
+                    <select id="Isreceived" class="CustomInput" asp-for="@Model.isRecieved" style="width: 500px; padding: .375rem .75rem">
+                        <option value=""></option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="" id="reasonField" style="display: none">
+                    <label>Reason in unacceptable condition:</label> <br />
+                    <textarea id="reasoncom" class="CustomInput" type="text" asp-for="@Model.reason" style="width: 92%; padding: .375rem .75rem; height: 230px;"></textarea>
+                </div>
+            </td>
+
+        </tr>
+    </table>
+    <br />
+    <br />
+    <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>
+
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ReceiveIP","SupplyManagement")'" style="background-color: #007bff; color: White;" />
+
+
+    <!-- Define the modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add the username and password fields to the modal body -->
+                    <form id="loginForm">
+                        <div class="form-group1">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="form-group1">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                    </form>
+                    <!-- <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+<script>
+//////////
+    
+        $(document).ready(function() {
+            // Initially hide the fields
+            /*$("#IsApproved, #sponsorDateField, #KitReceived, #reasonField").hide();*/
+            
+            if ($('#temperatureExcursionSelect').val() === "Yes") {
+                $("#IsApproved").show();
+                $("#KitReceived, #reasonField").hide();
+            } else /*($('#temperatureExcursionSelect').val() === "No")*/
+                $("#KitReceived").show();
+            if ($('#Isapproved').val() === "Yes") {
+                $("#sponsorDateField, #KitReceived").show();
+            } else{
+                $("#sponsorDateField, #KitReceived, #reasonField").hide();
+            }
+            if ($('#Isreceived').val() === "No") {
+                $("#reasonField").show();
+            } else {
+                $("#reasonField").hide();
+            }
+        // When temperatureExcursionSelect changes
+        $("#temperatureExcursionSelect").change(function() {
+            $("#Isreceived").val('');
+        var selectedValue = $(this).val();
+        if (selectedValue === "Yes") {
+            $("#IsApproved").show();
+            $("#KitReceived, #reasonField").hide();
+
+            $("#Isreceived, #reasoncom").val('');
+        } else if (selectedValue === "No") {
+            $("#KitReceived").show();
+            $("#IsApproved, #sponsorDateField, #reasonField").hide();
+            $("#Isapproved, #approvedate, #reasoncom").val('');
+        }
+    });
+
+        // When Isapproved changes
+        $("#Isapproved").change(function() {
+        var selectedValue = $(this).val();
+        if (selectedValue === "Yes") {
+            $("#sponsorDateField, #KitReceived").show();
+        } else if (selectedValue === "No") {
+            $("#sponsorDateField, #KitReceived, #reasonField").hide();
+            $("#approvedate, #Isreceived, #reasoncom").val('');
+
+        }
+    });
+
+        // When Isreceived changes
+        $("#Isreceived").change(function() {
+        var selectedValue = $(this).val();
+        if (selectedValue === "No") {
+            $("#reasonField").show();
+        } else {
+            $("#reasonField").hide();
+            $("#reasoncom").val('');
+        }
+    });
+});
+
+
+
+
+
+
+
+    ////////////////
+    function validateForm() {
+        var isValid = true;
+
+        var icdtDateStr = $("#datepicker").val();
+        var recdtc = new Date(icdtDateStr);
+
+
+        var currentDate = new Date();
+        var approvedate = $("#approvedate").val();
+        var approveDate = new Date(approvedate);
+        // Check if the datepicker field is empty
+        if ($("#datepicker").val() === "") {
+            isValid = false;
+            $("#datepicker").addClass("is-invalid");
+        } else {
+            if (recdtc > currentDate) {
+                isValid = false;
+                $("#datepicker").addClass("is-invalid");
+                $("#recError").show().text("The Received Date is after current date.");
+            }
+            else {
+                $("#datepicker").removeClass("is-invalid");
+                $("#recError").hide();
+            }
+          
+        }
+
+        var selectValue = document.getElementById("temperatureExcursionSelect").value;
+        var received = document.getElementById("Isreceived").value;
+        var approved = document.getElementById("Isapproved").value;
+        var approvedDate = document.getElementById("approvedate").value;
+        var reasoncom = document.getElementById("reasoncom").value;
+
+
+        if (selectValue === "") {
+            isValid = false;
+            $("#temperatureExcursionSelect").addClass("is-invalid");
+        } else if (selectValue === "Yes") {
+            $("#temperatureExcursionSelect").removeClass("is-invalid");
+
+            if (approved === "") {
+                isValid = false;
+                $("#Isapproved").addClass("is-invalid");
+            } else {
+                $("#Isapproved").removeClass("is-invalid");
+
+                if (approved === "Yes") {
+                    if (approvedDate === "") {
+                        isValid = false;
+                        $("#approvedate").addClass("is-invalid");
+                    } else {
+                        if (approveDate > currentDate) {
+                            isValid = false;
+                            $("#approvedate").addClass("is-invalid");
+                            $("#spError").show().text("Sponsor Aprroval Date is after current date");
+                        }
+                        else {
+                            $("#approvedate").removeClass("is-invalid");
+                            $("#spError").hide();
+                        }
+                        /*$("#approvedate").removeClass("is-invalid");*/
+                    }
+
+                    if (received === "") {
+                        isValid = false;
+                        $("#Isreceived").addClass("is-invalid");
+                    }
+                    else if (received === "No" && reasoncom === "") {
+                        /*isValid = false;*/
+                        $("#Isreceived").addClass("is-invalid");
+                        $("#reasoncom").addClass("is-invalid");
+                    } else {
+                        $("#Isreceived").removeClass("is-invalid");
+                        $("#reasoncom").removeClass("is-invalid");
+                    }
+                }
+            }
+        } else { // selectValue is "No"
+            $("#temperatureExcursionSelect").removeClass("is-invalid");
+
+            if (received === "") {
+                isValid = false;
+                $("#Isreceived").addClass("is-invalid");
+            } else {
+                $("#Isreceived").removeClass("is-invalid");
+
+                if (received === "No" && reasoncom === "") {
+                    isValid = false;
+                    $("#reasoncom").addClass("is-invalid");
+                } else {
+                    $("#reasoncom").removeClass("is-invalid");
+                }
+            }
+        }
+
+        
+        // Check other required fields
+
+        $(".form-group input[required], .form-group select[required]").each(function () {
+            if ($(this).val().trim() === "") {
+                isValid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        if (!isValid) {
+            /*alert('Please fill in all required fields.');*/
+
+        }
+        return isValid;
+    }
+</script>
+
+
+
+
+
+@*<script>
+    document.getElementById("temperatureExcursionSelect").addEventListener("change", showFields);
+    document.getElementById("IsApproved").addEventListener("change", showFields);
+    document.getElementById("Isreceived").addEventListener("change", showFields);
+
+    function showFields() {
+        var selectValue = document.getElementById("temperatureExcursionSelect").value;
+        var sponsorDateField = document.getElementById("sponsorDateField");
+        var reasonField = document.getElementById("reasonField");
+        var KitReceived = document.getElementById("KitReceived");
+        var IsApproved = document.getElementById("IsApproved");
+        var received = document.getElementById("Isreceived").value;
+        var approved = document.getElementById("Isapproved").value;
+
+        if (selectValue === "Yes") {
+            IsApproved.style.display = "inline-block";
+
+            if (approved === "Yes") {
+                sponsorDateField.style.display = "inline-block";
+                KitReceived.style.display = "inline-block";
+
+                if (received === "No") {
+                    reasonField.style.display = "inline-block";
+                } else {
+                    reasonField.style.display = "none";
+                }
+            } else {
+                sponsorDateField.style.display = "none";
+                KitReceived.style.display = "none";
+                reasonField.style.display = "none";
+            }
+        } else if (selectValue === "No") {
+            sponsorDateField.style.display = "none";
+            IsApproved.style.display = "none";
+            KitReceived.style.display = "inline-block";
+
+            if (received === "No") {
+                reasonField.style.display = "inline-block";
+            } else {
+                reasonField.style.display = "none";
+            }
+        } else {
+            sponsorDateField.style.display = "none";
+            reasonField.style.display = "none";
+            KitReceived.style.display = "none";
+            IsApproved.style.display = "none";
+        }
+
+        sessionStorage.setItem('IsApprovedVisible', IsApproved.style.display);
+        sessionStorage.setItem('sponsorDateFieldVisible', sponsorDateField.style.display);
+        sessionStorage.setItem('KitReceivedVisible', KitReceived.style.display);
+        sessionStorage.setItem('reasonFieldVisible', reasonField.style.display);
+    }
+</script>*@
+@*<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Retrieve visibility state from sessionStorage
+        var IsApprovedVisible = sessionStorage.getItem('IsApprovedVisible');
+        var sponsorDateFieldVisible = sessionStorage.getItem('sponsorDateFieldVisible');
+        var KitReceivedVisible = sessionStorage.getItem('KitReceivedVisible');
+        var reasonFieldVisible = sessionStorage.getItem('reasonFieldVisible');
+
+        // Apply visibility state to the fields
+        document.getElementById('IsApproved').style.display = IsApprovedVisible;
+        document.getElementById('sponsorDateField').style.display = sponsorDateFieldVisible;
+        document.getElementById('KitReceived').style.display = KitReceivedVisible;
+        document.getElementById('reasonField').style.display = reasonFieldVisible;
+    });
+
+</script>*@
+
+
+
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 500px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+</style>
+
+
+

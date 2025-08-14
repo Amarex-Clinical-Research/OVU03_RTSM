@@ -1,0 +1,58 @@
+﻿@model IPReporting
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<h1 style="color: black"> Site ID: @ViewBag.SiteID </h1>
+<h1 style="color: black"> Shipment ID:  @ViewBag.KITSET </h1>
+<hr />
+<br />
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Table').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+    
+}
+
+    <div class="search-table-outter wrapper" id="Tablediv">
+        <table class="table table-striped" id="Table">
+            <thead>
+                <tr>
+                    
+                    <th>Kit Key</th>
+                    <th>Kit Number</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.ShipIP.Count(); i++)
+                {
+                    <tr>
+                        
+                        <td>@Model.ShipIP[i].KITKEY</td>
+                        <td>@Model.ShipIP[i].KitNumber</td>
+                        <td>@Model.ShipIP[i].KITSTAT</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+
+    
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ReceiveIPTabs","SupplyManagement")'" style="background-color: #007bff; color: White;" />

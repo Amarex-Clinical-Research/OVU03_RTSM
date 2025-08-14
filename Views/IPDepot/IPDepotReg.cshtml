@@ -1,0 +1,447 @@
+﻿@model IPlabel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="text-align: left; color: #e95420;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" class="bi bi-prescription2" viewBox="0 0 16 16">
+        <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2V6Z" />
+        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1V1Zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4H4ZM3 3h10V1H3v2Z" style="color: black;" />
+    </svg> IP Depot
+</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        //function format(value) {
+
+        //    return '<div>Start Range - End Range: ' + value + '</div>';
+
+        //}
+        //function format(value) {
+        //    var ranges = value.split(";");
+        //    var formattedString = '<div>';
+
+        //    // Add bold heading for Shipped Kit Range
+        //    formattedString += '<b>Shipped Kit Range</b><br>';
+
+        //    // Corrected variable name from "shiprange" to "shipRanges"
+        //    var shipRanges = ranges[0].split(",");
+
+        //    for (var i = 0; i < shipRanges.length; i++) {
+        //        var range = shipRanges[i];
+        //        formattedString += 'Start Range - End Range: ' + range + '<br>';
+        //    }
+
+        //    // Add bold heading for Received Kit Range
+        //    formattedString += '<br><b>Received Kit Range</b><br>';
+
+        //    // Corrected variable name from "RecRanges" to "recRanges"
+        //    var recRanges = ranges[1].split(",");
+        //    for (var i = 0; i < recRanges.length; i++) {
+        //        var range = recRanges[i];
+        //        // Corrected square brackets to parentheses for splitting
+        //        var values = range.split("$");
+        //        // Appended received date to the next line
+
+        //        formattedString += 'Start Range - End Range: ' + values[0] + '<br>';
+        //        formattedString += 'Received Date: '
+        //        if (values.length == 2)
+        //            formattedString += values[1] + '<br>';
+        //        formattedString += '<br>';
+        //        formattedString += 'Received By:'
+        //        if (values.length == 3)
+        //            formattedString += values[2] + '<br>';
+
+        //    }
+
+        //    formattedString += '</div>';
+
+        //    return formattedString;
+        //}
+        function format(value) {
+            var ranges = value.split(";");
+            var formattedString = '<div>';
+            formattedString += '<b>Shipped Kit Range</b><br>';
+
+            // Corrected variable name from "shiprange" to "shipRanges"
+            var shipRanges = ranges[0].split(",");
+
+            for (var i = 0; i < shipRanges.length; i++) {
+                var range = shipRanges[i];
+                formattedString += 'Start Range - End Range: ' + range + '<br>';
+            }
+
+            // Add bold heading for Received Kit Range
+            formattedString += '<br><b>Received Kit Range</b><br>';
+
+            // Corrected variable name from "RecRanges" to "recRanges"
+            var recRanges = ranges[1].split(",");
+            for (var i = 0; i < recRanges.length; i++) {
+                var range = recRanges[i];
+                // Corrected square brackets to parentheses for splitting
+                var values = range.split("$");
+                // Appended received date to the next line
+
+                formattedString += 'Start Range - End Range: ' + values[0] + '<br>';
+                formattedString += 'Received Date: '
+                if (values.length == 3)
+                    formattedString += values[1];
+                formattedString += '<br>';
+                formattedString += 'Received By:'
+                if (values.length == 3)
+                    formattedString += values[2] + '<br>';
+            }
+
+            formattedString += '</div>';
+
+            return formattedString;
+        }
+        $(document).ready(function () {
+            // Initialize DataTable only once
+            var table = $('#Table2').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+                "order": [[1, 'desc']],
+
+            });
+
+            // Add event listener for opening and closing details
+            $('#Table2').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child(format(tr.data('child-value'))).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker1").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+
+}
+
+<form id="myForm" asp-action="IPDepotReg" method="post" onsubmit="return validateForm();">
+    <label id="Errormessage" style="font-size: 13px; display:none; color:red">Please complete all required fields</label>
+    <table>
+        <tr>
+            <td>
+                <label style="font-size: 13px">Enter a range, for example - Start: K0001 --- End: K0010</label><br />
+                <div id="ipFieldsContainer">
+                    <div>
+                        <div class="form-group">
+                            <label>Start Kit Number<span style="color: red;"> *</span></label> <br />
+                            <input id="startIP" class="CustomInput" type="text" asp-for="@Model.StartIP" name="StartIP[]" style="width:490px; padding:.375rem .75rem;" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label>End Kit Number<span style="color: red;"> *</span></label> <br />
+                            <input id="endIP" class="CustomInput" type="text" asp-for="@Model.EndIP" name="EndIP[]" style="width:490px; padding:.375rem .75rem;" required />
+                            @*<button id="addMore" style="background-color: #e95420; color: white;border:hidden">Add More</button>*@
+                            <button id="addMore" type="submit" class="btn" style=""><i class="bi bi-plus"></i> </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Expiry Date<span style="color: red;"> *</span></label> <br />
+                    <input class="CustomInput" type="text" id="datepicker1" asp-for="@Model.IPLblShipExpiryDate" autocomplete="off" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+                <div class="form-group">
+                    <label>Lot Number<span style="color: red;"> *</span></label> <br />
+                    <input id="LotNum" class="CustomInput" type="text" asp-for="@Model.IPLblShipLotNo"  autocomplete="off" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+                <div class="form-group">
+                    <label>Received Date<span style="color: red;"> *</span></label><span id="RecError" class="text-danger" style="display: none;"></span> <br />
+                    <input class="CustomInput" type="text" id="datepicker" asp-for="@Model.IPDepotDTC" autocomplete="off" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <!---
+        <button type="button" class="btn" data-toggle="modal" data-target="#loginModal" style="background-color: #e95420; color: white;">Submit</button>-->
+    <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("Index","Home")'" style="background-color: #007bff; color: White;" />
+
+    <!--Credential Model-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="loginForm">
+                        <div class="form-group1">
+                            <label for="username">Username<span style="color: red;"> *</span></label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="form-group1">
+                            <label for="password">Password<span style="color: red;"> *</span></label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+
+<br />
+<br />
+<div class="search-table-outter wrapper">
+    <table class="table table-striped" id="Table2">
+        <thead>
+            <tr>
+                <th></th>
+                <th style="display: none;">ILSKEY</th>
+                <th>Courier</th>
+                <th>Tracking Number</th>
+                <th>Lot Number</th>
+                <th>Expiry Date</th>
+                <th>Shipping Date</th>
+                <th>Sent By</th>
+
+                @*<th>Range</th>*@
+
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.IPShip.Count(); i++)
+            {
+                <tr data-child-value="@Model.IPShip[i].RangeStrEnd; @Model.IPShip[i].DepotRangeStrEnd">
+                    <td class="details-control"></td>
+                    <td style="display: none;">@Model.IPShip[i].ILSKEY</td>
+                    <td>@Model.IPShip[i].Courier</td>
+                    <td>@Model.IPShip[i].TrackNo</td>
+                    <td>@Model.IPShip[i].LotNo</td>
+                    <td>@Model.IPShip[i].ExpiryDate</td>
+                    <td>@Model.IPShip[i].IPLblShipDTC</td>
+                    <td>@Model.IPShip[i].ADDUSER</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function validateForm() {
+        var isValid = true;
+
+        // Check if the required fields are empty
+        $(".form-group input[type='text']").each(function () {
+            if ($(this).val() === "") {
+                isValid = false;
+
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+
+
+            }
+        });
+
+        $(".form-group select").each(function () {
+            if ($(this).val() === "") {
+                isValid = false;
+
+                $(this).addClass("is-invalid");
+            } else {
+
+                $(this).removeClass("is-invalid");
+
+            }
+        });
+
+        var selectedDate = $("#datepicker").val();
+        if (!selectedDate) {
+            isValid = false;
+            $("#datepicker").addClass("is-invalid");
+        } else {
+            var RecDate = new Date(selectedDate);
+            var currentDate = new Date();
+
+            if (RecDate > currentDate) {
+                isValid = false;
+                $("#datepicker").addClass("is-invalid");
+                $("#RecError").show().text(" Date cannot be in the future.");
+            } else {
+                $("#datepicker").removeClass("is-invalid");
+                $("#RecError").hide();
+            }
+        }
+
+        if (!isValid) {
+            /*alert('Please fill in all required fields.');*/
+            $("#Errormessage").show()
+        }
+        else {
+            $("#Errormessage").hide()
+        }
+        return isValid;
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#modalButton").click(function () {
+            if (validateForm()) {
+                $('#loginModal').modal('show');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var maxFields = 5;
+        var wrapper = $("#ipFieldsContainer");
+        var addButton = $("#addMore");
+
+        var x = 1; // Initial field counter
+
+        $(addButton).click(function (e) {
+            e.preventDefault();
+            if (x < maxFields) {
+                x++;
+                /* $(wrapper).append('<div class="form-group"><label>Start IP Number:</label><br /><input id="startIP" class="CustomInput" type="text" value="" name="StartIP[]" style="width:500px; padding:.375rem .75rem;" required /></div><div class="form-group"><label>End IP Number:</label><br /><input id="endIP" class="CustomInput" type="text" value="" name="endIP[]" style="width:500px; padding:.375rem .75rem;" required /></div><button class="removeField">Remove</button>');*/
+                $(wrapper).append('<div class="ip-field"><div class="form-group"><label>Start IP Number<span style="color: red;"> *</span></label><br /><input class="CustomInput" type="text" value="" name="startIP[]" style="width:490px; padding:.375rem .75rem;" required /></div><div class="form-group"><label>End IP Number<span style="color: red;"> *</span></label><br /><input class="CustomInput" type="text" value="" name="endIP[]" style="width:490px; padding:.375rem .75rem;" required /></div><i id="removeField" class="bi bi-x" style="font-size: 40px;color: red"></i></div>');
+            } else {
+                alert('You have reached the maximum number of IP fields allowed.');
+            }
+        });
+        // Remove the clicked IP range field
+        $(wrapper).on("click", "#removeField", function (e) {
+            e.preventDefault();
+            $(this).parent().remove();
+            x--;
+        });
+    });
+</script>
+
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+
+    .btn {
+        background-color: #e95420;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px 6px 12px;
+        text-decoration: none;
+    }
+
+    td.details-control::before {
+        content: '\25BC'; /*Unicode code for an up arrow */
+        font-size: 16px; /*Adjust the size as needed */
+        margin-right: 5px; /*Add some spacing between the icon and text */
+        cursor: pointer;
+    }
+
+    /*Update the icon for the shown state with a down arrow */
+    tr.shown td.details-control::before {
+        content: '\25B2'; /*Unicode code for a down arrow */
+    }
+</style>
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Email_Notifications
+
+
+<div id="notif">
+    
+    <input class="CustomInput" type="text" name="KEYID" id="modalKey" style="width:450px;" readonly="readonly" hidden="hidden" asp-for="@Model.KEYID" />
+    <label>Email address<span style="color: red;"> *</span></label> <br />
+    <input type="Email" asp-for="@Model.PIDet" name="Email" class="CustomInput" style="width: 450px; padding: .375rem .75rem;" pattern="^[a-zA-Z0-9._+-]+&#64;[a-zA-Z0-9.-]+\.[a-zA-Z]{2,9}$" title="example@example.com" required>
+    <br />
+    <br />
+
+</div>

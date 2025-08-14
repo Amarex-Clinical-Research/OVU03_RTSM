@@ -1,0 +1,35 @@
+﻿@model SiteScreenStatus
+
+
+
+<table id="infoTable" class="table">
+    <tbody>
+        <tr style="display: none;">
+            <th style="display: none;">PIKEY</th>
+            <td style="display: none;"><input type="text" asp-for="@Model.PIKEY" name="PIKEY" style="height:auto; width:auto" readonly hidden /></td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Model.PIDet</td>
+        </tr>
+
+        <tr>
+            <th>Status</th>
+            <td>
+                <select asp-for="@Model.PIDesc" name="PIDesc">
+                    <option value="Screen Enabled">Screen Enabled</option>
+                    <option value="Screen Disabled">Screen Disabled</option>
+
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <th style="display: none;">Type</th>
+            <td style="display: none;">@Model.PIType</td>
+        </tr>
+
+    </tbody>
+
+</table>
+

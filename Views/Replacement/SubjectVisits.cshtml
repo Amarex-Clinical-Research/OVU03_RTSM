@@ -1,0 +1,161 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Subjvisit
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContext
+
+<h1 style="color: black"> Visits </h1>
+<h1 style="color: black"> Subject ID:  @TempData["SUBJID"] </h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("IPReplacementHome","Replacement")'" style="background-color: #007bff; color: White;" />
+<div class="form-group" style="position:relative; top:20px">
+    <label><b>View IP Not Dispensed Visit</b> </label><br />
+    <label class="switch">
+        <input type="checkbox" id="ViewVisit" />
+        <div class="slider round">
+        </div>
+    </label>
+</div>
+
+<div id="rand">
+
+    <table class="table table-striped" id="Table2" style="display:none">
+        <thead>
+            <tr>
+                <th style="display: none;">VISITKEY</th>
+                <th>Site ID</th>
+                <th>Subject ID</th>
+                <th>Visit</th>
+                <th>IP Dispensed</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Visit.Count(); i++)
+            {
+                <tr>
+                    <td style="display: none;">@Model.Visit[i].VISITKEY</td>
+                    <td>@Model.Visit[i].SITEID</td>
+                    <td>@Model.Visit[i].SUBJID</td>
+                    <td>@Model.Visit[i].VISITID</td>
+                    <td>@Model.Visit[i].ELIGIP</td>
+
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    @*<button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("ReportProblemExcel","ProjectManagement")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>*@
+    @*<input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("IPReplacementHome","Replacement")'" style="background-color: #007bff; color: White;" />*@
+    <br />
+    <div class="search-table-outter wrapper">
+        <table class="table table-striped" id="aeTable">
+            <thead>
+                <tr>
+                    <th style="display: none;">ROWKEY</th>
+                    <th>Site ID</th>
+                    <th>Subject ID</th>
+                    <th>Visit</th>
+                    <th>Kit Number</th>
+                    <th>Dispensed Date</th>
+                    <th>Requested By</th>
+                    <th>Expiry</th>
+                    <th>Lot Number</th>
+                    <th>Replacement For</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.IPVisit.Count(); i++)
+                {
+                    <tr>
+                        <td style="display: none;">@Model.IPVisit[i].ROW_KEY</td>
+                        <td>@Model.IPVisit[i].SITEID</td>
+                        <td>@Model.IPVisit[i].SUBJID</td>
+                        <td>@Model.IPVisit[i].VISIT</td>
+                        <td>@Model.IPVisit[i].KitNumber</td>
+                        <td>@Model.IPVisit[i].Dispense</td>
+                        <td>@Model.IPVisit[i].ASSIGNED_BY</td>
+                        <td>@Model.IPVisit[i].IPLblShipExpiryDate</td>
+                        <td>@Model.IPVisit[i].IPLblShipLotNo</td>
+                        <td>@Model.IPVisit[i].KitRepled</td>
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                    @if ((_httpContext.HttpContext.Session.GetString("suserid") == "sidran") || (_httpContext.HttpContext.Session.GetString("sesCenter") != "(All)"))
+                                    {
+
+                                        <form action="IPReplacement">
+
+                                            <input type="submit" class="btn" value="Replace IP" style="border:none; background-color:transparent; color:#e95420;" />
+                                            <input hidden readonly value="@Model.IPVisit[i].ROW_KEY" name="ROW_KEY" />
+                                            <input hidden readonly value="@Model.IPVisit[i].SUBJID" name="SUBJID" />
+                                            <input hidden readonly value="@Model.IPVisit[i].SITEID" name="SITEID" />
+                                            <input hidden readonly value="@Model.IPVisit[i].VISIT" name="VISIT" />
+                                            <input hidden readonly value="@Model.IPVisit[i].KitNumber" name="KitNumber" />
+                                            <input hidden readonly value="@ViewBag.SPKEY" name="SPKEY" />
+
+
+                                            <br />
+
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <input type="submit" class="btn" value="Replace IP" style="border: none; background-color: transparent; color: #e95420; pointer-events: none; opacity: 0.6;" />
+                                    }
+                                </div>
+                            </div>
+                        </td>
+
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var ifchecked = $("#ViewVisit");
+            ifchecked.change(function () {
+
+                if (ifchecked.prop("checked")) {
+
+                    $("#Table2").show();
+                } else {
+
+                    $("#Table2").hide();
+                }
+            });
+        });
+
+    </script>
+
+}
+

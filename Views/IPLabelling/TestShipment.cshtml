@@ -1,0 +1,341 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IPlabel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="text-align:left; color: black;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" class="bi bi-prescription2" viewBox="0 0 16 16">
+        <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2V6Z" />
+        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1V1Zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4H4ZM3 3h10V1H3v2Z" style="color: black;" />
+    </svg> IP Shipment
+</h1>
+<hr />
+
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker1").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $("#birthYearInput").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years"
+        });
+    </script>
+}
+
+<form id="myForm" asp-action="IPShipment" method="post" onsubmit="return validateForm();">
+    <label id="Errormessage" style="font-size: 13px; display:none; color:red">Please complete all required fields</label>
+    <table>
+        <tr>
+            <td>
+                <label style="font-size: 13px">Enter a range, for example - Start: K0001 --- End: K0010</label><br />
+                @*<div id="ipFieldsContainer">
+                        <div >
+                        <div class="form-group">
+                            <label>Start IP Number:</label> <br />
+                            <input id="startIP" class="CustomInput" type="text" value="" name="StartIP[]" style="width:500px; padding:.375rem .75rem;" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label>End IP Number:</label> <br />
+                            <input id="endIP" class="CustomInput" type="text" value="" name="EndIP[]" style="width:500px; padding:.375rem .75rem;" required />
+                        </div>
+
+                    </div>
+                    </div>*@
+                <div id="ipFieldsContainer">
+                    <div>
+                        @for (int i = 0; i < Model.Iprange.Count; i++)
+                        {
+                            <div class="form-group">
+                                <label>Start IP Number<span style="color: red;"> *</span></label> <br />
+                                <input id="startIP" class="CustomInput" type="text" asp-for="@Model.Iprange[i].StartIP" style="width:490px; padding:.375rem .75rem;" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label>End IP Number<span style="color: red;"> *</span></label> <br />
+                                <input id="endIP" class="CustomInput" type="text" asp-for="@Model.Iprange[i].EndIP" style="width:490px; padding:.375rem .75rem;" required />
+                                @*<button id="addMore" style="background-color: #e95420; color: white;border:hidden">Add More</button>*@
+                                @*<button id="addMore" asp-action="IPShipment" method="post" type="submit" class="btn" style=""><i class="bi bi-plus"></i> </button>*@
+
+                            </div>
+                        }
+                    </div>
+                </div>
+                <button id="addMore" type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;" formnovalidate>Submit</button>
+                <div class="form-group">
+                    <label>Date of IP Shipment<span style="color: red;"> *</span></label><span id="ShipError" class="text-danger" style="display: none;"></span> <br />
+                    <input class="CustomInput" type="text" id="datepicker" asp-for="@Model.IPLblShipDTC" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+                <div class="form-group">
+                    <label>Courier(Fedex, UPS)<span style="color: red;"> *</span></label> <br />
+                    <input id="IP" list="courier" class="CustomInput" type="text" asp-for="@Model.Courier" style="width:500px; padding:.375rem .75rem;" required />
+                    @*<input type="text" list="cars" />*@
+                    <datalist id="courier">
+                        <option>UPS</option>
+                        <option>FedEx</option>
+                        <option>USPS</option>
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label>Tracking Number<span style="color: red;"> *</span></label><br />
+                    <input id="Tracking" class="CustomInput" type="text" asp-for="@Model.TrackNo" style="width:500px; padding:.375rem .75rem;" required />
+
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date<span style="color: red;"> *</span></label><span id="expiryError" class="text-danger" style="display: none;"></span><br />
+                    <input class="CustomInput" type="text" id="datepicker1" asp-for="@Model.IPLblShipExpiryDate" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+                <div class="form-group">
+                    <label>Lot Number<span style="color: red;"> *</span></label> <br />
+                    <input id="LotNum" class="CustomInput" type="text" asp-for="@Model.IPLblShipLotNo" style="width:500px; padding:.375rem .75rem;" required />
+
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <!---
+        <button type="button" class="btn" data-toggle="modal" data-target="#loginModal" style="background-color: #e95420; color: white;">Submit</button>-->
+    <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("IPLabellingHome","IPLabelling")'" style="background-color: #007bff; color: White;" />
+
+    <!--Credential Model-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="loginForm">
+                        <div class="form-group1">
+                            <label for="username">Username<span style="color: red;"> *</span></label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group1">
+                            <label for="password">Password<span style="color: red;"> *</span></label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+<script>
+    function validateForm() {
+        var isValid = true;
+
+        // Check if the required fields are empty
+        $(".form-group input[type='text']").each(function () {
+            if ($(this).val() === "") {
+                isValid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        $(".form-group select").each(function () {
+            if ($(this).val() === "") {
+                isValid = false;
+                $(this).addClass("is-invalid");
+            } else {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        var selectedDate = $("#datepicker").val();
+        if (!selectedDate) {
+            isValid = false;
+            $("#datepicker").addClass("is-invalid");
+        } else {
+            var ShipDate = new Date(selectedDate);
+            var currentDate = new Date();
+
+            if (ShipDate > currentDate) {
+                isValid = false;
+                $("#datepicker").addClass("is-invalid");
+                $("#ShipError").show().text(" Date cannot be in the future.");
+            } else {
+                $("#datepicker").removeClass("is-invalid");
+                $("#ShipError").hide();
+            }
+        }
+
+        var ExpiryDate = $("#datepicker1").val();
+        if (!ExpiryDate) {
+            isValid = false;
+            $("#datepicker1").addClass("is-invalid");
+        } else {
+            var Expiry = new Date(ExpiryDate);
+            var currentDate = new Date();
+
+            // Calculate the date 6 months from the current date
+            var sixMonthsLater = new Date();
+            sixMonthsLater.setMonth(currentDate.getMonth() + 6);
+
+            if (Expiry <= currentDate || Expiry < sixMonthsLater) {
+                isValid = false;
+                $("#datepicker1").addClass("is-invalid");
+                $("#expiryError").show().text(" Date should be at least 6 months from now.");
+            } else {
+                $("#datepicker1").removeClass("is-invalid");
+                $("#expiryError").hide();
+            }
+        }
+
+        if (!isValid) {
+            /*alert('Please fill in all required fields.');*/
+            $("#Errormessage").show()
+        }
+        else {
+            $("#Errormessage").hide()
+        }
+        return isValid;
+    }
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#modalButton").click(function () {
+            if (validateForm()) {
+                $('#loginModal').modal('show');
+            }
+        });
+    });
+</script>
+@*<script>
+        $(document).ready(function () {
+            var maxFields = 5;
+            var wrapper = $("#ipFieldsContainer");
+            var addButton = $("#addMore");
+
+            var x = 1; // Initial field counter
+
+            $(addButton).click(function (e) {
+                e.preventDefault();
+                if (x < maxFields) {
+                    x++;
+                    /* $(wrapper).append('<div class="form-group"><label>Start IP Number:</label><br /><input id="startIP" class="CustomInput" type="text" value="" name="StartIP[]" style="width:500px; padding:.375rem .75rem;" required /></div><div class="form-group"><label>End IP Number:</label><br /><input id="endIP" class="CustomInput" type="text" value="" name="endIP[]" style="width:500px; padding:.375rem .75rem;" required /></div><button class="removeField">Remove</button>');*/
+                    $(wrapper).append('<div class="ip-field"><div class="form-group"><label>Start IP Number<span style="color: red;"> *</span></label><br /><input class="CustomInput" type="text" value="" name="startIP[]" style="width:490px; padding:.375rem .75rem;" required /></div><div class="form-group"><label>End IP Number<span style="color: red;"> *</span></label><br /><input class="CustomInput" type="text" value="" name="endIP[]" style="width:490px; padding:.375rem .75rem;" required /></div><i id="removeField" class="bi bi-x" style="font-size: 40px;color: red"></i></div>');
+                } else {
+                    alert('You have reached the maximum number of IP fields allowed.');
+                }
+            });
+            // Remove the clicked IP range field
+            $(wrapper).on("click", "#removeField", function (e) {
+                e.preventDefault();
+                $(this).parent().remove();
+                x--;
+            });
+        });
+    </script>*@
+<script type="text/javascript">document.getElementById("addMore").disableValidation = true;</script>
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+
+    .btn {
+        background-color: #e95420;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px 6px 12px;
+        text-decoration: none;
+    }
+</style>
+
+
+
+
+
+
+
+

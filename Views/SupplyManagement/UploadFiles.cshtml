@@ -1,0 +1,179 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IPReporting
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<h1 style="color: black"> Site ID: @ViewBag.SiteID </h1>
+<h1 style="color: black"> Shipment ID:  @ViewBag.KITSET </h1>
+<hr />
+<br />
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#approvedate").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+
+
+
+    <script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+    </script>
+}
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<label id="Errormessage" style="font-size: 13px; display:none; color:red">Please select at least one file.</label>
+<br />
+<form id="myForm" asp-action="UploadFiles" method="post" asp-antiforgery="true" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <p><b>Please upload Temperature Log and Packing Slip. If you don't have it now you can upload them later</b></p>
+    <label>Allowed file types: .pdf</label><br />
+    <div class="form-group">
+        <label><b>Upload Packing List<span style="color: red;"> *</span></b></label>
+        <input class="fill-void" type="file" name="PackageFile" id="packageFile">
+    </div>
+    <br />
+    <div class="form-group">
+        <label><b>Upload Temperature Log<span style="color: red;"> *</span></b></label>
+        <input class="fill-void" type="file" name="LogFile" id="logFile">
+    </div>
+    <br />
+    <div class="form-group" style="display: none">
+        <label>Site ID:</label> <br />
+        <input class="CustomInput" type="text" value="@ViewBag.SiteID" name="SITEID" style=" width:500px; padding:.375rem .75rem; " readonly />
+
+    </div>
+
+    <div class="form-group" style="display: none">
+        <label>Shipment Key:</label> <br />
+        <input class="CustomInput" type="text" value="@ViewBag.KITSET" name="KITSET" style=" width: 500px; padding: .375rem .75rem; " readonly />
+
+    </div>
+    <div class="search-table-outter wrapper" id="Tablediv">
+        <table class="table table-striped" id="Table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Kit Key</th>
+                    <th>Kit Number</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.ShipIP.Count(); i++)
+                {
+                    <tr>
+                        <td></td>
+                        <td>@Model.ShipIP[i].KITKEY</td>
+                        <td>@Model.ShipIP[i].KitNumber</td>
+                        <td>@Model.ShipIP[i].KITSTAT</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <br />
+    <br />
+
+    <button type="submit" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ReceiveIPTabs","SupplyManagement")'" style="background-color: #007bff; color: White;" />
+
+</form>
+<script>
+    $(document).ready(function () {
+        $('#Table').DataTable({
+            "language": {
+                search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                searchPlaceholder: 'Type to Search'
+            },
+
+        })
+    });
+</script>
+<script>
+    function validateForm() {
+        var packageFile = document.getElementById("packageFile").files.length;
+        var logFile = document.getElementById("logFile").files.length;
+
+        if (packageFile === 0 && logFile === 0) {
+            $("#Errormessage").show()
+            return false; // Prevent form submission
+        }
+        $("#Errormessage").hide()
+        return true; // Allow form submission
+    }
+</script>
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 500px;
+    }
+</style>
+
+
+

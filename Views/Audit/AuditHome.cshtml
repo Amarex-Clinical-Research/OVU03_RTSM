@@ -1,0 +1,47 @@
+﻿<h1 style="color:#e95420;"> <i class="bi bi-clock-history" style="color:black;"></i> Audit Log(Blinded)</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+<br />
+<div class="card mb-4 shadow-sm" style="width:400px;">
+    <div class="card-header"> <b>Audit Log</b></div>
+    <div class="card-body">
+        <div class="card-text">
+            Select a date range and module to see a audit log of selected module over the set range.
+        </div>
+        <br />
+
+        <form asp-action="AuditLog" asp-controller="Audit" method="get">
+            <div class="form-group" style="display:inline-block" ;>
+                <label>Start Date</label><br />
+                <input type="date" asp-format="{0:d MMM yyyy}" class="form-control" style="width:auto;" name="start" id="start" required />
+            </div>
+            <div class="form-group" style="display:inline-block" ;>
+                <label>End Date</label>
+                <input type="date" asp-format="{0:d MMM yyyy}" class="form-control" style="width: auto;" name="end" id="end" required />
+            </div>
+            <select name="Module" id="ModuleSelection" class="CustomInput" style="width: 350px; " required>
+                <option value="">Please Select a Module</option>
+                <option value="BIL_SUBJ">Screening</option>
+                <option value="BIL_RAND">Randomization</option>
+                <option value="BIL_VISITS">Subsequent Dispensation</option>
+                <option value="BIL_IP_RANGE">Replacement</option>
+                <option value="BIL_UNBLD">Emergency Unblinding</option>
+                <option value="BIL_IP_RANGE">Supply Distribution</option>
+                <option value="Receive IP">Receive IP</option>
+                <option value="IP Labeling">IP Labeling</option>
+                <option value="IP Depot">IP Depot</option>
+                <option value="Project Management">Project Management</option>
+                <option value="IP_BIO_UPLOADS">File Upload</option>
+                <option value="BIL_UNBLD">Medical Monitor</option>
+                <option value="BIL_PRBLM">Report Problem</option>
+            </select>
+            <br /><br />
+            <input type="submit" class="btn" value="View Log" />
+        </form>
+
+    </div>
+</div>
+
+@section scripts{
+    <link href="~/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet" />
+    <script src="~/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+}

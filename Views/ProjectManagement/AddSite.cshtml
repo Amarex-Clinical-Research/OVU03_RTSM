@@ -1,0 +1,244 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model SiteInfo
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<h1 style="text-align:left; color: black;">Shipping Address</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+
+<form asp-action="AddSite" method="post" id="myForm">
+    <div>
+        <div class="form-group">
+            <label>Site ID<span style="color: red;"> *</span></label><br />
+            <input asp-for="@Model.SITEID" class="CustomInput" style="width:500px;padding:.375rem .75rem" required />
+        </div>
+        <div class="form-group">
+            <label>Site Name<span style="color: red;"> *</span></label><br />
+            <input asp-for="@Model.SITENAME" class="CustomInput" style="width:500px;padding:.375rem .75rem" required />
+        </div>
+        <div class="form-group">
+            <label>Investigator Name<span style="color: red;"> *</span></label><br />
+            <input asp-for="@Model.INVNAME" class="CustomInput" style="width:500px;padding:.375rem .75rem" />
+        </div>
+        <br />
+        <div class="form-group">
+            <label>Address<span style="color: red;"> *</span></label><br />
+            <input asp-for="@Model.ADDR1" class="CustomInput" style="width:500px;padding:.375rem .75rem" required />
+        </div>
+
+        <div class="form-group">
+            <label>Address 2</label><br />
+            <input asp-for="@Model.ADDR2" class="CustomInput" style="width:500px;padding:.375rem .75rem" />
+        </div>
+
+        <div class="form-group">
+            <label>City<span style="color: red;"> *</span></label><br />
+            <input asp-for="@Model.CITY" class="CustomInput" style="width:250px; padding:.375rem .75rem" required />
+        </div>
+
+        <div class="form-group">
+            <label>Country<span style="color: red;"> *</span></label><br />
+            <input id="countryInput" list="Countries" asp-for="@Model.COUNTRY" class="CustomInput" style="width:250px;padding:.375rem .75rem" required />
+            <datalist id="Countries">
+                <option>United States</option>
+
+            </datalist>
+        </div>
+
+        <div class="form-group" id="stateInputContainer" style="display:none">
+            <label>State<span style="color: red;"> *</span></label><br />
+            @*<input asp-for="@Model.STATE" style="width:250px;padding:.375rem .75rem" required />*@
+            <select id="stateOption" name="USState" asp-for="@Model.USSTATE" class="CustomInput" style="width:220px;padding:.375rem .75rem">
+                <option value=""></option>
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CA">California</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="DC">District Of Columbia</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MI">Michigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+            </select>
+        </div>
+        <div class="form-group" id="Statetext">
+            <label>State<span style="color: red;"> *</span></label><br />
+            <input id="stateInput" name="State" asp-for="@Model.STATE" class="CustomInput" style="width:250px;padding:.375rem .75rem" />
+        </div>
+        <div class="form-group">
+            <label>ZipCode<span style="color: red;"> *</span></label><br />
+            <input asp-for="@Model.ZIPCODE" class="CustomInput" style="width:250px;padding:.375rem .75rem" required />
+        </div>
+
+        <div class="form-group">
+            <label>Phone Number<span style="color: red;"> *</span> </label><br />
+            <input type="tel" asp-for="@Model.PHONE" class="CustomInput" style="width:500px;padding:.375rem .75rem" required />
+        </div>
+        <div class="form-group">
+            <label>Fax</label><br />
+            <input asp-for="@Model.FAX" class="CustomInput" style="width:500px;padding:.375rem .75rem" />
+        </div>
+        <div class="form-group">
+            <label>Email<span style="color: red;"> *</span></label><br />
+            <input type="email" asp-for="@Model.EMAIL" class="CustomInput" style="width:500px;padding:.375rem .75rem" placeholder="example@example.com" pattern="^[a-zA-Z0-9._+-]+&#64;[a-zA-Z0-9.-]+\.[a-zA-Z]{2,9}$" required />
+        </div>
+        <div class="form-group">
+            <label>Special Instructions</label><br />
+            <input asp-for="@Model.SpecialInstructions" class="CustomInput" style="width: 500px; padding: .375rem .75rem" />
+        </div>
+        <div class="form-group">
+            <label>Amarex Comments</label><br />
+            <textarea asp-for="@Model.AMAREX_COMM" class="CustomInput" style="width: 1000px; padding: .375rem .75rem; height: 230px;"></textarea>
+        </div>
+        <br />
+        <br />
+
+    </div>
+
+    @*<button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>*@
+    <button class="btn ladda-button" type="submit" data-style="expand-left" style=" background-color:#e95420;"><span class="ladda-label">Submit</span></button>
+    <button class="btn" onclick="cancelForm()" style="background-color: #e95420; color: white; ">Cancel</button>
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ShiptoSites","ProjectManagement")'" style="background-color: #007bff; color: White;" />
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+@*<script>
+        // Attach an event listener to the country dropdown
+        $('#countryInput').on('change', function () {
+            // Get the selected country value
+            var selectedCountry = $(this).val();
+
+            // Check if the selected country is United States
+            if (selectedCountry === 'United States') {
+                // Show the state dropdown
+                $('#stateInputContainer').show();
+                $('#Statetext').hide();
+                $('#stateInput').val('');
+
+
+            } else {
+                // Hide the state dropdown if the country is not United States
+                $('#stateInputContainer').hide();
+                $('#Statetext').show();
+                $('#stateOption').val('');
+            }
+        });
+    </script>*@
+<script>
+    $('#countryInput').on('change', function () {
+        // Get the selected country value
+        var selectedCountry = $(this).val();
+
+        // Check if the selected country is United States
+        if (selectedCountry === 'United States') {
+            // Show the state dropdown
+            $('#stateInputContainer').show();
+            $('#Statetext').hide();
+            $('#stateInput').val('');
+            $('#stateOption').prop('required', true);
+            $('#stateInput').prop('required', false);
+
+
+        } else {
+            // Hide the state dropdown if the country is not United States
+            $('#stateInputContainer').hide();
+            $('#Statetext').show();
+            $('#stateOption').val('')
+            $('#stateInput').prop('required', true);
+            $('#stateOption').prop('required', false);
+        }
+    });
+</script>
+
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+
+<script>
+    function cancelForm() {
+        // Reset the form and hide the username and password fields
+        document.getElementById('myForm').reset();
+    }
+</script>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}

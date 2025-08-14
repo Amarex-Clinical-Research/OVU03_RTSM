@@ -1,0 +1,124 @@
+﻿@model SubjectReport
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<h1 style=""> Screen Confirmation</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+
+@{
+    ViewData["Title"] = "Screen Confirmation";
+}
+
+<body>
+    <form id="myForm" asp-action="SubjectReports">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td style="display: none;">
+                        <label style="display: none;"> RowKey:</label>
+                    </td>
+                    <td style="display: none;">
+                        <input type="hidden" class="fill-void" asp-for="@Model.ROW_KEY" readonly />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label> Site:</label>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.SITEID" readonly />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <lable>Screen: </lable>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.SUBJID" readonly />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Year of Birth</label>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.BRTHDTC" readonly />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Gender</label>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.SEX" readonly />
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label>Informed consent date:</label>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.ICDTC" readonly />
+                    </td>
+
+                </tr>
+                @*<tr>
+                    <td>
+                        <label>Screen date:</label>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.SCRNDTC" readonly />
+                    </td>
+
+                </tr>*@
+
+                <tr>
+                    <td>
+                        <label>Status</label>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.STATUS_INFO" readonly />
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <label>Screen Fail Date</label>
+                    </td>
+                    <td>
+                        <input class="fill-void" type="text" asp-for="@Model.SFDATE" readonly />
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+        <p style="text-align: center; color: red;  "> If the above Subject is not eligible for Randomization, Please complete Screen Faliure form  </p>
+        @* <button class="btn" value="Print" onclick="printForm();" style="background-color: #e95420; color: white;">Print</button>*@
+        <input type="button" class="btn" value="Form" style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("PrintView","Screen", new {ROW_KEY = Model.ROW_KEY})')" />
+        <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ScrnSubjList","Screen")'" style="background-color: #007bff; color: White;" />
+    </form>
+</body>
+
+<script>
+    function printForm() {
+        // Open the print dialog
+        window.print();
+
+        /* Redirect back to the current page after a delay
+        setTimeout(function () {
+            window.location.href = window.location.href;
+        }, 1000); // Adjust the delay time (in milliseconds) as needed*/
+
+        window.addEventListener("afterprint", function () {
+            // Redirect back to the current page
+            window.location.href = window.location.href;
+        });
+    }
+</script>
+
+

@@ -1,0 +1,171 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContext
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.6.0/main.min.js">
+    </script>
+
+    @*<script>
+            $(document).ready(function (){
+                activaTab('Visits');
+            });
+
+            function activaTab(tab) {
+                $('.nav-tabs a[href="#' + tab + '"]').tab('show');
+            };
+        </script>*@
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    @*<script src="js/jquery-3.5.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>*@
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () { //I think the calendar breaks this
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('currentTab', $(e.target).attr('href'));
+            });
+            var currentTab = localStorage.getItem('currentTab');
+            if (currentTab) {
+                $('#reportsTabs a[href="' + currentTab + '"]').tab('show');
+            }
+        });
+
+
+
+
+
+    </script>
+
+</head>
+<h1 style="color:#e95420;"> <i class="bi bi-calendar2-check" style="color:black;"></i> Reports</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+
+
+<div id="Reports">
+
+    <br />
+    <div class="card mb-4 shadow-sm" style="width: 350px; display:inline-block">
+        <div class="card-header">  <b>Subject Status</b></div>
+        <div class="card-body">
+            <div class="card-text">
+                View or download a comprehensive report detailing the status of subjects.
+            </div>
+            <br />
+            <br />
+            <button onclick="window.location='@Url.Action("SubjectReport", "Reports")'" class="btn">  View</button> &nbsp;
+            <button onclick="window.location='@Url.Action("SubjectReportExcel", "Reports")'" class="btn" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp; Download</button>
+
+        </div>
+    </div> &nbsp;
+
+
+    <div class="card mb-4 shadow-sm" style="width: 350px; display:inline-block">
+        <div class="card-header">  <b>Subject Visits</b></div>
+        <div class="card-body">
+            <div class="card-text">
+                View or download a comprehensive report that list all subjects and their visits.
+            </div>
+            <br />
+            <br />
+            <button class="btn" onclick="window.location='@Url.Action("SubjectVisitReport", "Reports")'" style="margin-bottom:4px;">  View</button>&nbsp;
+            <button onclick="window.location='@Url.Action("SubjectVisitReportExcel", "Reports")'" class="btn" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp; Download</button>
+
+        </div>
+
+    </div>&nbsp;
+
+
+
+    <div class="card mb-4 shadow-sm" style="width: 350px; display:inline-block">
+        <div class="card-header">  <b>Site IP</b></div>
+        <div class="card-body">
+            <div class="card-text">
+                View or Download a report that shows the comperhensive details of IP at the Sites.
+            </div>
+            <br />
+            <br />
+            <button class="btn" onclick="window.location='@Url.Action("SiteIPReport", "Reports")'" style="margin-bottom:4px;">  View</button>&nbsp;
+            <button onclick="window.location='@Url.Action("SiteIPReportExcel", "Reports")'" class="btn" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp; Download</button>
+
+        </div>
+    </div>
+    &nbsp;
+    @if ((_httpContext.HttpContext.Session.GetString("sesCenter") == "(All)" && _httpContext.HttpContext.Session.Get("sesProjectManagement") != null) || (_httpContext.HttpContext.Session.GetString("sesCenter") == "(All)" && _httpContext.HttpContext.Session.Get("sesTrialsStatusReports") != null))
+    {
+        <div class="card mb-4 shadow-sm" style="width: 350px; display:inline-block">
+            <div class="card-header">  <b>IP Depot</b></div>
+            <div class="card-body">
+                <div class="card-text">
+                    View or Download a report that shows the comperhensive details of IP at the Depot.
+                </div>
+                <br />
+                <br />
+                <button class="btn" onclick="window.location='@Url.Action("DepotIPReport", "Reports")'" style="margin-bottom:4px;">  View</button>&nbsp;
+                <button onclick="window.location='@Url.Action("DepotIPReportExcel", "Reports")'" class="btn" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp; Download</button>
+
+            </div>
+        </div>
+    }
+    &nbsp;
+
+</div>
+
+
+@section scripts
+    {
+    <link href="~/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet" />
+    <script src="~/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+    <script>
+
+        var $rows = $('#table tbody tr');
+        $('#search').keyup(function () {
+
+            var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+                reg = RegExp(val, 'i'),
+                text;
+
+            $rows.show().filter(function () {
+                text = $(this).text().replace(/\s+/g, ' ');
+                return !reg.test(text);
+            }).hide();
+        });
+    </script>
+}
+
+<style>
+
+    .card {
+        display: inline-block;
+    }
+
+    .btn {
+        display: inline-block;
+    }
+
+
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 500px;
+    }
+
+    /*.container {
+        max-width: 85%;
+    }*/
+</style>

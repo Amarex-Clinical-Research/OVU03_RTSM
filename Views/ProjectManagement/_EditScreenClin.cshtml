@@ -1,0 +1,40 @@
+﻿@model ScreenInfo
+
+
+
+<table id="infoTable" class="table">
+    <tbody>
+        <tr style="display: none;">
+            <th style="display: none;">PIKEY</th>
+            <td style="display: none;"> <input type="text" asp-for="@Model.PIKEY" name="PIKEY" style="height:auto; width:auto" readonly hidden /></td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Model.PIDesc</td>
+        </tr>
+
+        <tr>
+            <th>Status</th>
+            <td>
+                <select asp-for="@Model.PIDet" name="PIDet">
+                    <option value="Screen Enabled">Screen Enabled</option>
+                    <option value="Screen Disabled">Screen Disabled</option>
+
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <th style="display: none;">Type</th>
+            <td style="display: none;">@Model.PIType</td>
+        </tr>
+
+    </tbody>
+
+</table>
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}

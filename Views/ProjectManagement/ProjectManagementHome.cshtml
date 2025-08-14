@@ -1,0 +1,201 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ScrnList
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+</head>
+<h1 style="color: #e95420;"> <i class="bi bi-clipboard-data" style="color:black;"></i> Project Management: Subject Info </h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<ul class="nav nav-tabs" id="StudyTabs">
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#rand">Randomized Subjects</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#screen">Screened/Screen Failed Subjects</a>
+    </li>
+
+
+</ul>
+
+<div class="tab-content">
+    <div id="rand" class="tab-pane fade show active">
+
+        @*<br />
+        <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("RandSubject","ProjectManagement")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+
+        <br />*@<br />
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th style="display: none;">ROW_KEY</th>
+                        <th>Subject ID</th>
+                        <th>Year Of Birth</th>
+                        <th>Sex</th>
+                        <th>Informed Consent Date</th>
+                        <th>Treatment</th>
+                        <th>Status</th>
+                        @*<th>Last Modified</th>*@
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.subjList.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.subjList[i].ROW_KEY"></td>
+                            <td>@Model.subjList[i].SUBJID</td>
+                            <td>@Model.subjList[i].BRTHDTC</td>
+                            <td>@Model.subjList[i].SEX</td>
+                            <td>@Model.subjList[i].ICDTC</td>
+                            <td>@Model.subjList[i].ARM</td>
+                            <td>@Model.subjList[i].STATUS_INFO</td>
+                            @*<td>@Model.subjList[i].PMCOMDATE</td>*@
+                            <td>
+
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                        <form action="EditRand">
+                                            <input type="submit" class="btn" value="View/Edit" style="border:none; background-color:transparent; color:#e95420;" />
+                                            <input hidden readonly value="@Model.subjList[i].ROW_KEY" name="ROW_KEY" />
+                                            <input hidden readonly value="@Model.subjList[i].SUBJID" name="SUBJID" />
+                                            <br />
+                                            <input type="submit" value="View Visits" formaction="Visits" class="btn" style="color:#e95420; background-color:transparent; border:none; align-content:center" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="screen" class="tab-pane fade">
+
+        @*<br />
+        <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("SubjectInfo","ProjectManagement")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+        <br />*@<br />
+        <div class="search-table-outter wrapper">
+            <br />
+            <table class="table table-striped" id="aeTable1">
+                <thead>
+                    <tr>
+                        <th style="display: none;">ROW_KEY</th>
+                        <th>Subject ID</th>
+                        <th>Year of Birth</th>
+                        <th>Sex</th>
+                        <th>Informed Consent Date</th>
+                        @*<th>Screen Date</th>*@
+                        <th>Status</th>
+                        @*<th>Last Modified</th>*@
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.statList.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.statList[i].ROW_KEY"></td>
+                            <td>@Model.statList[i].SUBJID</td>
+                            <td>@Model.statList[i].BRTHDTC</td>
+                            <td>@Model.statList[i].SEX</td>
+                            <td>@Model.statList[i].ICDTC</td>
+                            @*<td>@Model.statList[i].SCRNDTC</td>*@
+                            <td>@Model.statList[i].STATUS_INFO</td>
+                            @*<td>@Model.statList[i].PMCOMDATE</td>*@
+                            <td>
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                        @*<input type="submit" class="btn" value="Edit" onclick="window.open('@Url.Action("PrintView","Screen", new {ROW_KEY = Model.statList[i].ROW_KEY})')" style="color:#e95420; background-color:transparent; border:none; text-align: left;" />
+                                            <br />
+                                             <input type="submit" value="Remove"  class="btn" name="update" style="color:#e95420; background-color:transparent; border:none; align-content:center" onclick="return confirm('Warning this will remove the PRF from the table and it will no longer be viewable or editable. Are you sure you want to continue?')" />
+                                        *@
+                                        <form action="EditScreen">
+                                            <input type="submit" class="btn" value="View/Edit" style="border:none; background-color:transparent; color:#e95420;" />
+                                            <input hidden readonly value="@Model.statList[i].ROW_KEY" name="ROW_KEY" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#aeTable1').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+
+}
+
+<style>
+
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+</style>
+

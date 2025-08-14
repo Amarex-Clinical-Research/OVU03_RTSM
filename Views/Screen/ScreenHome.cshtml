@@ -1,0 +1,298 @@
+﻿@model ScrnList
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContext
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+</head>
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="color: #e95420;"> <i class="bi bi-person" style="color:black;"></i>Subject Screening</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+@*<ul class="nav nav-tabs" id="StudyTabs">
+
+        <li class="nav-item" style="font-weight:500;">
+            <a class="nav-link active" data-toggle="tab" href="#stat">Screened</a>
+        </li>
+
+        <li class="nav-item" style="font-weight:500;">
+            <a class="nav-link" data-toggle="tab" href="#subj">Screen Subject</a>
+        </li>
+
+        <li class="nav-item" style="font-weight:500;">
+            <a class="nav-link" data-toggle="tab" href="#Fail">Screen Failed</a>
+        </li>
+
+
+
+    </ul>*@
+
+<div class="tab-content">
+    <div id="subj" class="tab-pane fade  show active">
+
+        <br />
+        @*<button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("SubjectList","Screen")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>*@
+
+        @if (ViewBag.PIDet == "Screen Enabled" && ViewBag.SiteScreen == "Screen Enabled" && ViewBag.SITEID != "(All)" && ViewBag.StopScreenAt != "Stop")
+        {
+
+            <input type="button" class="btn" value="Screen Subject" style="background-color: #e95420; color: white;" onclick="window.location='@Url.Action("ScreenReg", "Screen")'" />
+
+        }
+        else
+        {
+            <input type="button" class="btn" value="Screen" style="background-color: #e95420; color: white; pointer-events: none; opacity: 0.6;" />
+            @if (ViewBag.PIDet == "Screen Disabled" || ViewBag.SiteScreen == "Screen Disabled" || ViewBag.StopScreenAt == "Stop")
+            {
+                <div style="color: red; display: inline;">Stop Enrollment has been set. Contact the PM or CRA.</div>
+            }
+
+        }
+        <br /><br />
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th style="display: none;">ROW_KEY</th>
+                        <th>Subject ID</th>
+                        <th>Year Of Birth</th>
+                        <th>Sex</th>
+                        <th>Informed Consent Date</th>
+                        @*<th>Screen Date</th>*@
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.subjList.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.subjList[i].ROW_KEY"></td>
+                            <td>@Model.subjList[i].SUBJID</td>
+                            <td>@Model.subjList[i].BRTHDTC</td>
+                            <td>@Model.subjList[i].SEX</td>
+                            <td>@Model.subjList[i].ICDTC</td>
+                            @*<td>@Model.subjList[i].SCRNDTC</td>*@
+                            <td>@Model.subjList[i].STATUS_INFO</td>
+                            <td>
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                        <form action="PrintView">
+                                            <input type="submit" class="btn" value="View" style="color:#e95420; background-color:transparent; border:none; align-content:center" />
+                                            <input hidden readonly value="@Model.subjList[i].ROW_KEY" name="ROW_KEY" />
+                                            <input hidden readonly value="@Model.subjList[i].SUBJID" name="SUBJID" />
+
+                                            @if (!Model.subjList[i].STATUS_INFO.Equals("Screen Failed") && ((_httpContext.HttpContext.Session.GetString("suserid") == "sidran") || (_httpContext.HttpContext.Session.GetString("sesCenter") != "(All)")))
+                                            {
+                                                <br />
+                                                <input type="submit" value="Screen Fail" formaction="SubjFailure" class="btn" style="color:#e95420; background-color:transparent; border:none; align-content:center" />
+                                            }
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @*<div id="Fail" class="tab-pane fade">
+
+            <br />
+            <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("FailSubject","Screen")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+            <br /><br />
+            <div class="search-table-outter wrapper">
+                <table class="table table-striped" id="aeTable1">
+                    <thead>
+                        <tr>
+                            <th>Subject ID</th>
+                            <th>Year of Birth</th>
+                            <th>Sex</th>
+                            <th>Informed Consent Date</th>
+                            <th>Screen Date</th>
+                            <th>Status Info</th>
+                            <th>Select a Subject to Screen Fail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < Model.FailList.Count(); i++)
+                        {
+                            <tr>
+                                <td>@Model.FailList[i].SUBJID</td>
+                                <td>@Model.FailList[i].BRTHDTC</td>
+                                <td>@Model.FailList[i].SEX</td>
+                                <td>@Model.FailList[i].ICDTC</td>
+                                <td>@Model.FailList[i].SCRNDTC</td>
+                                <td>@Model.FailList[i].STATUS_INFO</td>
+                                <td>
+
+
+                                    <form action="SubjFailure">
+
+                                        <input type="submit" class="btn" value="Screen Fail" style="background-color: #e95420; color: white;" />
+                                        <input hidden readonly value="@Model.FailList[i].SUBJID" name="SUBJID" />
+
+                                    </form>
+
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="stat" class="tab-pane fade">
+
+            <br />
+            <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("SubjectList","Screen")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+            <br /><br />
+            <div class="search-table-outter wrapper">
+                <table class="table table-striped" id="aeTable2">
+                    <thead>
+                        <tr>
+                            <th style="display: none;">ROW_KEY</th>
+                            <th>Subject ID</th>
+                            <th>Year of Birth</th>
+                            <th>Sex</th>
+                            <th>Informed Consent Date</th>
+                            <th>Screen Date</th>
+                            <th>Status Info</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < Model.statList.Count(); i++)
+                        {
+                            <tr>
+                                <td style="display: none;"><input type="hidden" value="@Model.statList[i].ROW_KEY"></td>
+                                <td>@Model.statList[i].SUBJID</td>
+                                <td>@Model.statList[i].BRTHDTC</td>
+                                <td>@Model.statList[i].SEX</td>
+                                <td>@Model.statList[i].ICDTC</td>
+                                <td>@Model.statList[i].SCRNDTC</td>
+                                <td>@Model.statList[i].STATUS_INFO</td>
+                                <td>
+
+                                    <form action="PrintView">
+
+
+                                        <input type="submit" class="btn" value="View" style="background-color: #e95420; color: white;" />
+                                        <input hidden readonly value="@Model.statList[i].ROW_KEY" name="ROW_KEY" />
+
+                                    </form>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>*@
+
+</div>
+
+
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+
+        $('#aeTable').DataTable({
+            "language": {
+                search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                searchPlaceholder: 'Type to Search'
+            },
+
+            "order": [[1, 'asc']],
+            "columnDefs": [
+                { "type": "string", "targets": 1 },
+                { "type": "date", "targets": 3 },
+                { "type": "date", "targets": 4 },
+
+            ],
+
+        });
+    </script>
+
+    @*<script>
+            $('#aetable').datatable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentcolor" class="bi bi-search" viewbox="0 0 16 16"><path d="m11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zm12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchplaceholder: 'type to search'
+                },
+                //scrolly: 600,
+                "order": [[1, 'desc']],
+                "columndefs": [
+                    { "type": "text", "targets": 1 }
+                ],
+
+                //   scrollx: true,
+            }).columns.adjust();
+        </script>*@
+}
+
+<style>
+
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+</style>

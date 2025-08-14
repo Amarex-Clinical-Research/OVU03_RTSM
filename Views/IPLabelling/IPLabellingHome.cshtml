@@ -1,0 +1,348 @@
+﻿@model IPLabelList
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+</head>
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+
+<script>
+    function openDownloadModal(UPLOAD_KEY) {
+
+        $('#UPLOAD_KEY').val(UPLOAD_KEY);
+        $('#DownloadModal').modal('show');
+    }
+</script>
+<script>
+    function OpenCancelModal(ILSKEY, TrackNo, LotNo, IPLblShipDTC, ExpiryDate) {
+        /* console.log(ILSKEY, TrackNo, LotNo, IPLblShipDTC, ExpiryDate);*/
+
+        $('#ILSKEY').val(ILSKEY);
+        $('#TrackNo').val(TrackNo);
+        $('#LotNo').val(LotNo);
+        $('#IPLblShipDTC').val(IPLblShipDTC);
+        $('#ExpiryDate').val(ExpiryDate);
+        $('#HideModal').modal('show');
+    }
+</script>
+
+
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Cancel Shipment Model-->
+<div class="modal fade" id="HideModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form method="post" asp-action="CancelShipment" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Cancel Shipment</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group1" style="display:none">
+                        <input type="text" id="ILSKEY" name="ILSKEY" Value="ILSKEY" class="form-control" readonly>
+                        <input type="text" id="TrackNo" name="TrackNo" Value="TrackNo" class="form-control" readonly>
+                        <input type="text" id="LotNo" name="LotNo" Value="LotNo" class="form-control" readonly>
+                        <input type="text" id="IPLblShipDTC" name="IPLblShipDTC" Value="IPLblShipDTC" class="form-control" readonly>
+                        <input type="text" id="ExpiryDate" name="ExpiryDate" Value="ExpiryDate" class="form-control" readonly>
+                    </div>
+                    <p style="Font-Size:18px"><b>Please enter User Name and Password</b></p>
+                    <div class="form-group1">
+                        <label for="username">Username<span style="color: red;"> *</span></label>
+                        <input type="text" id="username" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group1">
+                        <label for="password">Password<span style="color: red;"> *</span></label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Cancel Shipment" class="btn" name="Cancel" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<h1 style="color: #e95420;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" class="bi bi-prescription2" viewBox="0 0 16 16">
+        <path d="M7 6h2v2h2v2H9v2H7v-2H5V8h2V6Z" />
+        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v10.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 14.5V4a1 1 0 0 1-1-1V1Zm2 3v10.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V4H4ZM3 3h10V1H3v2Z" style="color: black;" />
+    </svg> IP Labeling
+</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<!--<ul class="nav nav-tabs" id="StudyTabs">-->
+@*<li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#subj">IP Kit Lists</a>
+    </li>*@
+
+<!--<li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#Fail">Shipments</a>
+    </li>
+
+
+
+
+
+</ul>-->
+@*<div class="tab-content">*@
+<!--<div id="subj" class="tab-pane fade show active">
+    <br />-->
+@*<button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("ScreenList","Screen")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>*@
+@*<br /><br />*@
+<!--<div class="search-table-outter wrapper">
+        <table class="table table-striped" id="Table1">
+            <thead>
+                <tr>
+                    <th style="display: none;">Upload_KEY</th>
+                    <th>File Name</th>
+                    <th>Uploaded Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.kitupload.Count(); i++)
+                {
+                    <tr>
+                        <td style="display: none;"><input type="hidden" value="@Model.kitupload[i].UPLOAD_KEY"></td>
+                        <td>@Model.kitupload[i].FILENAME</td>
+                        <td>@Model.kitupload[i].ADDDATE</td>
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                    <form action="Download">
+                                        <input type="submit" class="btn" value="Download" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.kitupload[i].UPLOAD_KEY" name="UPLOAD_KEY" />
+                                        <br />
+
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>-->
+@*<div id="Fail" class="tab-pane fade show active">*@
+
+<br />
+@*<button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("ScreenList","Screen")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>*@
+<input type="button" class="btn" value="Ship IP" style="background-color: #e95420; color: white;" onclick="window.location='@Url.Action("IPShipment", "IPLabelling")'" />
+<br />
+<br />
+<div class="search-table-outter wrapper">
+    <table class="table table-striped" id="Table2">
+        <thead>
+            <tr>
+                <th></th>
+                <th style="display: none;">ILSKEY</th>
+                <th>Courier</th>
+                <th>Tracking Number</th>
+                <th>Lot Number</th>
+                <th>Expiry Date</th>
+                <th>Shipping Date</th>
+                <th>Sent By</th>
+                @*<th>Range</th>*@
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.IPShip.Count(); i++)
+            {
+                <tr data-child-value="@Model.IPShip[i].RangeStrEnd; @Model.IPShip[i].DepotRangeStrEnd">
+                    <td class="details-control"></td>
+                    <td style="display: none;">@Model.IPShip[i].ILSKEY</td>
+                    <td>@Model.IPShip[i].Courier</td>
+                    <td>@Model.IPShip[i].TrackNo</td>
+                    <td>@Model.IPShip[i].LotNo</td>
+                    <td>@Model.IPShip[i].ExpiryDate</td>
+                    <td>@Model.IPShip[i].IPLblShipDTC</td>
+                    <td>@Model.IPShip[i].ADDUSER</td>
+                    @*<td>@Model.IPShip[i].RangeStrEnd</td>*@
+                    <td>
+                        <div class="dropdown" id="tableOptions">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                ⋮
+
+                            </button>
+                            <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                <form action="ViewShipment">
+                                    @*<input type="submit" class="btn" value="View" style="color:#e95420; background-color:transparent; border:none; align-content:center" /><br />*@
+                                    <input hidden readonly value="@Model.IPShip[i].ILSKEY" name="ILSKEY" />
+                                    @*<input type="submit" value="Edit" formaction="EditShipment" class="btn" style="color:#e95420; background-color:transparent; border:none; align-content:center" />*@
+
+                                    @if (!string.IsNullOrWhiteSpace(@Model.IPShip[i].DepotRangeStrEnd))
+                                    {
+                                        <input type="submit" value="Edit Expiry Date" formaction="EditExpiry" class="btn" style="color:#e95420; background-color:transparent; border:none; align-content:center" />
+
+                                    }
+                                    else
+                                    {
+                                        <input type="submit" value="Edit" formaction="EditShipment" class="btn" style="color:#e95420; background-color:transparent; border:none; align-content:center" />
+                                        <br />
+                                        <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenCancelModal(@Model.IPShip[i].ILSKEY,'@Model.IPShip[i].TrackNo','@Model.IPShip[i].LotNo', '@Model.IPShip[i].IPLblShipDTC','@Model.IPShip[i].ExpiryDate' )">Cancel</a>
+                                    }
+
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@*</div>
+    </div>*@
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+
+        function format(value) {
+            var ranges = value.split(";");
+            var formattedString = '<div>';
+            formattedString += '<b>Shipped Kit Range</b><br>';
+
+            // Corrected variable name from "shiprange" to "shipRanges"
+            var shipRanges = ranges[0].split(",");
+
+            for (var i = 0; i < shipRanges.length; i++) {
+                var range = shipRanges[i];
+                formattedString += 'Start Range - End Range: ' + range + '<br>';
+            }
+
+            // Add bold heading for Received Kit Range
+            formattedString += '<br><b>Received Kit Range</b><br>';
+
+            // Corrected variable name from "RecRanges" to "recRanges"
+            var recRanges = ranges[1].split(",");
+            for (var i = 0; i < recRanges.length; i++) {
+                var range = recRanges[i];
+                // Corrected square brackets to parentheses for splitting
+                var values = range.split("$");
+                // Appended received date to the next line
+
+                formattedString += 'Start Range - End Range: ' + values[0] + '<br>';
+                formattedString += 'Received Date: '
+                if (values.length == 3)
+                    formattedString += values[1];
+                formattedString += '<br>';
+                formattedString += 'Received By:'
+                if (values.length == 3)
+                    formattedString += values[2] + '<br>';
+            }
+
+            formattedString += '</div>';
+
+            return formattedString;
+        }
+        $(document).ready(function () {
+            // Initialize DataTable only once
+            var table = $('#Table2').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+                "order": [[1, 'desc']],
+            });
+
+            // Add event listener for opening and closing details
+            $('#Table2').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child(format(tr.data('child-value'))).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+    </script>
+
+}
+
+<style>
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+    td.details-control::before {
+        content: '\25BC'; /*Unicode code for an up arrow */
+        font-size: 16px; /*Adjust the size as needed */
+        margin-right: 5px; /*Add some spacing between the icon and text */
+        cursor: pointer;
+    }
+
+    /*Update the icon for the shown state with a down arrow */
+    tr.shown td.details-control::before {
+        content: '\25B2'; /*Unicode code for a down arrow */
+    }
+</style>

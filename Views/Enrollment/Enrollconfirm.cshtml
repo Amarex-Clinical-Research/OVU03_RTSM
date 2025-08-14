@@ -1,0 +1,212 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewBag.Title = "Home Page";
+}
+<h2>@ViewBag.Message</h2>
+@{
+
+    RandSubj1 subjinfo = ViewData["RandSubj"] as RandSubj1;
+    IEnumerable<KitsIP> subjkits = ViewData["SubjKits"] as IEnumerable<KitsIP>;
+}
+<div id="print-content">
+    @*<img src="~/images/AmarexNSFsm2.png" style="max-height: 200px; max-width: 300px; position: relative; float: right; bottom: 15px;" />
+        <div>
+            <h2>RANDOMIZATION CERTIFICATION</h2>
+        </div>*@
+    <div style="display: flex; justify-content: space-between; align-items: center; ">
+        <h2 style="margin: 0;">Enrollment Certification</h2>
+        <div style="text-align: right;">
+            <img src="~/images/AMX_PRODUCTS_WEBVIEW_RTSM_by Am_gray red.png" style="max-height: 100px; max-width: 200px; margin-bottom: 2px;" />
+            <div style="text-align: left;">@TempData.Peek("StudyName")</div>
+        </div>
+    </div>
+    <hr style="width:100%" />
+    <br />
+    <p><b>Subject Information</b></p>
+    <div>
+        <div class="form-group">
+            <label>Site:</label><br />
+            <input asp-for="@subjinfo.SITEID" name="Site" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Subject ID:</label><br />
+            <input asp-for="@subjinfo.SUBJID" name="Screen" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Year of Birth:</label><br />
+            <input asp-for="@subjinfo.BRTHDTC" name="Birthyear" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Sex:</label><br />
+            <input asp-for="@subjinfo.SEX" name="Gender" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Informed consent date:</label><br />
+            <input asp-for="@subjinfo.ICDTCstr" name="InformedDate" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Screen Date:</label><br />
+            <input asp-for="@subjinfo.SCRNDTCstr" name="ScreenDate" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Status:</label><br />
+            <input asp-for="@subjinfo.STATUS_INFO" name="Status" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Age Group:</label><br />
+            <input asp-for="@subjinfo.AgeGroup" name="AgeGroup" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Eligibility for randomization:</label><br />
+            <input asp-for="@subjinfo.ELIGRAND" name="ELIGRAND" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Sponsor Approval Date (if applicable):</label> <br />
+            <input class="CustomInput" type="text" id="datepicker1" asp-for="@subjinfo.DateSponsorApproved" name="DateSponsorApproved" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Randomized By:</label><br />
+            <input asp-for="@subjinfo.RANDBY" name="RANDBY" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
+            <label>Randomization Date&Time(EST):</label><br />
+            <input asp-for="@subjinfo.DATERAND" name="DATERAND" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <br />
+        <br />
+
+    </div>
+</div>
+<p><b>Kit List</b></p>
+<br />
+<div class="search-table-outter wrapper">
+    <table class="table table-striped" id="aeTable1">
+        <tr>
+            <th>Visit</th>
+            <th>Kit Number</th>
+            <th>Dispense Date</th>
+            <th>Requester</th>
+            <th>Expiry Date</th>
+            <th>Lot No</th>
+            <th>Replacement For</th>
+        </tr>
+        @foreach (KitsIP subjkit in subjkits)
+        {
+            <tr>
+                <td>@subjkit.VISIT</td>
+                <td>@subjkit.KitNumber</td>
+                <td>@subjkit.ASSIGNMENT_DATEstr</td>
+                <td>@subjkit.ASSIGNED_BY</td>
+                <td>@subjkit.IPLblShipExpiryDate</td>
+                <td>@subjkit.IPLblShipLotNo</td>
+                <td>@subjkit.KitRepled</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<input type="button" class="btn no-print" onClick="window.print()" value="Print" />
+<input type="button" class="btn no-print" value="Back" onclick="window.location='@Url.Action("RandHome","Rand")'" style="background-color: #007bff; color: White;" />
+
+<br />
+<div style="position:absolute; bottom:0; width:100%">
+    <hr style="width:100%" />
+    <a style="font-size: 12px; color: gray;">Date Generated: @DateTime.Now.ToString("dd MMM yyyy")</a>
+</div>
+
+
+<script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        w = window.open();
+        w.document.write(printContents);
+        w.print();
+        w.close();
+    }
+</script>
+
+<style media="print">
+    .form-group {
+        display: inline-block !important;
+        margin-right: 20px; /* Adjust as needed */
+        page-break-inside: avoid; /* Prevent breaking inside the form-group */
+    }
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 450px !important;
+    }
+</style>
+
+<style>
+    #name {
+        padding-bottom: 0px
+    }
+
+    .navbar {
+        display: none;
+    }
+
+    .footer {
+        display: none;
+    }
+
+    #HelpLink {
+        display: none !important;
+    }
+
+    #ReadOnlyIcon {
+        display: none !important;
+    }
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 500px;
+    }
+
+    input[readonly] {
+        background-color: #e8e6e6;
+    }
+
+
+    .btn {
+        background-color: #e95420;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px 6px 12px;
+        text-decoration: none;
+    }
+
+        .btn:hover {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0 0);
+            color: white;
+        }
+
+    .form-group {
+        display: inline-block;
+    }
+</style>

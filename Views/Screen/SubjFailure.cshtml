@@ -1,0 +1,288 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model RgstrSubjFailure
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<h1 style="text-align:left; color: black;"> <i class="bi bi-person" style="color:black;"></i> Screen Fail Subject</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<hr />
+@*<a href="C:\Users\sidran\source\repos\Webview_IRT\Views\Screen\SubjFailure.cshtml">C:\Users\sidran\source\repos\Webview_IRT\Views\Screen\SubjFailure.cshtml</a>*@
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet" />
+
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker({
+                format: "dd/M/yyyy",
+                todayHighlight: true,
+            });
+        });
+    </script>
+}
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<form id="myForm" asp-action="SubjFailure" method="post" onsubmit="return validateForm();">
+    <label id="Errormessage" style="font-size: 13px; display:none; color:red">Please complete all required fields</label>
+    <table>
+        <tr>
+            <td>
+                <div class="form-group">
+                    <label>Site ID</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SITEID" style="width:500px; padding:.375rem .75rem;" readonly />
+
+                </div>
+
+                <div class="form-group">
+                    <label>Subject ID</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SUBJID" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label>Year of Birth</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.BRTHDTC" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label>Sex</label> <br />
+                    <input class="CustomInput" type="text" asp-for="@Model.SEX" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+
+                <div class="form-group1">
+                    <label>Informed Consent Date</label> <br />
+                    <input class="CustomInput" id="Icdtc" type="text" asp-for="@Model.ICDTC" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>
+                @*<div class="form-group">
+                    <label>Screen Date</label> <br />
+                    <input class="CustomInput" id="Scrndtc" type="text" asp-for="@Model.SCRNDTC" style="width:500px; padding:.375rem .75rem;" readonly />
+                </div>*@
+
+                <div class="form-group">
+                    <label>Screen Fail Date<span style="color: red;"> *</span></label> <span id="Error" class="text-danger" style="display: none;"></span><br />
+                    <input class="CustomInput" type="text" id="datepicker" asp-format="{0:d MMM yyyy}" name="SFDATE" asp-for="@Model.SFDATE" style="width:500px; padding:.375rem .75rem;" required />
+                </div>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <button type="button" class="btn" id="modalButton" style="background-color: #e95420; color: white;">Submit</button>
+
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ScreenHome","Screen")'" style="background-color: #007bff; color: White;" />
+
+
+    <!-- Define the modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Please enter User Name and Password </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add the username and password fields to the modal body -->
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                    </form>
+                    <!-- <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #007bff; color: White;" data-dismiss="modal">Close</button>
+                    <button type="submit" form="myForm" class="btn" style="background-color: #e95420; color: white;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<script>
+    //function validateForm() {
+    //    var isValid = true;
+
+    //    // Check if the required fields are empty
+
+
+    //    if ($("#datepicker").val() === "") {
+    //        isValid = false;
+    //        $("#datepicker").addClass("is-invalid");
+    //    } else {
+    //            var SubjFail = $("#datepicker").val();
+    //            var SubjFaildtc = new Date(SubjFail);
+    //            var currentDate = new Date();
+    //            var ICDTC = new Date($("#Icdtc").val());
+    //            var SCRNDTC = new Date($("#Scrndtc").val());
+
+
+    //        if (SubjFaildtc > currentDate) {
+    //            isValid = false;
+    //            $("#datepicker").addClass("is-invalid");
+    //            $("#Error").show().text(" Date cannot be in the future");
+    //        } else {
+    //            $("#datepicker").removeClass("is-invalid");
+    //            $("#Error").hide();
+    //        }
+    //        if (SubjFaildtc < ICDTC) {
+    //            isValid = false;
+    //            $("#datepicker").addClass("is-invalid");
+    //            $("#Error").show().text(" Date is after the Informed Consent & Screen Date.");
+    //        } else {
+    //            $("#datepicker").removeClass("is-invalid");
+    //            $("#Error").hide();
+    //        }
+    //        if (SubjFaildtc < SCRNDTC) {
+    //            isValid = false;
+    //            $("#datepicker").addClass("is-invalid");
+    //            $("#Error").show().text(" Date is after the Screen Date.");
+    //        } else {
+    //            $("#datepicker").removeClass("is-invalid");
+    //            $("#Error").hide();
+    //        }
+    //    }
+    //    $(".form-group input[type='text'], .form-group select").each(function () {
+    //        if ($(this).val() !== "") {
+    //            $(this).removeClass("is-invalid");
+    //        }
+    //    });
+    //    if (!isValid) {
+    //        /*alert('Please fill in all required fields.');*/
+    //    }
+    //    return isValid;
+    //}
+    function validateForm() {
+        var isValid = true;
+        var SubjFail = $("#datepicker").val();
+        var SubjFaildtc = new Date(SubjFail);
+        var currentDate = new Date();
+        var ICDTC = new Date($("#Icdtc").val());
+        var SCRNDTC = new Date($("#Scrndtc").val());
+
+        // Check if the required fields are empty
+        if (SubjFail === "") {
+            isValid = false;
+            $("#datepicker").addClass("is-invalid");
+            $("#Error").show().text("Please select a date.");
+        } else {
+            $("#datepicker").removeClass("is-invalid");
+            $("#Error").hide();
+
+            if (SubjFaildtc > currentDate) {
+                isValid = false;
+                $("#datepicker").addClass("is-invalid");
+                $("#Error").show().text("Date cannot be in the future.");
+            } else if (SubjFaildtc < ICDTC) {
+                isValid = false;
+                $("#datepicker").addClass("is-invalid");
+                $("#Error").show().text("Date must be on or after Informed Consent & Screen Date.");
+            } 
+        }
+
+        // Additional validation for other fields can be added here
+
+        // Remove validation styles from other input fields
+        $(".form-group input[type='text'], .form-group select").each(function () {
+            if ($(this).val() !== "") {
+                $(this).removeClass("is-invalid");
+            }
+        });
+
+        if (!isValid) {
+            /*alert('Please fill in all required fields.');*/
+            $("#Errormessage").show()
+        }
+        else {
+            $("#Errormessage").hide()
+        }
+        return isValid;
+
+    }
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#modalButton").click(function () {
+            if (validateForm()) {
+                $('#loginModal').modal('show');
+            }
+        });
+    });
+</script>
+
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .form-group1 {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 500px;
+    }
+
+    .is-invalid {
+        border: 2px solid black !important; /* Add !important to ensure the style is applied */
+    }
+</style>
+
+

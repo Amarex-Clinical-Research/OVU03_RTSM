@@ -1,0 +1,433 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContext
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Webview_IRT</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
+    <link rel="stylesheet" href="~/dist/ladda-themeless.min.css">
+    <link rel="stylesheet" href="~/bootstrap-icons/bootstrap-icons.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+</head>
+<body>
+    <script>
+    $(document).ready(function() {
+        var success = @((TempData["Message"] != null).ToString().ToLower());
+        if (success == true) {
+           $('#infoModal').modal('show');
+        }
+
+});
+    </script>
+
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p style="font-size: large; color: green">
+                        <span class="icon-container">
+                            <svg class="bi bi-check-circle-fill text-success" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.97 5.53l-4.5 4.5a.75.75 0 0 1-1.06 0l-2-2a.75.75 0 1 1 1.06-1.06l1.47 1.47 3.97-3.97a.75.75 0 0 1 1.06 1.06z" />
+                            </svg>
+                        </span>
+                        <b>@TempData["Message"]</b>
+                    </p>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <header class="bg-dark">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3" style="font-size: 70%;">
+            <div class="container-fluid">
+
+                <a class="navbar-brand bg-dark" asp-area="" asp-controller="Home" asp-action="Index" style="float:left; font-weight: 600!important;">
+                    <img class="bg-dark" src="~/images/AMX_PRODUCTS_WEBVIEW_RTSM_white.png" style="max-height:28px; max-width:140px;">
+                </a>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" style="position:center" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        @if (_httpContext.HttpContext.Session.Get("sesScreening") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Screen" asp-action="ScreenHome"><i class="bi bi-person"></i> Subject Screening</a>
+                            </li>
+                        }
+                        @if (_httpContext.HttpContext.Session.Get("sesVPERAND") != null)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-eye"></i> Randomization\Dispensation </a>
+                                <div class="dropdown-menu bg-dark">
+
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Rand" asp-action="RandHome"> Randomization</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="SubsequentDispensation" asp-action="SubsequentDispensationHome">Subsequent Dispensation</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Replacement" asp-action="IPReplacementHome">Replacement</a>
+
+
+                                </div>
+                            </li>
+                        }
+                        @if (_httpContext.HttpContext.Session.Get("sesMedicalMonitor") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="MedicalMointor" asp-action="MedicalMointorHome"> <i class="bi bi-person-workspace"></i> Medical Monitor</a>
+                            </li>
+                        }
+                        @if ((_httpContext.HttpContext.Session.Get("sesEmergencyUnblind") != null) || (_httpContext.HttpContext.Session.Get("sesSUSARS") != null))
+                        {
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-eye"></i> Emergency Unblinding </a>
+                                    <div class="dropdown-menu bg-dark">
+                                        @if ((_httpContext.HttpContext.Session.Get("sesEmergencyUnblind") != null))
+                                        {
+                                            <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="EmergencyUnblinding" asp-action="EmergencyUnblindHome">Emergency Unblinding 1</a>
+                                            <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="MMUnblinding" asp-action="MMUnblindingHome">Emergency Unblinding 2</a>
+                                            <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="RegulatoryUnblinding" asp-action="RegulatoryUnblindingHome">Regulatory Unblinding</a>
+                                        }
+                                        @if ((_httpContext.HttpContext.Session.Get("sesSUSARS") != null))
+                                        {
+                                            <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="RegulatoryUnblinding" asp-action="RegulatoryUnblindingHome">Regulatory Unblinding</a>
+                                        }
+                                    </div>
+                                </li>
+                            }
+
+                        }
+                        @if (_httpContext.HttpContext.Session.Get("sesIPManagement") != null)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-truck"></i> Supply Management </a>
+                                <div class="dropdown-menu bg-dark">
+                                    @if (_httpContext.HttpContext.Session.Get("sesReceiveIP") != null)
+                                    {
+
+                                        <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="SupplyManagement" asp-action="ReceiveIPTabs">Receive IP</a>
+                                    }
+                                    @if (_httpContext.HttpContext.Session.Get("sesSupplyDistribution") != null)
+                                    {
+                                        <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="SupplyDistribution" asp-action="SupplyDistributionhome">Supply Distribution</a>
+                                    }
+
+
+                                    @if (_httpContext.HttpContext.Session.Get("sesIPLabel") != null)
+                                    {
+                                        <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="IPLabelling" asp-action="IPLabellingHome">IP Labeling</a>
+                                    }
+
+                                    @if (_httpContext.HttpContext.Session.Get("sesIPDepot") != null)
+                                    {
+                                        <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="IPDepot" asp-action="IPDepotReg">IP Depot</a>
+                                    }
+
+                                </div>
+                            </li>
+                        }
+                        @if (_httpContext.HttpContext.Session.Get("sesIPBiometrics") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="FileUpload" asp-action="FileUploadHome"> <i class="bi bi-file-earmark-arrow-up"></i> File Upload</a>
+                            </li>
+                        }
+                        @if (_httpContext.HttpContext.Session.Get("sesProjectManagement") != null)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-clipboard-data"></i> Project Management </a>
+                                <div class="dropdown-menu bg-dark">
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="ProjectManagementHome">Subject Info</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="ProblemReply">Problem Reply</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="RequestHome">Screen/Randomization Settings</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="ShiptoSites">Site Shipping Address</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="IRTUsers">RTSM Users</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="EmailSettings">Notification Settings</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="InventoryHome">Inventory</a>
+
+
+                                </div>
+                            </li>
+                        }
+                        @if (_httpContext.HttpContext.Session.Get("sesTrialsStatusReports") != null)
+                        {
+                            <li class="nav-item">
+
+                                <a class="nav-link text-light" asp-area="" asp-controller="Reports" asp-action="ReportsHome"><i class="bi bi-calendar2-check"></i> Reports</a>
+                            </li>
+                        }
+
+                        <li class="nav-item">
+
+                            <a class="nav-link text-light" asp-area="" asp-controller="ReportProblem" asp-action="ReportProblem"><i class="bi bi-shield-exclamation"></i> Report Problem</a>
+                        </li>
+
+
+
+                    </ul>
+                </div>
+            </div>
+
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    @if (_httpContext.HttpContext.Session.Get("suserid") != null)
+                    {
+
+                        <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown" style="color:white; content:none;"><i class="bi bi-person-circle"></i> @_httpContext.HttpContext.Session.GetString("suserid") (Site ID: @_httpContext.HttpContext.Session.GetString("sesCenter")) <span id="demo"></span> </a>
+                        <div class="dropdown-menu bg-dark">
+
+                            <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Home" asp-action="MyNotifications">My Notifications</a>
+
+                        </div>
+
+                    }
+
+                </li>
+                @if (_httpContext.HttpContext.Session.Get("suserid") != null)
+                {
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="SignOut" data-toggle="tooltip" title="Logout" class="btn" style="background-color:#dc3545; font-size:1rem; height: 42px;"><span class="iconify" data-icon="oi:power-standby"></span></a>
+                    </li>
+
+                }
+            </ul>
+
+            @*</div>*@
+        </nav>
+    </header>
+
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+
+            @*<div class="container-main" id="name">
+                  <div class="row">
+                      @if (_httpContext.HttpContext.Session.Get("sesSPKey") != null)
+                      {
+                          <h5 style="">@TempData.Peek("StudyName")</h5>
+                      }
+                  </div>
+                </div>*@
+
+            @RenderBody()
+
+        </main>
+    </div>
+
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container-fluid">
+            &copy; 2023 <a href="https://www.amarexus.com/">Amarex</a>, an NSF Company. <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <text style="float:right;">Webview RTSM</text>
+        </div>
+    </footer>
+
+    <div id="popup" style="display: none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background-color: white; border: 1px solid black; ">
+        <h2 style="display: inline-block;">Session Time Out </h2>
+        <p>Due to inactivity, your session will expire and you will be automatically logged out in  <span id="countdown"></span>Click the continue button if additional time is need.</p>
+
+        <br>
+
+        <button class="btn" id="resetSessionButton" style="display: inline-block">Continue</button>
+        <form method="post" asp-controller="Home" asp-action="SignOut" style="display: inline-block;">
+            <button class="btn" id="logout" type="submit" title="Logout">Log Out</button>
+        </form>
+    </div>
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);"></div>
+
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+
+
+
+    <script>
+
+        var x;
+        var countdownElement = document.getElementById("countdown"); // Get the element for displaying the countdown
+        var countdownInterval;
+        var overlayElement = document.getElementById("overlay"); // Get the overlay element
+
+        function resetTimer() {
+            var now = new Date();
+            countDownDate = new Date(now.getTime() + 60 * 60000).getTime(); // Set the countdown date to 60 minutes
+            clearInterval(x);
+            x = setInterval(updateTimer, 1000); // Update the timer every second
+        }
+
+        function updateTimer() {
+            var now = new Date().getTime();
+            var distance = countDownDate - now; // Calculate the remaining time until the countdown date
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)); // Calculate the minutes
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000); // Calculate the seconds
+            var minutesDisplay = minutes > 0 ? (minutes < 10 ? "0" + minutes + ":" : minutes + ":") : "00:"; // Format the minutes
+            var secondsDisplay = seconds > 0 ? (seconds < 10 ? "0" + seconds : seconds) : "00"; // Format the seconds
+            document.getElementById("demo").innerHTML = minutesDisplay + "" + secondsDisplay; // Update the timer display
+            countdownElement.innerHTML = minutesDisplay + "" + secondsDisplay; // Update the countdown element
+
+            if (distance < 600000) {
+                document.getElementById("popup").style.display = "block"; // Display the popup if time remaining is less than 10 minutes
+                document.getElementById("overlay").style.display = "block"; // Display the overlay
+            }
+
+            if (distance < 0) {
+                clearInterval(x); // Clear the interval if the countdown has expired
+                document.getElementById("demo").innerHTML = "EXPIRED"; // Update the timer display to show "EXPIRED"
+                window.location.href = '/Home/SignOut';
+            }
+        }
+
+        resetTimer(); // Start the countdown timer
+
+        document.getElementById("resetSessionButton").addEventListener("click", function () {
+            document.getElementById("popup").style.display = "none"; // Hide the popup
+            document.getElementById("overlay").style.display = "none"; // Hide the overlay
+            resetTimer(); // Reset the timer
+        });
+
+        overlayElement.addEventListener("click", function () {
+            location.reload(); // Reload the page when the overlay is clicked
+        });
+
+        document.getElementById("logout").addEventListener("click", function () {
+            clearInterval(x); // Clear the interval
+            document.getElementById("popup").style.display = "none"; // Hide the popup
+            document.getElementById("overlay").style.display = "none"; // Hide the overlay
+        });
+
+    </script>
+</body>
+</html>
+<style>
+
+    #sliderLabel {
+        top: 20px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        /*top: 20px;*/
+    }
+
+        .switch input {
+            display: none;
+        }
+
+
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+
+
+    input[type="checkbox"]:checked + input[type="hidden"] + .slider,
+    input[type="checkbox"]:checked + .slider {
+        background-color: #2196F3;
+    }
+
+
+
+    input[type="checkbox"]:focus + input[type="hidden"] + .slider,
+    input[type="checkbox"]:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+
+
+    input[type="checkbox"]:checked + input[type="hidden"] + .slider:before,
+    input[type="checkbox"]:checked + .slider:before {
+        transform: translateX(26px);
+    }
+
+
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    .CustomInput {
+        height: calc(1.5em + .75rem + 2px);
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        width: 500px;
+    }
+
+    #tableOptions .dropdown-toggle::after {
+        content: none;
+    }
+
+    #tableOptions .btn:hover {
+        background-image: none;
+    }
+
+    .btn {
+        background-color: #e95420;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px 6px 12px;
+        text-decoration: none;
+    }
+
+        .btn:hover {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0 0);
+            color: white;
+        }
+
+    body {
+        background-image: url("https://webviewctms.com/testdotnetCTMS/images/uat.png");
+        background-repeat: repeat;
+    }
+</style>

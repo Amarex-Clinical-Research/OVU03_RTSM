@@ -1,0 +1,346 @@
+﻿
+@model SPModel
+
+<head>
+
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+</head>
+
+
+<script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+</script>
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<h1 style="color: #e95420;"> <i class="bi bi-truck" style="color:black;"></i>Supply Management: Supply Distribution </h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+
+<ul class="nav nav-tabs" id="StudyTabs">
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#invn">Supply IP</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#sitekits">Site Inventory</a>
+    </li>
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#depotkits">Depot Inventory</a>
+    </li>
+
+</ul>
+<div class="tab-content">
+    <div id="invn" class="tab-pane fade show active">
+        <br />
+
+        <p> Select the Site and click the Supply IP button.</p>
+        <form action="Update">
+
+            <select name="SITEID" id="StudySelection" style="width: 350px; " required>
+                <option value="" disabled selected>Please select a Site</option>
+                @for (int i = 0; i < Model.Site.Count; i++)
+                {
+                    <option value="@Model.Site[i].SITEID">@Model.Site[i].SITEID</option>
+                }
+            </select>
+
+            <select name="INVNAME" id="INVSelection" style="width: 350px; " required>
+                <option value="" disabled selected>Please select Investigator</option>
+                @for (int i = 0; i < Model.Site.Count; i++)
+                {
+                    <option value="@Model.Site[i].INVNAME">@Model.Site[i].INVNAME</option>
+                }
+            </select>
+            <br />
+            <br />
+            <select name="shiptype" class="shiptype" id="shiptype" style="width: 350px; " required>
+                <option value="" disabled selected>Please select a Shipment type</option>
+
+                <option value="Initial">Initial</option>
+                <option value="Re-Supply">Re-Supply</option>
+
+
+            </select>
+            <br />
+            <br />
+
+            <div class="form-group">
+                <label>Number to ship (per group)<span style="color: red;"> *</span></label><br />
+                <input type="text" name="shipNumber" asp-for="@Model.shipNumber" id="numberInput" style="width:500px;" class="CustomInput" pattern="\d*" title="Please enter only numbers" required />
+                <button type="button" class="btn" id="editButton" onclick="toggleEditMode()">Edit</button>
+            </div>
+
+
+            <br />
+            <br />
+            <input type="submit" class="btn" value="Supply IP" /> &emsp;
+
+        </form>
+    </div>
+
+    <div id="sitekits" class="tab-pane fade">
+
+        @*<br />
+        <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("SiteKits","SupplyDistribution")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+        <br />*@<br />
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable1" style="width: 80%">
+                <thead>
+                    <tr>
+                        <th style="display: none;">KITKEY</th>
+                        <th>Site ID</th>
+                        <th>Kit Number</th>
+                        <th>Status</th>
+                        <th>Sent Date</th>
+                        <th>Sent by</th>
+                        <th>Received Date</th>
+                        <th>Received by</th>
+                        <th>Assigned</th>
+                        <th>Assigment Date</th>
+                        <th>Replacement For</th>
+                        <th>Expiry Date</th>
+                        <th>Lot Number</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.SiteKits.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.SiteKits[i].KITKEY"></td>
+                            <td>@Model.SiteKits[i].SITEID</td>
+                            <td>@Model.SiteKits[i].KitNumber</td>
+                            <td>@Model.SiteKits[i].KITSTAT</td>
+                            <td>@Model.SiteKits[i].SENDDATEstr</td>
+                            <td>@Model.SiteKits[i].SENDBY</td>
+                            <td>@Model.SiteKits[i].RECVDDATEstr</td>
+                            <td>@Model.SiteKits[i].RECVDBY</td>
+                            <td>@Model.SiteKits[i].ASSIGNED</td>
+                            <td>@Model.SiteKits[i].ASSIGNMENT_DATE</td>
+                            <td>@Model.SiteKits[i].KitRepled</td>
+                            <td>@Model.SiteKits[i].IPLblShipExpiryDate</td>
+                            <td>@Model.SiteKits[i].IPLblShipLotNo</td>
+
+
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="depotkits" class="tab-pane fade">
+
+        @*<br />
+        <button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("DepotKits","SupplyDistribution")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>
+
+        <br />*@<br />
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th style="display: none;">KITKEY</th>
+
+                        <th>Kit Number</th>
+                        <th>Expiry Date</th>
+                        <th>Lot Number</th>
+                        <th>At Depot</th>
+                        <th>At Depot Date</th>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.DepotKits.Count(); i++)
+                    {
+                        <tr>
+                            <td style="display: none;"><input type="hidden" value="@Model.DepotKits[i].KITKEY"></td>
+
+                            <td>@Model.DepotKits[i].KitNumber</td>
+                            <td>@Model.DepotKits[i].IPLblShipExpiryDate</td>
+                            <td>@Model.DepotKits[i].IPLblShipLotNo</td>
+                            <td>@Model.DepotKits[i].ATDEPOT</td>
+                            <td>@Model.DepotKits[i].ATDEPOTDTC</td>
+
+
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>*@
+
+@section scripts{
+    <link href="~/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet" />
+    <script src="~/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+
+    @*<script>
+            $(document).ready(function () {
+
+                document.getElementById("numberInput").value = "";
+                // Initialize Chosen for the #StudySelection element
+
+                $("#StudySelection").chosen();
+                $("#INVSelection").chosen();
+
+                // Initialize Chosen for elements with the .shiptype class
+                $(".shiptype").chosen();
+
+                // Add event handler for the select element with ID "shiptype"
+                $("#shiptype").on("change", function () {
+                    const selectedValue = $(this).val();
+                    const numberInput = document.getElementById("numberInput");
+
+                    if (selectedValue === "Initial") {
+                        numberInput.value = 16;
+                        numberInput.readonly = true;
+                    } else {
+                        numberInput.value = "";
+                        numberInput.readonly = false;
+                    }
+                });
+            });
+
+            function toggleEditMode() {
+                const numberInput = document.getElementById("numberInput");
+                const editButton = document.getElementById("editButton");
+
+                if (numberInput.readonly) {
+                    numberInput.readonly = false;
+                    editButton.innerText = "Save";
+                } else {
+                    numberInput.readonly = true;
+                    editButton.innerText = "Edit";
+                }
+            }
+        </script>*@
+    <script>
+        $(document).ready(function () {
+            document.getElementById("numberInput").value = "";
+            // Initialize Chosen for the #StudySelection element
+            $("#StudySelection").chosen();
+            $("#INVSelection").chosen();
+
+            // Initialize Chosen for elements with the .shiptype class
+            $(".shiptype").chosen();
+
+            // Add an event handler for the select element with ID "shiptype"
+            $("#shiptype").on("change", function () {
+                const selectedValue = $(this).val();
+                const numberInput = document.getElementById("numberInput");
+
+                if (selectedValue === "Initial") {
+                    numberInput.value = 16;
+                    numberInput.readOnly = true; // Corrected property name
+                } else {
+                    numberInput.value = "";
+                    numberInput.readOnly = false; // Corrected property name
+                }
+            });
+        });
+
+        function toggleEditMode() {
+            const numberInput = document.getElementById("numberInput");
+            const editButton = document.getElementById("editButton");
+
+            if (numberInput.readOnly) {
+                numberInput.readOnly = false;
+                /*editButton.innerText = "Save";*/
+            } else {
+                numberInput.readOnly = true;
+                editButton.innerText = "Edit";
+            }
+        }
+
+
+
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable1').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+                scrollX: true,
+
+            })
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+}
+
+
+<style>
+
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+
+
+</style>
+
+
+
+
+

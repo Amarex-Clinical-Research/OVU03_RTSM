@@ -1,0 +1,248 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model InventoryModel
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+
+    <script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+    </script>
+
+
+    @section scripts{
+        <link href="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.css" rel="stylesheet" type="text/css">
+        <script src="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.js"></script>
+        <script src="~/js/FlexSites.js"></script>
+
+        <link href="~/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet" />
+        <script src="~/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+        <script>
+            $(function () {
+                $("#StudySelection").chosen();
+
+            });
+        </script>
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#aeTable').DataTable({
+                    "language": {
+                        search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                        searchPlaceholder: 'Type to Search'
+                    },
+
+                })
+            });
+        </script>
+    }
+
+</head>
+
+
+
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<h1 style="color: #e95420;"> <i class="bi bi-clipboard-data" style="color:black;"></i> Project Management: Inventory</h1>
+
+<ul class="nav nav-tabs" id="StudyTabs">
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#invn">Site Inventory</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#depot">Depot Inventory</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#stop">Stop Auto Re-supply</a>
+    </li>
+
+
+</ul>
+
+<div class="tab-content">
+    <div id="invn" class="tab-pane fade show active">
+
+
+        <p> To reset a Kit (in Received or Damaged status) at a site: Select the Site and click the Site Inventory button.</p>
+        <form asp-action="Inventory" method="get">
+
+            <select name="SITEID" id="StudySelection" style="width: 350px; " required>
+                <option value="">Please Select a Site</option>
+                @for (int i = 0; i < Model.Site.Count; i++)
+                {
+                    <option value="@Model.Site[i].SITEID">@Model.Site[i].SITEID</option>
+                }
+            </select>
+            <br />
+            <br />
+            <input type="submit" class="btn" value="Site Inventory" /> &emsp;
+
+        </form>
+    </div>
+
+    <div id="depot" class="tab-pane fade">
+        <br />
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th>Site ID</th>
+                        <th>Kit Number</th>
+                        <th>Kit Key</th>
+                        <th>Kit Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Depinv.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Model.Depinv[i].SITEID</td>
+                            <td>@Model.Depinv[i].KitNumber</td>
+                            <td>@Model.Depinv[i].KITKEY</td>
+                            <td>@Model.Depinv[i].KITSTAT</td>
+
+                            <td>
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                        <form asp-action="Resetshipdepot">
+                                            <input type="submit" class="btn" value="Reset to Ship" style="border:none; background-color:transparent; color:#e95420;" />
+                                            <input hidden readonly value="@Model.Depinv[i].KITKEY" name="kitKey" />
+                                            <input hidden readonly value="@Model.Depinv[i].SITEID" name="SITEID" />
+                                            <input hidden readonly value="@Model.Depinv[i].KitNumber" name="KitNumber" />
+                                            <input hidden readonly value="@Model.Depinv[i].KITSTAT" name="Kitstat" />
+                                        </form>
+
+                                        <form asp-action="Damagedepot">
+                                            <input type="submit" class="btn" value="Mark Damage" style="border:none; background-color:transparent; color:#e95420;" />
+                                            <input hidden readonly value="@Model.Depinv[i].KITKEY" name="kitKey" />
+                                            <input hidden readonly value="@Model.Depinv[i].SITEID" name="SITEID" />
+                                            <input hidden readonly value="@Model.Depinv[i].KitNumber" name="KitNumber" />
+                                            <input hidden readonly value="@Model.Depinv[i].KITSTAT" name="Kitstat" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+    <div id="stop" class="tab-pane fade">
+        <p>Click in the box below to add one or more Sites.</p>
+        <form asp-action="PostSite">
+            <input class="form-control flexdatalist" name="SiteID" required />
+            <br />
+            <input type="submit" class="btn" value="Add" />
+        </form>
+        <br />
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+
+                    <th>Site ID</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Stopauto.Count(); i++)
+                {
+                    <tr>
+
+                        <td>@Model.Stopauto[i].PIDet</td>
+                        <td>
+                            <form asp-action="RemoveSite">
+                                <input asp-for="@Model.Stopauto[i].KEYID" name="KEYID" hidden readonly />
+                                <input hidden readonly value="@Model.Stopauto[i].PIDet" name="SITEID" />
+                                <input type="submit" class="btn" value="Remove" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+
+
+<style>
+
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+
+    .btn {
+        background-color: #e95420;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px 6px 12px;
+        text-decoration: none;
+    }
+
+        .btn:hover {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0 0);
+            color: white;
+        }
+</style>

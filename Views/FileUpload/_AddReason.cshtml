@@ -1,0 +1,14 @@
+﻿@model BiometircUploadEmailNoti
+
+
+
+<div id="notif">
+    <input class="CustomInput STUDYKEY" type="number" name="UPLOAD_KEY" id="modalKey" style="width:450px;" readonly="readonly" hidden="hidden" asp-for="@Model.UPLOAD_KEY" />
+    <input class="CustomInput STUDYKEY" type="text" name="FILENAME" id="modalKey" style="width:450px;" readonly="readonly" hidden="hidden" value="@ViewBag.FILENAME" />
+    <label>Please provide reason:</label> <br />
+    <textarea asp-for="@Model.Reason" name="Reason" class="CustomInput" style="width: 450px; padding: .375rem .75rem; height: 200px;" required></textarea>
+</div>
+
+
+
+

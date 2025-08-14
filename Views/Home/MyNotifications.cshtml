@@ -1,0 +1,90 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@*@model List<Email_Notifications>
+
+    <h1>My Notifications</h1>
+    <br />
+
+    <form action ="UpdateCheckbox">
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="display: none">Key Id</th>
+                    <th>Notification Type</th>
+                    <th>Enable</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td style="display: none">@Model[i].KEYID</td>
+                        <td>@Model[i].PIType</td>
+
+
+                        <td>
+                            <input type="submit" class="custom-checkbox"  asp-for="@Model[i].Enable" name="enable" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>*@
+
+@model List<Email_Notifications>
+
+<h1>My Notifications</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+<br />
+
+
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th style="display:none">Key Id</th>
+            <th>Notification Type</th>
+            <th>Enable</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <form action="UpdateMyNotification" method="post">
+            <tr>
+                <td style="display:none">
+                    <input type="hidden" name="KEYID" asp-for="@Model[i].KEYID" readonly />
+                </td>
+                <td>@Model[i].PIDESC</td>
+
+                <td>
+                    <label class="switch">
+                        <input type="checkbox" asp-for="@Model[i].Enable" name="Enable" class="notification-checkbox" onChange="this.form.submit()" />
+                        <div class="slider round"></div>
+                    </label>
+                </td>
+
+            </tr>
+            </form>
+
+        }
+    </tbody>
+</table>
+
+
+<script>
+   @*
+    document.addEventListener('change', function (e) {
+        if (e.target.classList.contains('notification-checkbox')) {
+            document.getElementById('notificationForm').submit();
+        }
+    });*@
+</script>
+
+
+

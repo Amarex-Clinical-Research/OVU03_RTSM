@@ -1,0 +1,99 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<Visits>
+
+<h1 style="color: black"> Visits </h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+
+<div id="rand">
+
+    @*<button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("ReportProblemExcel","ProjectManagement")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>*@
+    <input type="button" class="btn" value="Back" onclick="window.location='@Url.Action("ProjectManagementHome","ProjectManagement")'" style="background-color: #007bff; color: White;" />
+    <br /><br />
+    <div class="search-table-outter wrapper">
+        <table class="table table-striped" id="aeTable">
+            <thead>
+                <tr>
+                    <th style="display: none;">ROWKEY</th>
+                    <th style="display: none;">VISITKEY</th>
+                    <th>Site ID</th>
+                    <th>Subject ID</th>
+                    <th>Visit</th>
+                    <th>Visit Date</th>
+                    <th>IP Dispensed</th>
+                    <th>Reason: If visit not done by IP dispensed</th>
+                    @*<th>Project Manager Comments</th>*@
+                    @*<th>Actions</th>*@
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var subject in Model)
+                {
+                    <tr>
+                        <td style="display: none;">@subject.ROW_KEY</td>
+                        <td style="display: none;">@subject.VISITKEY</td>
+                        <td>@subject.SITEID</td>
+                        <td>@subject.SUBJID</td>
+                        <td>@subject.VISITID</td>
+                        <td>@subject.VisitDate</td>
+                        <td>@subject.ELIGIP</td>
+                        <td>@subject.ReaYes</td>
+                        @*<td>@subject.VISITCOMM</td>*@
+
+                        @*<td>
+                                <div class="dropdown" id="tableOptions">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                        ⋮
+
+                                    </button>
+                                    <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                        <form action="IPReplacement">
+                                            <input type="submit" class="btn" value="Replace IP" style="border:none; background-color:transparent; color:#e95420;" />
+                                            <input hidden readonly value="@subject.ROW_KEY" name="ROW_KEY" />
+                                            <input hidden readonly value="@subject.SUBJID" name="SUBJID" />
+                                            <input hidden readonly value="@subject.SITEID" name="SITEID" />
+                                            <input hidden readonly value="@subject.VISIT" name="VISIT" />
+                                            <input hidden readonly value="@subject.KitNumber" name="KitNumber" />
+                                            <input hidden readonly value="@ViewBag.SPKEY" name="SPKEY" />
+
+
+                                            <br />
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>*@
+
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+
+            })
+        });
+    </script>
+
+}
+

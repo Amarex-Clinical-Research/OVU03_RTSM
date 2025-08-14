@@ -1,0 +1,170 @@
+﻿@model List<Audit>
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    ViewData["Title"] = "Audit Log";
+}
+
+<h1 style="color:#e95420;"> <i class="bi bi-clock-history" style="color:black;"></i> Audit Log(Unblinded)</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+<div id="payLegend" style="
+    display:inline-block;
+    position: relative;
+   ">
+    <div class="box" style=" float: left; height: 20px; width: 20px; margin-bottom: 15px; clear: both; background-color: #88eba2;"></div>
+    <label>&emsp;Insert - I</label>
+    <br />
+    <div class="box" style=" float: left; height: 20px; width: 20px; margin-bottom: 15px; clear: both; background-color: #fae996;"></div>
+    <label>&emsp;Update - U</label>
+    <br />
+    <div class="box" style=" float: left; height: 20px; width: 20px; margin-bottom: 15px; clear: both; background-color: #f78181;"></div>
+    <label>&emsp;Deleted - D</label>
+</div>
+<br />
+<br />
+
+<form asp-action="UnblindedAuditLog" asp-controller="UnblindedAudit" method="get">
+    <div class="form-group" style="display:inline-block" ;>
+        <label>Start Date</label><br />
+        <input type="date" asp-format="{0:d MMM yyyy}" class="form-control" style="width:auto;" name="start" id="start" value="@TempData["start"]" required />
+    </div>
+    <div class="form-group" style="display:inline-block" ;>
+        <label>End Date</label>
+        <input type="date" asp-format="{0:d MMM yyyy}" class="form-control" style="width: auto;" name="end" id="end" value="@TempData["end"]" required />
+    </div>
+    <select name="Module" id="ModuleSelection" style="width: 350px; " class="CustomInput" value="@TempData["Module"]" required>
+        <option value="">Please Select a Module</option>
+        <option value="BIL_SUBJ">Screening</option>
+        <option value="BIL_RAND">Randomization</option>
+        <option value="BIL_VISITS">Subsequent Dispensation</option>
+        <option value="BIL_IP_RANGE">Replacement</option>
+       
+        <option value="BIL_IP_RANGE">Supply Distribution</option>
+        <option value="Receive IP">Receive IP</option>
+        <option value="IP Labeling">IP Labeling</option>
+        <option value="IP Depot">IP Depot</option>
+        <option value="Project Management">Project Management</option>
+       
+    </select>
+
+    @*<input asp-for="@Model[1].sDate" asp-format="{0:d MMM yyyy}" name="startDate" class="form-control" style="width:500px;" id="start" />*@
+
+    &emsp; <input type="submit" class="btn" value="View Log" style=" position: relative; bottom: 2px;" />
+    &emsp; <button type="button" class="btn btn-default" onclick="window.location='@Url.Action("UnblindedAuditHome", "UnblindedAudit")'" style="background-color:#007bff;">Back</button>
+</form>
+
+<table id="table" class="table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            @*<th>Table</th>*@
+            <th>Type</th>
+            <th>Key</th>
+            <th>Field Name</th>
+            <th>Old Value</th>
+            <th>New Value</th>
+            <th>Date changed</th>
+            <th>Changed By</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Audit m in Model)
+        {
+            @if (m.AUDTYPE.Equals("U"))
+            {
+                <tr style="background-color: #fae996">
+                    @*<td>@m.AUDTBL</td>*@
+                    <td>@m.AUDTYPE</td>
+                    <td>@m.AUDPKEY</td>
+                    <td>@m.AUDFLD</td>
+                    <td>@m.AUDOLDV</td>
+                    <td>@m.AUDNEWV</td>
+                    <td>@m.AUDDTC</td>
+                    <td>@m.AUDUSER</td>
+                </tr>
+            }
+            else if (m.AUDTYPE.Equals("D"))
+            {
+                <tr style="background-color: #f78181">
+                    @*<td>@m.AUDTBL</td>*@
+                    <td>@m.AUDTYPE</td>
+                    <td>@m.AUDPKEY</td>
+                    <td>@m.AUDFLD</td>
+                    <td>@m.AUDOLDV</td>
+                    <td>@m.AUDNEWV</td>
+                    <td>@m.AUDDTC</td>
+                    <td>@m.AUDUSER</td>
+                </tr>
+            }
+            else
+            {
+                <tr style="background-color: #88eba2;">
+                    @*<td>@m.AUDTBL</td>*@
+                    <td>@m.AUDTYPE</td>
+                    <td>@m.AUDPKEY</td>
+                    <td>@m.AUDFLD</td>
+                    <td>@m.AUDOLDV</td>
+                    <td>@m.AUDNEWV</td>
+                    <td>@m.AUDDTC</td>
+                    <td>@m.AUDUSER</td>
+
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>
+
+
+
+@section scripts{
+    <link href="~/js/chosen_v1.8.7/chosen.min.css" rel="stylesheet" />
+    <script src="~/js/chosen_v1.8.7/chosen.jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.0.2/css/searchPanes.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/searchpanes/2.0.2/js/dataTables.searchPanes.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#table').DataTable({
+                buttons: ['excel',
+                    {
+                        extend: 'searchPanes',
+                        config: {
+                            cascadePanes: true,
+                            columns: [0, 2]
+                        }
+
+                    }
+                ],
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                },
+                "columnDefs": [
+                    { "type": "date", "targets": 6 }
+                ],
+                order: [[6, 'desc']],
+
+                dom: 'Bfrtip'
+
+            }).columns.adjust();
+        });
+    </script>
+}
+
+<style>
+    .container {
+        max-width: 85%;
+    }
+</style>

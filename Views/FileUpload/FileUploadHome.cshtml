@@ -1,0 +1,509 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IPBioList
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.0/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                localStorage.setItem('studyTab', $(e.target).attr('href'));
+            });
+            var studyTab = localStorage.getItem('studyTab');
+            if (studyTab) {
+                $('#StudyTabs a[href="' + studyTab + '"]').tab('show');
+            }
+        });
+    </script>
+
+
+    <script>
+    function OpenBioModal() {
+        @*$.get("@Url.Action("GetEmailList", "FileUpload")",
+                function (data) {
+                    $('#EditModalBody').html(data);
+                });*@
+
+        $("#myModal").modal("show");
+        }
+
+
+
+    </script>
+    <script>
+        function OpenRandModal() {
+        @*$.get("@Url.Action("RandModel", "FileUpload")",
+                function (data) {
+                    $('#EditModalBody1').html(data);
+                });*@
+
+        $("#myModal1").modal("show");
+        }
+
+    </script>
+
+    <script>
+    $(document).ready(function() {
+        var error =  @((TempData["ErrorMessage"] != null).ToString().ToLower());
+        if (error == true) {
+            $('#infoModal1').modal('show');
+        }
+});
+    </script>
+    
+    <script>
+        function SendCodeModal(UPLOAD_KEY, FILENAME, TYPEUL) {
+
+            $('#UPLOAD_KEY').val(UPLOAD_KEY);
+            $('#FILENAME').val(FILENAME);
+            $('#TYPEUL').val(TYPEUL);
+            $('#CodeModal').modal('show');
+        }
+    </script>
+
+</head>
+@*Error Model*@
+<div class="modal fade" id="infoModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="font-size:large; color: red">
+                    <span class="icon-container">
+                        <svg class="bi bi-exclamation-circle-fill text-danger" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                        </svg>
+                    </span>
+                    <b>@TempData["ErrorMessage"]</b>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Bio kit Modal-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form method="post" asp-action="UploadKit" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Upload a Biometrics Kit</h4>
+
+                </div>
+                <div class="modal-body" id="EditModalBody">
+                    <span>Allowed file types: .xls, .xlsx</span>
+                    <input class="fill-void" type="file" name="File" required>
+                    <br />
+                    <div id="notif">
+
+                        <div class="form-group">
+                            <label>Email Address <span style="font-size: 13px;"> (Note: Type email address and press enter)</span><span style="color: red;"> *</span></label> <br />
+                            @*<textarea asp-for="@Model.PIDet" name="email" class="CustomInput" style="width: 450px; padding: .375rem .75rem; height: 200px;"></textarea>*@
+                            @*<input name="email" class="form-control flexdatalist" multiple='multiple' value="" style="width: 450px;" required />*@
+                            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" style="width: 450px;" required />
+                        </div>
+
+                        <label>Message<span style="color: red;"> *</span></label> <br />
+                        <textarea asp-for="@Model.Comment" name="comment" class="CustomInput" style="width: 450px; padding: .375rem .75rem; height: 200px;" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Upload" formaction="UploadKit" class="btn" name="update" />
+                    <!--<input type="button" value="Upload and Send Notification"  class="btn" name="update" onclick="OpenStopModal(@Model.File)"/>-->
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">Cancel</button>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Rand kit Modal-->
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form method="post" asp-action="UploadRand" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Upload a Subject Randomization List</h4>
+
+                </div>
+                <div class="modal-body" id="EditModalBody1">
+
+                    <span>Allowed file types: .xls, .xlsx</span>
+                    <input class="fill-void" type="file" name="File" required>
+                    <br />
+                    <div id="notif">
+
+                        <div class="form-group">
+                            <label>Email Address<span style="font-size: 13px;"> (Note: Type email address and press enter)</span><span style="color: red;">*</span></label> <br />
+                            @*<textarea asp-for="@Model.PIDet" name="email" class="CustomInput" style="width: 450px; padding: .375rem .75rem; height: 200px;"></textarea>*@
+                            @*@Value = TempData["email"].ToString()*@
+                            @*<input name="email" class="form-control flexdatalist" value="" style="width: 450px;" />*@
+                            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" style="width: 450px;" required />
+                        </div>
+
+                        <label>Message<span style="color: red;"> *</span></label> <br />
+                        <textarea asp-for="@Model.Comment" name="comment" class="CustomInput" style="width: 450px; padding: .375rem .75rem; height: 200px;" required></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Upload" formaction="UploadRand" class="btn" name="update" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">Cancel</button>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--Send Code Modal-->
+<div class="modal fade" id="CodeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form method="post" asp-action="SendCode" asp-antiforgery="true" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Send Password</h4>
+
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="UPLOAD_KEY" name="UPLOAD_KEY" Value="UPLOAD_KEY" class="form-control" readonly style="display:none" />
+                    <input type="text" id="FILENAME" name="FILENAME" Value="FILENAME" class="form-control" readonly style="display:none" />
+                    <input type="text" id="TYPEUL" name="TYPEUL" Value="TYPEUL" class="form-control" readonly style="display:none" />
+                    <div id="notif">
+
+                        <div class="form-group">
+                            <label>Email Address <span style="font-size: 13px;"> (Note: Type email address and press enter)</span><span style="color: red;"> *</span></label> <br />
+                            @*<textarea asp-for="@Model.PIDet" name="email" class="CustomInput" style="width: 450px; padding: .375rem .75rem; height: 200px;"></textarea>*@
+                            @*<input name="email" class="form-control flexdatalist" multiple='multiple' style="width: 450px;" type="email" required />*@
+                            @*<input class="form-control flexdatalist" multiple='multiple' name="email" required />*@
+                            <input type="email" class="form-control flexdatalist" multiple='multiple' name="email" placeholder="example@example.com" style="width: 450px;" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Enter file password<span style="color: red;"> *</span></label>
+                            <input name="code" class="CustomInput" value="" style="width: 450px;" required />
+                        </div>
+                        <label>Message<span style="color: red;"> *</span></label> <br />
+                        <textarea asp-for="@Model.Comment" name="comment" class="CustomInput" style="width: 450px; padding: .375rem .75rem; height: 200px;" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="Send" formaction="SendCode" class="btn" name="update" />
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color:#007bff;">Cancel</button>
+
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<h1 style="color: #e95420;"> <i class="bi bi-file-earmark-arrow-up" style="color:black;"></i>File Upload</h1>
+<p style="font-size: 14px">Protocol Name: @TempData.Peek("StudyName")</p>
+
+
+<ul class="nav nav-tabs" id="StudyTabs">
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link active" data-toggle="tab" href="#rand">Biometrics Kit Lists</a>
+    </li>
+
+    <li class="nav-item" style="font-weight:500;">
+        <a class="nav-link" data-toggle="tab" href="#screen">Subject Randomization Lists</a>
+    </li>
+    @*<li class="nav-item" style="font-weight:500;">
+            <a class="nav-link" data-toggle="tab" href="#Hide">Removed Lists</a>
+        </li>*@
+
+
+</ul>
+
+<div class="tab-content">
+    <!--Bio Kit-->
+    <div id="rand" class="tab-pane fade show active">
+        <br />
+
+        <button id="myBtn" class="btn" onclick="OpenBioModal()">Upload a file</button>
+        <br />
+        <br />
+
+        <div class="search-table-outter wrapper">
+            <table class="table table-striped" id="aeTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th style="display: none;">Upload_KEY</th>
+                        <th style="display: none;">Type</th>
+                        <th>File Name</th>
+                        <th>Email Sent</th>
+                        <th>Password Sent</th>
+                        <th>Uploaded by</th>
+                        <th>Uploaded Date</th>
+
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.kitupload.Count(); i++)
+                    {
+
+                    <tr data-child-value="@Model.kitupload[i].EmailAddress">
+                        <td class="details-control"></td>
+                        <td style="display: none;"><input type="hidden" value="@Model.kitupload[i].UPLOAD_KEY"></td>
+                        <td style="display: none;"><input type="hidden"  value="@Model.kitupload[i].TYPEUL"></td>
+                        <td>@Model.kitupload[i].FILENAME</td>
+                        <td>@Model.kitupload[i].EMAILSENT</td>
+                        <td>@Model.kitupload[i].CodeSend</td>
+                        <td>@Model.kitupload[i].ADDUSER</td>
+                        <td>@Model.kitupload[i].ADDDATE</td>
+                        <td>
+
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+
+                                    <form action="Download">
+                                        <input type="submit" class="btn" value="Download" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.kitupload[i].UPLOAD_KEY" name="UPLOAD_KEY" />
+                                        <br />
+                                    </form>
+                                    @*<a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenHideModal(@Model.kitupload[i].UPLOAD_KEY)">Remove</a>*@
+                                    @*<br />*@
+                                    <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="SendCodeModal(@Model.kitupload[i].UPLOAD_KEY,'@Model.kitupload[i].FILENAME', '@Model.kitupload[i].TYPEUL')">Send Password</a>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="screen" class="tab-pane fade">
+        <!--Rand kit>-->
+        <br />
+        <button id="myBtn1" class="btn" onclick="OpenRandModal()">Upload a file</button>
+        <br />
+        <br />
+        <div class="search-table-outter wrapper">
+
+            <table class="table table-striped" id="aeTable1">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th style="display: none;">Upload_KEY</th>
+                        <th style="display: none;">Type</th>
+                        <th>File Name</th>
+                        <th>Email Sent</th>
+                        <th>Password Sent</th>
+                        <th>Uploaded by</th>
+                        <th>Uploaded Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.randupload.Count(); i++)
+                    {
+                    <tr data-child-value="@Model.randupload[i].EmailAddress">
+                        <td class="details-control"></td>
+                        <td style="display: none;"><input type="hidden" value="@Model.randupload[i].UPLOAD_KEY"></td>
+                        <td style="display: none;"><input type="hidden" value="@Model.randupload[i].TYPEUL"></td>
+                        <td>@Model.randupload[i].FILENAME</td>
+                        <td>@Model.randupload[i].EMAILSENT</td>
+                        <td>@Model.randupload[i].CodeSend</td>
+                        <td>@Model.randupload[i].ADDUSER</td>
+                        <td>@Model.randupload[i].ADDDATE</td>
+
+                        <td>
+                            <div class="dropdown" id="tableOptions">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
+                                    ⋮
+
+                                </button>
+                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
+                                    <form action="Download">
+                                        <input type="submit" class="btn" value="Download" style="border:none; background-color:transparent; color:#e95420;" />
+                                        <input hidden readonly value="@Model.randupload[i].UPLOAD_KEY" name="UPLOAD_KEY" />
+                                        <br />
+
+                                    </form>
+                                    @*<a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenHideModal(@Model.randupload[i].UPLOAD_KEY)">Remove</a>
+                    <br />*@
+                                    <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="SendCodeModal(@Model.randupload[i].UPLOAD_KEY,'@Model.randupload[i].FILENAME','@Model.randupload[i].TYPEUL')">Send Password</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+</div>
+
+
+@section scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+    <link href="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.css" rel="stylesheet" type="text/css">
+    <script src="~/js/jquery-flexdatalist-2.3.0/jquery.flexdatalist.min.js"></script>
+    <script src="~/js/FlexFileEmail.js"></script>
+    <script>
+        function format(value) {
+            return '<div>Email Sent To: ' + value + '</div>';
+
+        }
+        $(document).ready(function () {
+            // Initialize DataTable only once
+            var table = $('#aeTable').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                }
+            });
+
+            // Add event listener for opening and closing details
+            $('#aeTable').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child(format(tr.data('child-value'))).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function format1(value) {
+
+
+            return '<div>Email Sent To: ' + value + '</div>';
+
+        }
+        $(document).ready(function () {
+            // Initialize DataTable only once
+            var table = $('#aeTable1').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                }
+            });
+
+            // Add event listener for opening and closing details
+            $('#aeTable1').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child(format1(tr.data('child-value'))).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function format2(value) {
+
+
+            return '<div>Email Sent To: ' + value + '</div>';
+
+        }
+        $(document).ready(function () {
+            // Initialize DataTable only once
+            var table = $('#aeTable2').DataTable({
+                "language": {
+                    search: '<span class="input-group-text" id="basic-addon1" style="width:33px;height:36px;display:inline-block;padding-right:27px;position:relative;left:6px;top:1px;border-radius: 5px 0px 0px 5px;"><svg style="position:relative; bottom:2px;"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path></svg></span>',
+                    searchPlaceholder: 'Type to Search'
+                }
+            });
+
+            // Add event listener for opening and closing details
+            $('#aeTable2').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child(format1(tr.data('child-value'))).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+}
+
+<style>
+    /* bootstrap hack: fix content width inside hidden tabs */
+    .tab-content > .tab-pane:not(.active),
+    .pill-content > .pill-pane:not(.active) {
+        display: block;
+        height: 0;
+        overflow-y: hidden;
+    }
+    /* bootstrap hack end */
+
+    td.details-control::before {
+        content: '\25BC'; /*Unicode code for an up arrow */
+        font-size: 16px; /*Adjust the size as needed */
+        margin-right: 5px; /*Add some spacing between the icon and text */
+        cursor: pointer;
+    }
+
+    /*Update the icon for the shown state with a down arrow */
+    tr.shown td.details-control::before {
+        content: '\25B2'; /*Unicode code for a down arrow */
+    }
+</style>
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
