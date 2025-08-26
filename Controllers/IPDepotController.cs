@@ -400,7 +400,7 @@ namespace RTSM_OLSingleArm.Controllers
                 msgBody += Environment.NewLine + "Lot Number: " + Request.IPLblShipLotNo;
                 msgBody += Environment.NewLine + message;
                
-                SendEmail(randemail + ";" + "sidran@amarexcro.com", subject, msgBody);
+                SendEmail(randemail + ";" + "jacobk@amarexcro.com", subject, msgBody);
                 string sql2 = @"
                     SELECT 
                 ship.Courier, 

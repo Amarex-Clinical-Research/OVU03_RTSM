@@ -203,7 +203,7 @@ namespace RTSM_OLSingleArm.Controllers
             retSupp = GetEmailByGrp(SPKEY, "(All)", "D");
             //shipperEmail = BllDalGen.GetProfVpe(spkey, "ShipperEmail");
 
-            string SendTo = GetEmailList(SPKEY, "PMIPLblRel") + ";" + GetEmailList(SPKEY, "IPDepot") + ";" + "sidran@amarexcro.com" ;
+            string SendTo = GetEmailList(SPKEY, "PMIPLblRel") + ";" + GetEmailList(SPKEY, "IPDepot") + ";" + "jacobk@amarexcro.com" ;
             if(retSite != null)
             {
                 SendTo = SendTo + ";" + retSite;

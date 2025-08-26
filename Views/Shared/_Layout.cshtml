@@ -73,8 +73,8 @@
                     }
                     @if (_httpContext.HttpContext.Session.Get("sesVPERAND") != null)
                     {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-person-plus"></i> Randomization\Dispensation </a>
+                        <li class="nav-item">
+                                        @*<a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-person-plus"></i> Randomization\Dispensation </a>
                             <div class="dropdown-menu bg-dark">
 
                                 <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Rand" asp-action="RandHome"> Randomization</a>
@@ -82,39 +82,12 @@
                                 <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Replacement" asp-action="IPReplacementHome">Replacement</a>
 
 
-                            </div>
+                            </div>*@
+                            <a class="nav-link text-light" asp-area="" asp-controller="Rand" asp-action="RandHome"><i class="bi bi-person"></i> Randomization</a>
                         </li>
                     }
                     
-                    @if (_httpContext.HttpContext.Session.Get("sesIPManagement") != null)
-                    {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-truck"></i> Supply Management </a>
-                            <div class="dropdown-menu bg-dark">
-                                @if (_httpContext.HttpContext.Session.Get("sesReceiveIP") != null)
-                                {
 
-                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="SupplyManagement" asp-action="ReceiveIPTabs">Receive IP</a>
-                                }
-                                @if (_httpContext.HttpContext.Session.Get("sesSupplyDistribution") != null)
-                                {
-                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="SupplyDistribution" asp-action="SupplyDistributionhome">Supply Distribution</a>
-                                }
-
-
-                                @if (_httpContext.HttpContext.Session.Get("sesIPLabel") != null)
-                                {
-                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="IPLabelling" asp-action="IPLabellingHome">IP Labeling</a>
-                                }
-
-                                @if (_httpContext.HttpContext.Session.Get("sesIPDepot") != null)
-                                {
-                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="IPDepot" asp-action="IPDepotReg">IP Depot</a>
-                                }
-
-                            </div>
-                        </li>
-                    }
                     @if (_httpContext.HttpContext.Session.Get("sesIPBiometrics") != null)
                     {
                         <li class="nav-item">
@@ -129,12 +102,9 @@
                                 <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="ProjectManagementHome">Subject Info</a>
                                 <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="ProblemReply">Problem Reply</a>
                                 <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="RequestHome">Screen/Randomization Settings</a>
-                                <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="ShiptoSites">Site Shipping Address</a>
+                                <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="ShiptoSites">Site Settings</a>
                                 <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="IRTUsers">RTSM Users</a>
                                 <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="EmailSettings">Notification Settings</a>
-                                <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="ProjectManagement" asp-action="InventoryHome">Inventory</a>
-
-
                             </div>
                         </li>
                     }
@@ -237,7 +207,7 @@
     <footer class="border-top footer text-muted">
         <div class="container-fluid">
             &copy; 2024 <a href="https://www.amarexus.com/">Amarex</a>, an NSF Company. <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            <text style="float:right;">Webview RTSM Version: 1.0.0 Tk5</text>
+            <text style="float:right;">Webview RTSM UAT</text>
         </div>
     </footer>
 

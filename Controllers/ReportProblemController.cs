@@ -161,7 +161,7 @@ namespace RTSM_OLSingleArm.Controllers
             SendEmail(GetUserEmail(), subject, message);
            
 
-            string emailadd = GetNotify(SPKEY, "Problem Reported") + ";" + "sidran@amarexcro.com  ;";
+            string emailadd = GetNotify(SPKEY, "Problem Reported") + ";" + "jacobk@amarexcro.com  ;";
             message = "Protocol: Webview RTSM - Test" + "\n";
             message += "A problem report has been submitted from " + GetUserEmail() + " ." + "\n" ;
             if (Request.SITEID != null)

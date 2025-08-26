@@ -243,15 +243,17 @@ namespace RTSM_OLSingleArm.Controllers
                 }
                 rdr3.Close();
                 //string select = "SELECT PIDet, PIType, SPKEY FROM ProfileInfo where PIDet = 'Screen Enabled' AND PIType = 'ScreenStat' AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " ";
-                string select = "SELECT PIDet, PIType, SPKEY FROM ProfileInfo WHERE PIType = 'ScreenStat' AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " ";
-                SqlCommand cmdsql = new SqlCommand(select, con);
+                //string select = "SELECT PIDet, PIType, SPKEY FROM ProfileInfo WHERE PIType = 'ScreenStat' AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " ";
+                //SqlCommand cmdsql = new SqlCommand(select, con);
                
-                SqlDataReader rdr4 = cmdsql.ExecuteReader();
-                while (rdr4.Read())
-                {
-                    ViewBag.PIDet = rdr4["PIDet"].ToString();
-                }
-                rdr4.Close();
+                //SqlDataReader rdr4 = cmdsql.ExecuteReader();
+                //while (rdr4.Read())
+                //{
+                //    ViewBag.PIDet = rdr4["PIDet"].ToString();
+                //}
+                //rdr4.Close();
+                //the above is pointless code
+
                 //string selectsql = "SELECT PIDesc, PIDet, PIType, SPKEY FROM ProfileInfo where PIDet = '" + HttpContext.Session.GetString("sesCenter") + "' AND PIType = 'SiteScreen' AND PIDesc = 'Screen Enabled' AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " ";
                 string selectsql = "SELECT PIDesc, PIDet, PIType, SPKEY FROM ProfileInfo where PIDet = '" + HttpContext.Session.GetString("sesCenter") + "' AND PIType = 'SiteScreen' AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " ";
                 SqlCommand cmdsql1 = new SqlCommand(selectsql, con);
@@ -379,7 +381,7 @@ namespace RTSM_OLSingleArm.Controllers
             int SPKEY = int.Parse(HttpContext.Session.GetString("sesSPKey"));
             string userid = HttpContext.Session.GetString("suserid");
             string SITEID = HttpContext.Session.GetString("sesCenter");
-            if (IsValidUser(username, password) && (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) || userid == "sidran" || userid == "test1"))
+            if (IsValidUser(username, password) && (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) ))
        
             {
                 connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
@@ -436,7 +438,7 @@ namespace RTSM_OLSingleArm.Controllers
                     TempData["Message"] = Message;
                 }
                 string randemail = GetProfVpe(SPKEY, "AddRandEmails");
-                string emailadd = GetNotify(SPKEY, "Randomized") + ";" + GetUserEmail() + ";" + "sidran@amarexcro.com";
+                string emailadd = GetNotify(SPKEY, "Randomized") + ";" + GetUserEmail() + ";" + "jacobk@amarexcro.com";
                 string otheremail = GetEmailByGrp(SPKEY, SITEID, "S") + ";" + randemail + ";" + emailadd;
                 string subject = StudyName() + " - WebView RTSM - Subject ID : " + SUBJID + " Screen failed";
                 string emailBody = "Protocol: " + StudyName() + Environment.NewLine;
@@ -446,9 +448,9 @@ namespace RTSM_OLSingleArm.Controllers
                 emailBody += Environment.NewLine + "Informed consent Date: " + ICDTC;
                 emailBody += Environment.NewLine + "Screen Failed Date: " + SFDATE;
                 if (otheremail != null)
-                    SendEmail(GetUserEmail() + ";" + otheremail + ";" + "sidran@amarexcro.com", subject, emailBody);
+                    SendEmail(GetUserEmail() + ";" + otheremail + ";" + "jacobk@amarexcro.com", subject, emailBody);
                 else
-                    SendEmail(GetUserEmail() + ";" + "sidran@amarexcro.com", subject, emailBody);
+                    SendEmail(GetUserEmail() + ";" + "jacobk@amarexcro.com", subject, emailBody);
                 return RedirectToAction("ScreenHome");
             }
             else
@@ -472,6 +474,7 @@ namespace RTSM_OLSingleArm.Controllers
 
 
         // Subject Screening
+        //need to add a check for if the number has already been used
         [HttpPost]
         public IActionResult ScreenReg(Subject Request, string username, string password, string SiteID)
         {
@@ -480,7 +483,15 @@ namespace RTSM_OLSingleArm.Controllers
             string SITEID = HttpContext.Session.GetString("sesCenter");
             ViewBag.siteid = SiteID;
 
-            if (IsValidUser(username, password) && (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) || userid == "sidran" || userid == "test1"))
+            string lastSubj = GetLastSubj(Request.SITEID);
+            if(int.Parse(Request.SUBJID) <= int.Parse(lastSubj))
+            {
+                string Message = "Error: This subject ID has been used in the past. Please select a new subject ID greater than " + lastSubj + " and rescreen the subject";
+                TempData["ErrorMessage"] = Message;
+                return View(Request);
+            }
+
+            if (IsValidUser(username, password) && (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) ))
             {
                 connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -501,7 +512,7 @@ namespace RTSM_OLSingleArm.Controllers
                         {
                             string Message = "Subject ID: "+ SITEID+"-"+ Request.SUBJID+" already exists";
                             TempData["ErrorMessage"] = Message;
-                            return View();
+                            return View(Request);
                         }
                     }
 
@@ -591,8 +602,8 @@ namespace RTSM_OLSingleArm.Controllers
                     emailBody += Environment.NewLine + "Informed consent Date: " + Request.ICDTC;
                     //emailBody += Environment.NewLine + "Screened Date: " + Request.SCRNDTC ;
                     if (otheremail != null)
-                        SendEmail(GetUserEmail() + ";" + otheremail + ";" + "sidran@amarexcro.com", subject, emailBody);
-                    else
+                        SendEmail(GetUserEmail() + ";" + otheremail + ";" + "jacobk@amarexcro.com", subject, emailBody);
+                    else 
                         SendEmail(GetUserEmail(), subject, emailBody);
                     return RedirectToAction("ScreenHome");
                 }
@@ -605,6 +616,45 @@ namespace RTSM_OLSingleArm.Controllers
                 TempData["ErrorMessage"] = errorMessage;
                 return View();
             }
+        }
+
+
+        //private string GetLastSubj(string siteid)
+        //{
+        //    string last = "000";
+        //    string sql = "Select LASTSUBJ from ShipToSite where SITEID = @siteid";
+        //    SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("VpeRandDbConnStr"));
+        //    SqlCommand cmd = new SqlCommand(sql, conn);
+        //    using (conn)
+        //    {
+        //        cmd.Parameters.AddWithValue("@siteid", siteid);
+        //        SqlDataReader rdr = cmd.ExecuteReader();
+        //        while (rdr.Read())
+        //        {
+        //            last = rdr["LASTSUBJ"].ToString();
+        //        }
+        //    }
+        //    return last;
+        //}
+
+        private string GetLastSubj(string site)
+        {
+            string subjid = "";
+            string sql = "Select * from ShipToSite where SITEID = @site";
+            SqlConnection conn = new SqlConnection(_configuration.GetConnectionString("VpeRandDbConnStr"));
+            SqlCommand cmd = new SqlCommand(sql, conn);
+            using (conn)
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("@site", site);
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    subjid = rdr["LASTSUBJ"].ToString();
+                }
+            }
+
+            return subjid;
         }
 
 

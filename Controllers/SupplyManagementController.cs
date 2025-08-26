@@ -231,11 +231,11 @@ namespace RTSM_OLSingleArm.Controllers
                             //retSupp = GetEmailByGrp(spkey, "(All)", "D");
                             if (retSupp == "")
                             {
-                                SendEmail("sidran@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status - No Supp", msgBody);
+                                SendEmail("jacobk@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status - No Supp", msgBody);
                             }
                             else
                             {
-                                SendEmail(retSupp + ";" + "sidran@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status", msgBody);
+                                SendEmail(retSupp + ";" + "jacobk@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status", msgBody);
                             }
                         }
                     }
@@ -251,7 +251,7 @@ namespace RTSM_OLSingleArm.Controllers
                         int rowsAfft = (int)cmd3.ExecuteNonQuery();
                         if (rowsAfft <= 0)
                         {
-                            SendEmail("sidran@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Unable to find kits", "Unable to find kits for Treatment Group: " + arm);
+                            SendEmail("jacobk@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Unable to find kits", "Unable to find kits for Treatment Group: " + arm);
                         }
                         else
                         {
@@ -267,7 +267,7 @@ namespace RTSM_OLSingleArm.Controllers
                             if (kitsSel == "")
                             {
                                 rtnVal = "Error - Problem with Re-supply Shipment process, unable to find kits after selection.";
-                                SendEmail("sidran@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Shipment process, unable to find kits", "Shipment process, unable to find kits after selection for Treatment Group: " + arm);
+                                SendEmail("jacobk@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Shipment process, unable to find kits", "Shipment process, unable to find kits after selection for Treatment Group: " + arm);
                             }
                             else
                             {
@@ -326,7 +326,7 @@ namespace RTSM_OLSingleArm.Controllers
                     msgBody += "KitNumber in shipment: " + Environment.NewLine + kits + Environment.NewLine + Environment.NewLine;
                     if (toEmail == "")
                     {
-                        toEmail = "sidran@amarexcro.com";
+                        toEmail = "jacobk@amarexcro.com";
                     }
 
                     SendEmail(toEmail + ";" + "sidran@amarecro.com", "Webview RTSM - Request to Release - Site " + siteid, msgBody);
@@ -516,7 +516,7 @@ namespace RTSM_OLSingleArm.Controllers
             ViewBag.SENDDATE = SENDDATE;
             string sql;
             string rtnVal = "";
-            if (IsValidUser(username, password) && (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) || userid == "sidran" || userid == "test1"))
+            if (IsValidUser(username, password) && (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) ))
             {
                 //If there is no temperature Excursion
                 connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
@@ -1409,11 +1409,11 @@ namespace RTSM_OLSingleArm.Controllers
                             //retSupp = GetEmailByGrp(spkey, "(All)", "D");
                             if (retSupp == "")
                             {
-                                SendEmail("sidran@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status - No Supp", msgBody);
+                                SendEmail("jacobk@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status - No Supp", msgBody);
                             }
                             else
                             {
-                                SendEmail(retSupp + ";" + "sidran@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status", msgBody);
+                                SendEmail(retSupp + ";" + "jacobk@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status", msgBody);
                             }
                         }
                     }
@@ -1429,7 +1429,7 @@ namespace RTSM_OLSingleArm.Controllers
                         int rowsAfft = (int)cmd3.ExecuteNonQuery();
                         if (rowsAfft <= 0)
                         {
-                            SendEmail("sidran@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Unable to find kits", "Unable to find kits");
+                            SendEmail("jacobk@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Unable to find kits", "Unable to find kits");
                         }
                         else
                         {
@@ -1445,7 +1445,7 @@ namespace RTSM_OLSingleArm.Controllers
                             if (kitsSel == "")
                             {
                                 rtnVal = "Error - Problem with Re-supply Shipment process, unable to find kits after selection.";
-                                SendEmail("sidran@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Shipment process, unable to find kits", "Shipment process, unable to find kits ");
+                                SendEmail("jacobk@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Shipment process, unable to find kits", "Shipment process, unable to find kits ");
                             }
                             else
                             {

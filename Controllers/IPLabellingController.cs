@@ -386,7 +386,7 @@ namespace RTSM_OLSingleArm.Controllers
                 msgBody += Environment.NewLine + "Expiry Date: " + Request.IPLblShipExpiryDate;
                 msgBody += Environment.NewLine + "Lot Number: " + Request.IPLblShipLotNo;
                 msgBody += Environment.NewLine + message;
-                SendEmail(randemail + ";" + "sidran@amarexcro.com", subject, msgBody);
+                SendEmail(randemail + ";" + "jacobk@amarexcro.com", subject, msgBody);
                 return RedirectToAction("IPLabellingHome");
             }
             else
@@ -842,7 +842,7 @@ namespace RTSM_OLSingleArm.Controllers
                 msgBody += Environment.NewLine + "Shipment Date: " + IPLblShipDTC;
                 msgBody += Environment.NewLine + "Expiry date: " + ExpiryDate;
 
-                SendEmail(randemail + ";" + "sidran@amarexcro.com" , subject, msgBody);
+                SendEmail(randemail + ";" + "jacobk@amarexcro.com" , subject, msgBody);
                 return RedirectToAction("IPLabellingHome");
                 
             }
@@ -960,7 +960,7 @@ namespace RTSM_OLSingleArm.Controllers
                 msgBody +=  "Shipment Date: " + IPLblShipDTC + "\n";
                 msgBody += "Expiry date: " + ExpiryDate + "\n";
 
-                SendEmail(randemail + ";" + "sidran@amarexcro.com", subject, msgBody);
+                SendEmail(randemail + ";" + "jacobk@amarexcro.com", subject, msgBody);
                 return RedirectToAction("IPLabellingHome");
 
             }
@@ -1099,7 +1099,7 @@ namespace RTSM_OLSingleArm.Controllers
                 msgBody += Environment.NewLine + "Expiry date: " + ExpiryDate + Environment.NewLine; 
 
 
-                SendEmail(randemail + ";" + "sidran@amarexcro.com", subject, msgBody);
+                SendEmail(randemail + ";" + "jacobk@amarexcro.com", subject, msgBody);
                 return RedirectToAction("IPLabellingHome");
 
             }

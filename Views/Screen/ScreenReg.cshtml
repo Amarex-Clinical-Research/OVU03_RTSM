@@ -85,8 +85,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Screening Number <span id="Extext">(Please enter the last four digits of the subject ID)</span><span style="color: red;"> *</span></label> <span id="SubjIDError" class="text-danger" style="display: none;"></span><br />
-                    <input id="SubjID" class="CustomInput" type="text" asp-for="@Model.SUBJID" style="width:500px; padding:.375rem .75rem;" required pattern="[0-9]{4}" title="Please enter a 4-digit number." />
+                    <label>Screening Number <span id="Extext">(Please enter the last 3 digits of the subject ID)</span><span style="color: red;"> *</span></label> <span id="SubjIDError" class="text-danger" style="display: none;"></span><br />
+                    <input id="SubjID" class="CustomInput" type="text" asp-for="@Model.SUBJID" style="width:500px; padding:.375rem .75rem;" required pattern="[0-9]{3}" title="Please enter a 3-digit number." />
+                   
 
                 </div>
 
@@ -100,7 +101,6 @@
                     <select id="genderSelect" class="CustomInput" asp-for="@Model.SEX" style="width: 500px; padding: .375rem .75rem" required>
                         <option value=""></option>
                         <option value="Female">Female</option>
-                        <option value="Male">Male</option>
                     </select>
                 </div>
 
@@ -192,12 +192,12 @@
             /*$("#ScrdtcError").show().text("Screen date is required.");*/
         }
         else {
-            if (!/^\d{4}$/.test(subjIDValue)) {
+            if (!/^\d{3}$/.test(subjIDValue)) {
                 isValid = false;
                 count = 1;
 
                 $("#SubjID").addClass("is-invalid");
-                $("#SubjIDError").show().text(" Please enter a 4-digit number."); // Show the error message
+                $("#SubjIDError").show().text(" Please enter a 3-digit number."); // Show the error message
                 $("#Extext").hide();
             } else {
                 $("#SubjID").removeClass("is-invalid");

@@ -77,7 +77,7 @@
         <br />
         @*<button class="btn" type="button" style="background-color: #008000; color: #fff;" onclick="window.location='@Url.Action("SubjectList","Screen")'"><img src="~/images/excel-3-24.png" /> &nbsp;Download</button>*@
 
-        @if (ViewBag.PIDet == "Screen Enabled" && ViewBag.SiteScreen == "Screen Enabled" && ViewBag.SITEID != "(All)" && ViewBag.StopScreenAt != "Stop")
+        @if (ViewBag.SiteScreen == "Screen Enabled" && ViewBag.SITEID != "(All)" && ViewBag.StopScreenAt != "Stop")
         {
 
             <input type="button" class="btn" value="Screen Subject" style="background-color: #e95420; color: white;" onclick="window.location='@Url.Action("ScreenReg", "Screen")'" />
@@ -86,7 +86,7 @@
         else
         {
             <input type="button" class="btn" value="Screen" style="background-color: #e95420; color: white; pointer-events: none; opacity: 0.6;" />
-            @if (ViewBag.PIDet == "Screen Disabled" || ViewBag.SiteScreen == "Screen Disabled" || ViewBag.StopScreenAt == "Stop")
+            @if (ViewBag.SiteScreen == "Screen Disabled" || ViewBag.StopScreenAt == "Stop")
             {
                 <div style="color: red; display: inline;">Stop Enrollment has been set. Contact the PM or CRA.</div>
             }

@@ -202,7 +202,7 @@ namespace Webview_IRT.Models
                 }
                 if (retVal2 == "")
                 {
-                    retVal2 = "sidran@amarexcro.com";
+                    retVal2 = "jacobk@amarexcro.com";
                 }
                 if (othEmail != "NF")
                 {
@@ -494,11 +494,11 @@ namespace Webview_IRT.Models
                             retSupp = GetEmailByGrp(connectionString, spkey, "(All)", "D");
                             if (retSupp == "")
                             {
-                                SendEmail(connectionString,"sidran@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status - No Supp", msgBody);
+                                SendEmail(connectionString,"jacobk@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status - No Supp", msgBody);
                             }
                             else
                             {
-                                SendEmail(connectionString, retSupp + ";" + "sidran@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status", msgBody);
+                                SendEmail(connectionString, retSupp + ";" + "jacobk@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + siteid + " - Low Inv with Shipped status", msgBody);
                             }
                         }
                     }
@@ -514,7 +514,7 @@ namespace Webview_IRT.Models
                         int rowsAfft = (int)cmd3.ExecuteNonQuery();
                         if (rowsAfft <= 0)
                         {
-                            SendEmail(connectionString,"sidran@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Unable to find kits", "Unable to find kits for Treatment Group: " + arm);
+                            SendEmail(connectionString,"jacobk@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Unable to find kits", "Unable to find kits for Treatment Group: " + arm);
                         }
                         else
                         {
@@ -530,7 +530,7 @@ namespace Webview_IRT.Models
                             if (kitsSel == "")
                             {
                                 rtnVal = "Error - Problem with Re-supply Shipment process, unable to find kits after selection.";
-                                SendEmail(connectionString,"sidran@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Shipment process, unable to find kits", "Shipment process, unable to find kits after selection for Treatment Group: " + arm);
+                                SendEmail(connectionString,"jacobk@amarexcro.com", "Webview RTSM - Auto Re-supply - Site " + siteid + " -  Shipment process, unable to find kits", "Shipment process, unable to find kits after selection for Treatment Group: " + arm);
                             }
                             else
                             {
@@ -589,7 +589,7 @@ namespace Webview_IRT.Models
                     msgBody += "KitNumber in shipment: " + Environment.NewLine + kits + Environment.NewLine + Environment.NewLine;
                     if (toEmail == "")
                     {
-                        toEmail = "sidran@amarexcro.com";
+                        toEmail = "jacobk@amarexcro.com";
                     }
 
                     SendEmail(connectionString, toEmail + ";" + "sidran@amarecro.com", "Webview RTSM - Request to Release - Site " + siteid, msgBody);

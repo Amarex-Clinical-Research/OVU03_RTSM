@@ -39,7 +39,7 @@ namespace RTSM_OLSingleArm.Controllers
             if (HttpContext.Session.GetString("suserid") != null)
             {
                 int SPKEY = int.Parse(HttpContext.Session.GetString("sesSPKey"));
-                // string connection = "server=VMSQL2K16B\\DEVDB;database=A_IRT_LIB_DEV;UID=appsid2;PWD=Kaz!Sal.01;Integrated Security=False";
+                // string connection = "server=VMSQL2K16B.cro.com\\DEVDB;database=A_IRT_LIB_DEV;UID=appsid2;PWD=Kaz!Sal.01;Integrated Security=False";
                 connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
                 // SQL query to retrieve data
                 string sql = "SELECT SITEID, SUM(case when STATUS_INFO = 'Screened' then 1 else 0 end )as 'Total Screen Number', SUM(case when STATUS_INFO = 'Screen Failed' then 1 else 0 end )as 'Total Screen Fail Number', SUM(case when STATUS_INFO = 'RAND' OR STATUS_INFO = 'Randomized' then 1 else 0 end )as 'Total Randomization Number'  from BIL_SUBJ WHERE (SITEID = '" + HttpContext.Session.GetString("sesCenter") + "' OR '" + HttpContext.Session.GetString("sesCenter") + "' = '(All)') AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " Group by SITEID ";
@@ -79,7 +79,6 @@ namespace RTSM_OLSingleArm.Controllers
                             ViewBag.TotalRandomization = rdr3["PIDet"];
                         }
 
-
                     }
                     rdr3.Close();
                     using (SqlCommand cmd1 = new SqlCommand(sql2, con))
@@ -109,13 +108,13 @@ namespace RTSM_OLSingleArm.Controllers
                                     //if (retSupp == "")
                                     //{
 
-                                    SendEmail(retSite + ";" + "sidran@amarexcro.com", "Webview RTSM - Kit Shipment", msgBody);
+                                    SendEmail(retSite + ";" + "jacobk@amarexcro.com", "Webview RTSM - Kit Shipment", msgBody);
 
                                     //}
 
                                     //else
                                     //{
-                                    //    SendEmail(retSupp + ";" + "sidran@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + SITEID + " - Low Inv with Shipped status", msgBody);
+                                    //    SendEmail(retSupp + ";" + "jacobk@amarexcro.com", "Webview RTSM - Kit Shipment - Site " + SITEID + " - Low Inv with Shipped status", msgBody);
                                     //}
                                     emailSent = true; // Set the flag to indicate that the email has been sent
                                     string[] Shipment = KITSET.Split(';');
