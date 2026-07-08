@@ -57,5 +57,7 @@ namespace Webview_IRT.Models
         public string Title { get; set; }
 
         public string Location { get; set; }
+
+        public string LASTSUBJ { get; set; }
     }
 }

@@ -57,8 +57,8 @@
             <input asp-for="@subjinfo.STATUS_INFO" name="Status" style="width:500px;" class="CustomInput" readonly />
         </div>
         <div class="form-group">
-            <label>Age Group:</label><br />
-            <input asp-for="@subjinfo.AgeGroup" name="AgeGroup" style="width:500px;" class="CustomInput" readonly />
+            <label>Platinum Status:</label><br />
+            <input asp-for="@subjinfo.PLATSTAT" name="PLATSTAT" style="width:500px;" class="CustomInput" readonly />
         </div>
         <div class="form-group">
             <label>Eligibility for randomization:</label><br />
@@ -89,33 +89,7 @@
 
     </div>
 </div>
-<p><b>Kit List</b></p>
-<br />
-<div class="search-table-outter wrapper">
-    <table class="table table-striped" id="aeTable1">
-        <tr>
-            <th>Visit</th>
-            <th>Kit Number</th>
-            <th>Dispense Date</th>
-            <th>Requester</th>
-            <th>Expiry Date</th>
-            <th>Lot No</th>
-            <th>Replacement For</th>
-        </tr>
-        @foreach (KitsIP subjkit in subjkits)
-        {
-            <tr>
-                <td>@subjkit.VISIT</td>
-                <td>@subjkit.KitNumber</td>
-                <td>@subjkit.ASSIGNMENT_DATEstr</td>
-                <td>@subjkit.ASSIGNED_BY</td>
-                <td>@subjkit.IPLblShipExpiryDate</td>
-                <td>@subjkit.IPLblShipLotNo</td>
-                <td>@subjkit.KitRepled</td>
-            </tr>
-        }
-    </table>
-</div>
+@*  *@
 
 <input type="button" class="btn no-print" onClick="window.print()" value="Print" />
 <input type="button" class="btn no-print" value="Back" onclick="window.location='@Url.Action("RandHome","Rand")'" style="background-color: #007bff; color: White;" />

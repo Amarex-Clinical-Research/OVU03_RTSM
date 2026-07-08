@@ -65,54 +65,6 @@
     </div> &nbsp;
 
 
-    <div class="card mb-4 shadow-sm" style="width: 350px; display:inline-block">
-        <div class="card-header">  <b>Subject Visits</b></div>
-        <div class="card-body">
-            <div class="card-text">
-                View or download a comprehensive report that list all subjects and their visits.
-            </div>
-            <br />
-            <br />
-            <button class="btn" onclick="window.location='@Url.Action("SubjectVisitReport", "Reports")'" style="margin-bottom:4px;">  View</button>&nbsp;
-            <button onclick="window.location='@Url.Action("SubjectVisitReportExcel", "Reports")'" class="btn" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp; Download</button>
-
-        </div>
-
-    </div>&nbsp;
-
-
-
-    <div class="card mb-4 shadow-sm" style="width: 350px; display:inline-block">
-        <div class="card-header">  <b>Site IP</b></div>
-        <div class="card-body">
-            <div class="card-text">
-                View or Download a report that shows the comperhensive details of IP at the Sites.
-            </div>
-            <br />
-            <br />
-            <button class="btn" onclick="window.location='@Url.Action("SiteIPReport", "Reports")'" style="margin-bottom:4px;">  View</button>&nbsp;
-            <button onclick="window.location='@Url.Action("SiteIPReportExcel", "Reports")'" class="btn" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp; Download</button>
-
-        </div>
-    </div>
-    &nbsp;
-    @if ((_httpContext.HttpContext.Session.GetString("sesCenter") == "(All)" && _httpContext.HttpContext.Session.Get("sesProjectManagement") != null) || (_httpContext.HttpContext.Session.GetString("sesCenter") == "(All)" && _httpContext.HttpContext.Session.Get("sesTrialsStatusReports") != null))
-    {
-        <div class="card mb-4 shadow-sm" style="width: 350px; display:inline-block">
-            <div class="card-header">  <b>IP Depot</b></div>
-            <div class="card-body">
-                <div class="card-text">
-                    View or Download a report that shows the comperhensive details of IP at the Depot.
-                </div>
-                <br />
-                <br />
-                <button class="btn" onclick="window.location='@Url.Action("DepotIPReport", "Reports")'" style="margin-bottom:4px;">  View</button>&nbsp;
-                <button onclick="window.location='@Url.Action("DepotIPReportExcel", "Reports")'" class="btn" style="background-color:#008000;"><img src="~/images/excel-3-24.png" /> &nbsp; Download</button>
-
-            </div>
-        </div>
-    }
-    &nbsp;
 
 </div>
 

@@ -271,25 +271,7 @@
                             </div>
 
                         }
-                        @if ((_httpContext.HttpContext.Session.GetString("sesCenter") == "(All)" && _httpContext.HttpContext.Session.Get("sesProjectManagement") != null) || (_httpContext.HttpContext.Session.GetString("sesCenter") == "(All)" && _httpContext.HttpContext.Session.Get("sesTrialsStatusReports") != null))
-                        {
-                            <div class="row" style="display: block; background-color: #6c757d1f; margin-bottom: 2px">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5>Depot IP</h5>
-                                    </div>
-                                    <div>
-                                        <a href="@Url.Action("DepotIPReport", "Reports")" class="btn" style="margin-bottom: 4px;" data-toggle="tooltip" data-placement="Top" title="View IP Depot Report">
-                                            <i class="bi bi-search"></i>
-                                        </a>
-
-                                        <a href="@Url.Action("DepotIPReportExcel", "Reports")" class="btn" style="margin-bottom: 4px; background-color: #008000;" data-toggle="tooltip" data-placement="Top" title="Download Report">
-                                            <img src="~/images/excel-3-24.png" />
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                       
                     </div>
                 }
                 <!--<div style="clear: both;"></div>--> <!-- Clear float to ensure proper layout -->

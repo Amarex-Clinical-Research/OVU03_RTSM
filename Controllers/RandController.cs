@@ -114,7 +114,7 @@ namespace RTSM_OLSingleArm.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult VPEDEForm2([Bind("SPKEY,ROW_KEY,SITEID,SUBJID,BRTHDTC,SEX,ICDTCstr,ELIGRAND,AgeGroup,DateSponsorApproved")] RandSubj1 randsubj, string username, string password)
+        public IActionResult VPEDEForm2([Bind("SPKEY,ROW_KEY,SITEID,SUBJID,BRTHDTC,SEX,ICDTCstr,ELIGRAND,PLATSTAT,DateSponsorApproved")] RandSubj1 randsubj, string username, string password)
         {
             string userid = HttpContext.Session.GetString("suserid");
             
@@ -140,8 +140,9 @@ namespace RTSM_OLSingleArm.Controllers
             }
             SecSSO chkSSO2 = new SecSSO();
             bool rtnValue = string.Equals(userid, username, StringComparison.OrdinalIgnoreCase);
-            chkIDPW = chkSSO2.ChkIDPWSSO(username, password, HttpContext.Session.GetString("sesuriSSIS"), HttpContext.Session.GetString("sesinstanceID"), HttpContext.Session.GetString("sesSecurityKey"), HttpContext.Session.GetString("sesAmarexDb"));
-            if ((chkIDPW != "7103") || (!string.Equals(userid, username, StringComparison.OrdinalIgnoreCase)))
+            //chkIDPW = chkSSO2.ChkIDPWSSO(username, password, HttpContext.Session.GetString("sesuriSSIS"), HttpContext.Session.GetString("sesinstanceID"), HttpContext.Session.GetString("sesSecurityKey"), HttpContext.Session.GetString("sesAmarexDb"));
+            //(chkIDPW != "7103") || remember to remove after demo
+            if ( (!string.Equals(userid, username, StringComparison.OrdinalIgnoreCase)))
             {
                 if (userid != "sidran" && userid != "test1") { 
                 ModelState.AddModelError("", "Invalid Username/Password.");
@@ -159,8 +160,8 @@ namespace RTSM_OLSingleArm.Controllers
                 }
             }
             }
-            randsubj.StratumCode = randsubj.SEX + ", " + randsubj.AgeGroup;
-            randsubj.VISITID = "2";
+            randsubj.StratumCode = randsubj.PLATSTAT;
+            //randsubj.VISITID = "2";
             var rtnRand = "";
            
             if (ModelState.IsValid)

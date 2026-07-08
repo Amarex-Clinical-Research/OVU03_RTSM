@@ -791,7 +791,7 @@ namespace RTSM_OLSingleArm.Controllers
         {
             SiteInfo tempRep = new SiteInfo();
             tempRep.STSKEY = STSKEY;
-            string sql = "SELECT STSKEY, SITEID, INVNAME, SITENAME, ADDR1, ADDR2, CITY, STATE, ZIPCODE, COUNTRY, PHONE, FAX, EMAIL, SpecialInstructions, AMAREX_COMM FROM ShipToSite WHERE STSKEY = @STSKEY";
+            string sql = "SELECT STSKEY, SITEID, INVNAME, SITENAME, ADDR1, ADDR2, CITY, STATE, ZIPCODE, COUNTRY, PHONE, FAX, EMAIL, SpecialInstructions, AMAREX_COMM, LASTSUBJ FROM ShipToSite WHERE STSKEY = @STSKEY";
             connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
             SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand(sql, conn);
@@ -826,6 +826,7 @@ namespace RTSM_OLSingleArm.Controllers
                    
                     tempRep.SpecialInstructions = rdr["SpecialInstructions"].ToString();
                     tempRep.AMAREX_COMM = rdr["AMAREX_COMM"].ToString();
+                    tempRep.LASTSUBJ = rdr["LASTSUBJ"].ToString();
                 }
                 rdr.Close();
 
@@ -843,13 +844,13 @@ namespace RTSM_OLSingleArm.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditSite(int STSKEY, string SITENAME, string SITEID, string INVNAME, string ADDR1, string ADDR2, string CITY, string STATE, string USSTATE, string ZIPCODE, string PHONE, string FAX, string EMAIL, string SpecialInstructions, string AMAREX_COMM, string COUNTRY)
+        public IActionResult EditSite(int STSKEY, string SITENAME, string SITEID, string INVNAME, string ADDR1, string ADDR2, string CITY, string STATE, string USSTATE, string ZIPCODE, string PHONE, string FAX, string EMAIL, string SpecialInstructions, string AMAREX_COMM, string COUNTRY, string LASTSUBJ)
         {
            
            
             string userid = HttpContext.Session.GetString("suserid");
            
-            string sql = "Update ShipToSite set SITEID = @SITEID, CHANGEDATE = SYSDATETIME(), CHANGEUSER = @CHANGEUSER, SITENAME = @SITENAME, INVNAME = @INVNAME, ADDR1 = @ADDR1, ADDR2 = @ADDR2, CITY = @CITY, STATE = @STATE, ZIPCODE = @ZIPCODE, COUNTRY = @COUNTRY, PHONE = @PHONE, FAX = @FAX, EMAIL = @EMAIL, SpecialInstructions = @SpecialInstructions, AMAREX_COMM = @AMAREX_COMM  where STSKEY = @STSKEY";
+            string sql = "Update ShipToSite set SITEID = @SITEID, CHANGEDATE = SYSDATETIME(), CHANGEUSER = @CHANGEUSER, SITENAME = @SITENAME, INVNAME = @INVNAME, ADDR1 = @ADDR1, ADDR2 = @ADDR2, CITY = @CITY, STATE = @STATE, ZIPCODE = @ZIPCODE, COUNTRY = @COUNTRY, PHONE = @PHONE, FAX = @FAX, EMAIL = @EMAIL, SpecialInstructions = @SpecialInstructions, AMAREX_COMM = @AMAREX_COMM, LASTSUBJ = @LASTSUBJ  where STSKEY = @STSKEY";
             connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
             SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectionString);
             //if (COUNTRY != "USA" && COUNTRY != "US" && COUNTRY != "United States of America" && COUNTRY != "U.S.")
@@ -882,6 +883,7 @@ namespace RTSM_OLSingleArm.Controllers
                 cmd.Parameters.AddWithValue("@SpecialInstructions", (object)SpecialInstructions ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@AMAREX_COMM", (object)AMAREX_COMM ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@CHANGEUSER", userid);
+                cmd.Parameters.AddWithValue("@LASTSUBJ", LASTSUBJ);
                 cmd.ExecuteNonQuery();
             }
             

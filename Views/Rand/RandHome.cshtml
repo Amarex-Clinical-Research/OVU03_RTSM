@@ -121,7 +121,7 @@
                                     </td>
                                     <td>
                                         @*<input type="submit" class="btn" value="Randomize" @disRand style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("VPEDEForm2","Rand", new {ROW_KEY = item.ROW_KEY})', '_parent')" />*@
-                                        @if (ViewBag.Rand == "Rand Enabled" && ViewBag.SiteRand == "Rand Enabled" && ViewBag.StopAt != "Stop")
+                                        @if (ViewBag.SiteRand == "Rand Enabled" && ViewBag.StopAt != "Stop")
                                         {
 
                                             <input type="submit" class="btn" value="Randomize" @disRand style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("VPEDEForm2","Rand", new {ROW_KEY = item.ROW_KEY})', '_parent')" />
@@ -152,8 +152,9 @@
                                     <td>
                                         @Html.DisplayFor(modelItem => item.STATUS_INFO)
                                     </td>
+                                    @*ViewBag.Rand == "Rand Enabled" &&*@
                                     <td>
-                                        @if (ViewBag.Rand == "Rand Enabled" && ViewBag.SiteRand == "Rand Enabled" && ViewBag.StopAt != "Stop")
+                                        @if ( ViewBag.SiteRand == "Rand Enabled" && ViewBag.StopAt != "Stop")
                                         {
 
                                             <input type="submit" class="btn" value="Randomize" @disRand style="background-color: #e95420; color: white;" onclick="window.open('@Url.Action("VPEDEForm2","Rand", new {ROW_KEY = item.ROW_KEY})', '_parent')" />

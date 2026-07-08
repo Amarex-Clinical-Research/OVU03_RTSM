@@ -123,7 +123,6 @@
                     <select id="genderSelect" class="CustomInput" asp-for="@Model.SEX" name="SEX" style="width: 500px; padding: .375rem .75rem" required>
                         <option value=""></option>
                         <option value="Female">Female</option>
-                        <option value="Male">Male</option>
                     </select>
                     @*<span asp-validation-for="SEX" class="text-danger"></span>*@
                 </div>
@@ -137,12 +136,11 @@
                     @*<span asp-validation-for="ELIGRAND" class="text-danger"></span>*@
                 </div>
                 <div class="form-group">
-                    <label>Age Group<span style="color: red;"> *</span></label><span id="ageError" class="text-danger" style="display: none;"></span> <br />
-                    <select id="AgeGroup" class="CustomInput" asp-for="@Model.AgeGroup" name="AgeGroup" style="width: 500px; padding: .375rem .75rem" required>
+                    <label>Platinum Status<span style="color: red;"> *</span></label><span id="ageError" class="text-danger" style="display: none;"></span> <br />
+                    <select id="AgeGroup" class="CustomInput" asp-for="@Model.PLATSTAT" name="PLATSTAT" style="width: 500px; padding: .375rem .75rem" required>
                         <option value=""></option>
-                        <option value="Age<40">Age LT 40</option>
-                        <option value="40>=Age<=60">40 GE Age LE 60</option>
-                        <option value="Age>60">Age GT 60</option>
+                        <option value="platinum-resistant">Platinum-Resistant</option>
+                        <option value="platinum-ineligible ">Platinum-Ineligible </option>
                     </select>
                     @*<span asp-validation-for="AgeGroup" class="text-danger"></span>*@
                 </div>
@@ -224,17 +222,7 @@
             var currentYear = new Date().getFullYear();
             var age = currentYear - birthYearInput;
 
-            // Validate age group
-            if ((selectedAgeGroup === "Age<40" && age >= 40) ||
-                (selectedAgeGroup === "40>=Age<=60" && (age < 40 || age > 60)) ||
-                (selectedAgeGroup === "Age>60" && age <= 60)) {
-                isValid = false;
-                $(this).addClass("is-invalid");
-                $("#ageError").show().text(" Age group is incorrect");
-            }
-            else {
-                $("#ageError").hide();
-            }
+         
             var icdtDateStr = $("#datepicker").val();
             var ICDTDate = new Date(icdtDateStr);
             var SponsorDateStr = $("#datepicker1").val();

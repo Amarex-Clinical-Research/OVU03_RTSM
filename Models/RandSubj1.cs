@@ -35,7 +35,7 @@ namespace Webview_IRT.Models
         public DateTime SCRNDTC { get; set; }
         public string SCRNDTCstr { get; set; }
         //[Required(ErrorMessage = "Age Group is a required field")]
-        public string AgeGroup { get; set; }
+        public string PLATSTAT { get; set; }
         //[Required(ErrorMessage = "Eligibility is a required field")]
         public string ELIGRAND { get; set; }
         public string StratumCode { get; set; }
@@ -97,10 +97,10 @@ namespace Webview_IRT.Models
                         pICDTC.Value = randSubjInfo.ICDTCstr;
                         cmd.Parameters.Add(pICDTC);
                     }
-                    SqlParameter AgeGroup = cmd.CreateParameter();
-                    AgeGroup.ParameterName = "@AgeGroup";
-                    AgeGroup.Value = randSubjInfo.AgeGroup;
-                    cmd.Parameters.Add(AgeGroup);
+                    SqlParameter PLATSTAT = cmd.CreateParameter();
+                    PLATSTAT.ParameterName = "@PLATSTAT";
+                    PLATSTAT.Value = randSubjInfo.PLATSTAT;
+                    cmd.Parameters.Add(PLATSTAT);
                     SqlParameter ELIGRAND = cmd.CreateParameter();
                     ELIGRAND.ParameterName = "@ELIGRAND";
                     ELIGRAND.Value = randSubjInfo.ELIGRAND;
@@ -184,22 +184,16 @@ namespace Webview_IRT.Models
                 msgBody += "Year of Birth: " + randSubjInfo.BRTHDTC + Environment.NewLine;
                 msgBody += "Sex: " + randSubjInfo.SEX + Environment.NewLine;
                 msgBody += "Informed consent date: " + randSubjInfo.ICDTCstr + Environment.NewLine;
-                msgBody += "Age Group: " + randSubjInfo.AgeGroup + Environment.NewLine;
+                msgBody += "Platinum Status: " + randSubjInfo.PLATSTAT + Environment.NewLine;
+                var arm = "";
+                arm = GetARM(connectionString, randSubjInfo.SPKEY.ToString(), randSubjInfo.ROW_KEY.ToString());
+                msgBody += "Treatment: " + arm + Environment.NewLine;
                 var sqlState = "";
                 sqlState = "SELECT * FROM [BIL_IP_RANGE] WHERE ([ROW_KEY] = " + randSubjInfo.ROW_KEY + ") ORDER BY [KitNumber]";
                 DataTable dt2;
                 dt2 = GetTblSql(connectionString, sqlState);
-                if (dt2.Rows.Count > 0)
-                {
-                    msgBody += "Randomized by: " + dt2.Rows[0]["ASSIGNED_BY"].ToString() + Environment.NewLine;
-                    msgBody += "Randomized date: " + (DateTime)dt2.Rows[0]["ASSIGNMENT_DATE"] + Environment.NewLine;
-                    msgBody += "Visit: " + dt2.Rows[0]["VISIT"].ToString() + Environment.NewLine;
-                    msgBody += "KitNumber: " + dt2.Rows[0]["KitNumber"].ToString() + Environment.NewLine;
-    
-                    msgBody += "ExpiryDate: " + dt2.Rows[0]["IPLblShipExpiryDate"].ToString() + Environment.NewLine;
-                    msgBody += "LotNo: " + dt2.Rows[0]["IPLblShipLotNo"].ToString() + Environment.NewLine;
-
-                }
+               
+                
                 if (retVal2 == "")
                 {
                     retVal2 = "jacobk@amarexcro.com";
@@ -213,9 +207,8 @@ namespace Webview_IRT.Models
                     retVal2 += "; " + retSite;
                 }
                 genAct.SendMail(connectionString, retVal2 + ";" + useremail, subject, msgBody);
-                var arm = "";
-                arm = GetARM(connectionString, randSubjInfo.SPKEY.ToString(), randSubjInfo.ROW_KEY.ToString());
-                RecVisit(connectionString, randSubjInfo.SPKEY.ToString(), randSubjInfo.ROW_KEY.ToString(), randSubjInfo.SITEID, randSubjInfo.SUBJID, uid, "Visit 2", dt2.Rows[0]["KitNumber"].ToString(), arm, "Yes", "");
+                
+                //RecVisit(connectionString, randSubjInfo.SPKEY.ToString(), randSubjInfo.ROW_KEY.ToString(), randSubjInfo.SITEID, randSubjInfo.SUBJID, uid, "Visit 2", dt2.Rows[0]["KitNumber"].ToString(), arm, "Yes", "");
 
                 string val = CheckAutoResupply(connectionString, randSubjInfo.SPKEY, randSubjInfo.SITEID);
                 if ((val == "") && CheckStudyAutoRe(connectionString, randSubjInfo.SPKEY) == "Enabled")
@@ -298,7 +291,7 @@ namespace Webview_IRT.Models
                             {
                                 getToRand.BRTHDTC = reader["BRTHDTC"].ToString();
                                 getToRand.SEX = reader["SEX"].ToString();
-                                getToRand.AgeGroup = reader["AgeGroup"].ToString();
+                                getToRand.PLATSTAT = reader["PLATSTAT"].ToString();
                                 getToRand.SCRNDTCstr = reader["SCRNDTC"].ToString();
                                 getToRand.ELIGRAND = reader["ELIGRAND"].ToString();
                                 getToRand.RANDBY = reader["RANDBY"].ToString();

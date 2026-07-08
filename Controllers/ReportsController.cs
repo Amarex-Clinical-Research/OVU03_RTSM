@@ -32,7 +32,7 @@ namespace RTSM_OLSingleArm.Controllers
         public IActionResult SubjectReport()
         { //since the study table does not currently contain all of the codes to allow for joining I full joined all the log tables on project codes and will just take the relavent info from each
           // string sql = "select * from PROJECT_TEAM_LOG a full join ClinProjectLogs b on a.PROJECTCODE = b.ProjectCode full join DMProjectLogs c on a.PROJECTCODE = c.AmaProjCode full join ITProjectLogs d on a.PROJECTCODE = d.ProjectCode full join MWProjectLogs e on a.PROJECTCODE = e.ProjectCode full join RAProjectLogs f on a.PROJECTCODE = f.ProjectCode full join SafetyProjectLogs g on a.PROJECTCODE = g.StudyCode";
-            string sql = "SELECT ARM, ARMCD, SITEID, SUBJID, BRTHDTC, SEX, AgeGroup, ICDTC,  STATUS_INFO, PMCOMDATE, ADDDATE, ADDUSER, DATE_RAND, RANDBY, SFDATE FROM BIL_SUBJ WHERE (SITEID = '" + HttpContext.Session.GetString("sesCenter") + "' OR '" + HttpContext.Session.GetString("sesCenter") + "' = '(All)') AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " ORDER BY SITEID   ";
+            string sql = "SELECT ARM, ARMCD, SITEID, SUBJID, BRTHDTC, SEX, ICDTC,  STATUS_INFO, PMCOMDATE, ADDDATE, ADDUSER, DATE_RAND, RANDBY, SFDATE FROM BIL_SUBJ WHERE (SITEID = '" + HttpContext.Session.GetString("sesCenter") + "' OR '" + HttpContext.Session.GetString("sesCenter") + "' = '(All)') AND SPKEY = " + HttpContext.Session.GetString("sesSPKey") + " ORDER BY SITEID   ";
             connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand(sql, conn);
@@ -47,16 +47,16 @@ namespace RTSM_OLSingleArm.Controllers
             worksheet.Cell(1, 2).Value = "Subject ID";
             worksheet.Cell(1, 3).Value = "Year of Birth";
             worksheet.Cell(1, 4).Value = "Sex";
-            worksheet.Cell(1, 5).Value = "Age Group";
-            worksheet.Cell(1, 6).Value = "Informed Consent Date";
-            worksheet.Cell(1, 7).Value = "Status";
+            //worksheet.Cell(1, 5).Value = "Age Group";
+            worksheet.Cell(1, 5).Value = "Informed Consent Date";
+            worksheet.Cell(1, 6).Value = "Status";
             //worksheet.Cell(1, 8).Value = "Screened Date";
-            worksheet.Cell(1, 8).Value = "Screened By";
-            worksheet.Cell(1, 9).Value = "Randomization Date";
-            worksheet.Cell(1, 10).Value = "Randomized By";
-            worksheet.Cell(1, 11).Value = "Treatment";
-            worksheet.Cell(1, 12).Value = "Treatment Group";
-            worksheet.Cell(1, 13).Value = "Screen Failed Date";
+            worksheet.Cell(1, 7).Value = "Screened By";
+            worksheet.Cell(1, 8).Value = "Randomization Date";
+            worksheet.Cell(1, 9).Value = "Randomized By";
+            worksheet.Cell(1, 10).Value = "Treatment";
+            worksheet.Cell(1, 11).Value = "Treatment Group";
+            worksheet.Cell(1, 12).Value = "Screen Failed Date";
            
 
 
@@ -68,16 +68,16 @@ namespace RTSM_OLSingleArm.Controllers
                 worksheet.Cell(i, 2).Value = !Convert.IsDBNull(rdr["SUBJID"]) ? rdr["SUBJID"].ToString() : null;
                 worksheet.Cell(i, 3).Value = !Convert.IsDBNull(rdr["BRTHDTC"]) ? rdr["BRTHDTC"].ToString() : null;
                 worksheet.Cell(i, 4).Value = !Convert.IsDBNull(rdr["SEX"]) ? rdr["SEX"].ToString() : null;
-                worksheet.Cell(i, 5).Value = !Convert.IsDBNull(rdr["AgeGroup"]) ? rdr["AgeGroup"].ToString() : null;
-                worksheet.Cell(i, 6).Value = !Convert.IsDBNull(rdr["ICDTC"]) ? rdr["ICDTC"].ToString() : null;
-                worksheet.Cell(i, 7).Value = !Convert.IsDBNull(rdr["STATUS_INFO"]) ? rdr["STATUS_INFO"].ToString() : null;
+                //worksheet.Cell(i, 5).Value = !Convert.IsDBNull(rdr["AgeGroup"]) ? rdr["AgeGroup"].ToString() : null;
+                worksheet.Cell(i, 5).Value = !Convert.IsDBNull(rdr["ICDTC"]) ? rdr["ICDTC"].ToString() : null;
+                worksheet.Cell(i, 6).Value = !Convert.IsDBNull(rdr["STATUS_INFO"]) ? rdr["STATUS_INFO"].ToString() : null;
                 //worksheet.Cell(i, 8).Value = !Convert.IsDBNull(rdr["SCRNDTC"]) ? rdr["SCRNDTC"].ToString() : null;
-                worksheet.Cell(i, 8).Value = !Convert.IsDBNull(rdr["ADDUSER"]) ? rdr["ADDUSER"].ToString() : null;
-                worksheet.Cell(i, 9).Value = !Convert.IsDBNull(rdr["DATE_RAND"]) ? rdr["DATE_RAND"].ToString() : null;
-                worksheet.Cell(i, 10).Value = !Convert.IsDBNull(rdr["RANDBY"]) ? rdr["RANDBY"].ToString() : null;
-                worksheet.Cell(i, 11).Value = !Convert.IsDBNull(rdr["ARM"]) ? rdr["ARM"].ToString() : null;
-                worksheet.Cell(i, 12).Value = !Convert.IsDBNull(rdr["ARMCD"]) ? rdr["ARMCD"].ToString() : null;
-                worksheet.Cell(i, 13).Value = !Convert.IsDBNull(rdr["SFDATE"]) ? rdr["SFDATE"].ToString() : null;
+                worksheet.Cell(i, 7).Value = !Convert.IsDBNull(rdr["ADDUSER"]) ? rdr["ADDUSER"].ToString() : null;
+                worksheet.Cell(i, 8).Value = !Convert.IsDBNull(rdr["DATE_RAND"]) ? rdr["DATE_RAND"].ToString() : null;
+                worksheet.Cell(i, 9).Value = !Convert.IsDBNull(rdr["RANDBY"]) ? rdr["RANDBY"].ToString() : null;
+                worksheet.Cell(i, 10).Value = !Convert.IsDBNull(rdr["ARM"]) ? rdr["ARM"].ToString() : null;
+                worksheet.Cell(i, 11).Value = !Convert.IsDBNull(rdr["ARMCD"]) ? rdr["ARMCD"].ToString() : null;
+                worksheet.Cell(i, 12).Value = !Convert.IsDBNull(rdr["SFDATE"]) ? rdr["SFDATE"].ToString() : null;
                 i++;
 
             }
@@ -191,7 +191,7 @@ namespace RTSM_OLSingleArm.Controllers
 
             XLWorkbook wb = new XLWorkbook();
             connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
-            DataTable dt = CreateDataTable("SELECT SITEID AS 'Site ID', SUBJID AS 'Subject ID', BRTHDTC AS 'Year of Birth', SEX AS 'Sex', AgeGroup as 'Age Group', ICDTC AS 'Informed Consent Date', STATUS_INFO AS 'Status', ADDUSER AS 'Screened By', DATE_RAND AS 'Randomization Date', RANDBY AS 'Randomized By', ARM AS 'Treatment', ARMCD AS 'Treatment Group', SFDATE As 'Screen Failed Date ' FROM BIL_SUBJ WHERE (SITEID = '" + HttpContext.Session.GetString("sesCenter") + "' OR '" + HttpContext.Session.GetString("sesCenter") + "' = '(All)') AND SPKEY  = " + HttpContext.Session.GetString("sesSPKey") + " ORDER BY SITEID   ", connectionString);
+            DataTable dt = CreateDataTable("SELECT SITEID AS 'Site ID', SUBJID AS 'Subject ID', BRTHDTC AS 'Year of Birth', SEX AS 'Sex', ICDTC AS 'Informed Consent Date', STATUS_INFO AS 'Status', ADDUSER AS 'Screened By', DATE_RAND AS 'Randomization Date', RANDBY AS 'Randomized By', ARM AS 'Treatment', ARMCD AS 'Treatment Group', SFDATE As 'Screen Failed Date ' FROM BIL_SUBJ WHERE (SITEID = '" + HttpContext.Session.GetString("sesCenter") + "' OR '" + HttpContext.Session.GetString("sesCenter") + "' = '(All)') AND SPKEY  = " + HttpContext.Session.GetString("sesSPKey") + " ORDER BY SITEID   ", connectionString);
             wb.Worksheets.Add(dt, "Subject Status Report").Columns().AdjustToContents();
             using (var stream = new MemoryStream())
             {

@@ -490,8 +490,8 @@ namespace RTSM_OLSingleArm.Controllers
                 TempData["ErrorMessage"] = Message;
                 return View(Request);
             }
-
-            if (IsValidUser(username, password) && (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) ))
+            //IsValidUser(username, password) && 
+            if ((string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) ))
             {
                 connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
                 using (SqlConnection con = new SqlConnection(connectionString))
