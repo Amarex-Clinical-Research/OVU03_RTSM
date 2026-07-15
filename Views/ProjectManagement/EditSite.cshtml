@@ -55,7 +55,7 @@ const { title } = require("node:process");
             <input asp-for="@Model.INVNAME" name="INVNAME" style="width:500px;padding:.375rem .75rem" class="CustomInput" />
         </div>
         <div class="form-group">
-            <label>Last Used Subjid by Site (example: 01-005 enter 005) *<span style="color: red;"> *</span></label><br />
+            <label>Last Used Subjid by Site (example: 01-005 enter 005)<span style="color: red;"> *</span></label><br />
             <input asp-for="@Model.LASTSUBJ" name="LASTSUBJ" required pattern="[0-9]{3}" title="Please enter a 3 digit number" style="width:500px;padding:.375rem .75rem" class="CustomInput" />
         </div>
         <br />
