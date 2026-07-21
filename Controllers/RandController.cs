@@ -167,6 +167,7 @@ namespace RTSM_OLSingleArm.Controllers
             if (ModelState.IsValid)
             {
                 //var rtnRand = "";
+                //Will probably do the handeling for the measurable check in the randsubject model instead of here
                 rtnRand = procRand.AssgnRand2(HttpContext.Session.GetString("sesVpeRandDbConnStr"), userid, randsubj.SPKEY.ToString(), randsubj, HttpContext.Session.GetString("sesAmarexDbConnStr"));
                 if (rtnRand == "OK")
                 {

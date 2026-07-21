@@ -47,9 +47,13 @@ namespace Webview_IRT.Models
         public string DateSponsorApproved { get; set; }
         public string ARM { get; set; }
         public string ARMCD { get; set; }
+
+        public string measure { get; set; }
+        
     }
     public class RandSubj1BllDll
     {
+        //I think the best way to do it is if measurable is set to no then look for where the stratum code is equal to null otherwise pass the platinum staus as the stratum code
         public string AssgnRand2(string connectionString, string uid, string spkey, RandSubj1 randSubjInfo, string amarexDbConnStr)
         {
             var retVal = "OK";
