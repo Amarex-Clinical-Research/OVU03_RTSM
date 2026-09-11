@@ -478,6 +478,8 @@ namespace RTSM_OLSingleArm.Controllers
         [HttpPost]
         public IActionResult ScreenReg(Subject Request, string username, string password, string SiteID)
         {
+            SecSSO chkSSO2 = new SecSSO();
+            string chkIDPW = chkSSO2.ChkIDPWSSO(username, password, HttpContext.Session.GetString("sesuriSSIS"), HttpContext.Session.GetString("sesinstanceID"), HttpContext.Session.GetString("sesSecurityKey"), HttpContext.Session.GetString("sesAmarexDb"));
             int SPKEY = int.Parse(HttpContext.Session.GetString("sesSPKey"));
             string userid = HttpContext.Session.GetString("suserid");
             string SITEID = HttpContext.Session.GetString("sesCenter");
@@ -491,7 +493,7 @@ namespace RTSM_OLSingleArm.Controllers
                 return View(Request);
             }
             //IsValidUser(username, password) && 
-            if ((string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) ))
+            if (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) && chkIDPW == "7103")
             {
                 connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
                 using (SqlConnection con = new SqlConnection(connectionString))

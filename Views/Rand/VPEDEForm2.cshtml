@@ -152,11 +152,11 @@
                             <option value=""></option>
                             <option value="platinum-resistant">Platinum-Resistant</option>
                             <option value="platinum-ineligible ">Platinum-Ineligible</option>
-                            <option value="platinum-refractory ">Platinum-Refractory</option>
+                            <option value="platinum refractory ">Platinum-Refractory</option>
                         </select>
                         @*<span asp-validation-for="AgeGroup" class="text-danger"></span>*@
                     </div>
-                </div>              
+                </div>
 
                 <div class="form-group1">
                     <label>Sponsor Approval Date (if applicable)</label><span id="Error" class="text-danger" style="display: none;"></span> <br />
@@ -207,13 +207,24 @@
 </form>
 
 <script>
+    //update this so on page redirect it stays open or closed depnding on value
     $(document).ready(function () {
         $('#platDiv').hide();
+        //add in a check for what it is on post back to unhide the div
+        var measureSelect = $("#measureSelect").val();
+        if (measureSelect === 'Yes') {
+            $('#platDiv').animate({ "opacity": "show" }, 500); // Unhide
+        } else {
+            $('#platDiv').animate({ "opacity": "hide" }, 500); // Hide
+        }
+
+
         $('#measureSelect').change(function () {
             if ($(this).val() === 'Yes') {
                 $('#platDiv').animate({ "opacity": "show" }, 500); // Unhide
             } else {
-                $('#platDiv').animate({ "opacity": "hide"}, 500); // Hide
+                $('#platDiv').animate({ "opacity": "hide" }, 500); // Hide
+                $("#platSelect").val('');
             }
         });
     });
@@ -250,7 +261,7 @@
                 $("#platSelect").removeAttr("required");
             }
             else if (measureSelect === "Yes" && platSelect !== "") {
-                isValid = true;              
+                isValid = true;
                 $("#platSelect").removeClass("is-invalid");
                 //$("#platSelect").addAttr("required");
             }
@@ -260,11 +271,17 @@
                 $("#platSelect").addAttr("required");
             }
 
-            // Calculate age based on the current year
-            var currentYear = new Date().getFullYear();
-            var age = currentYear - birthYearInput;
+            var ELIGRANDValue = $("#ELIGRAND").val();
+            console.log("Eligibility value:", ELIGRANDValue);
+            if ($("#ELIGRAND").val() === "") {
+                isValid = false;
+                $("#ELIGRAND").addClass("is-invalid");
+            } else {
 
-         
+                $("#ELIGRAND").removeClass("is-invalid");
+            }
+
+
             var icdtDateStr = $("#datepicker").val();
             var ICDTDate = new Date(icdtDateStr);
             var SponsorDateStr = $("#datepicker1").val();
@@ -326,10 +343,6 @@
         border: 2px solid black !important; /* Add !important to ensure the style is applied */
     }
 </style>
-
-
-
-
 
 
 

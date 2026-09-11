@@ -54,6 +54,8 @@ namespace Webview_IRT.Models
     public class RandSubj1BllDll
     {
         //I think the best way to do it is if measurable is set to no then look for where the stratum code is equal to null otherwise pass the platinum staus as the stratum code
+        //Idea is have two rand stored procedures one for with measureable and without
+        // the DB has two rand stored procedures that will switch depending on if you pick no or yes for measurable disease
         public string AssgnRand2(string connectionString, string uid, string spkey, RandSubj1 randSubjInfo, string amarexDbConnStr)
         {
             var retVal = "OK";
@@ -63,7 +65,14 @@ namespace Webview_IRT.Models
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "BLLVpeSelUpdtRand";
+                    if(randSubjInfo.measure == "Yes") { // switching between the stratification and no 
+                        cmd.CommandText = "BLLVpeSelUpdtRand";
+                    }
+                    else
+                    {
+                        cmd.CommandText = "BLLVpeSelUpdtRandNoStrat";
+                    }
+                   
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlParameter pUID = cmd.CreateParameter();
                     pUID.ParameterName = "@USERID";
@@ -101,18 +110,31 @@ namespace Webview_IRT.Models
                         pICDTC.Value = randSubjInfo.ICDTCstr;
                         cmd.Parameters.Add(pICDTC);
                     }
-                    SqlParameter PLATSTAT = cmd.CreateParameter();
-                    PLATSTAT.ParameterName = "@PLATSTAT";
-                    PLATSTAT.Value = randSubjInfo.PLATSTAT;
-                    cmd.Parameters.Add(PLATSTAT);
+
+                    //SqlParameter MEASURE = cmd.CreateParameter();
+                    //MEASURE.ParameterName = "@MEASURE";
+                    //MEASURE.Value = randSubjInfo.measure;
+                    //cmd.Parameters.Add(MEASURE);
+
+                    if (randSubjInfo.measure == "Yes")
+                    { // switching between the stratification and no 
+                        SqlParameter PLATSTAT = cmd.CreateParameter();
+                        PLATSTAT.ParameterName = "@PLATSTAT";
+                        PLATSTAT.Value = randSubjInfo.PLATSTAT;
+                        cmd.Parameters.Add(PLATSTAT);
+                    }
+                    
                     SqlParameter ELIGRAND = cmd.CreateParameter();
                     ELIGRAND.ParameterName = "@ELIGRAND";
                     ELIGRAND.Value = randSubjInfo.ELIGRAND;
                     cmd.Parameters.Add(ELIGRAND);
-                    SqlParameter StratumCode = cmd.CreateParameter();
-                    StratumCode.ParameterName = "@StratumCode";
-                    StratumCode.Value = randSubjInfo.StratumCode;
-                    cmd.Parameters.Add(StratumCode);
+                    if (randSubjInfo.measure == "Yes")
+                    {
+                        SqlParameter StratumCode = cmd.CreateParameter();
+                        StratumCode.ParameterName = "@StratumCode";
+                        StratumCode.Value = randSubjInfo.StratumCode;
+                        cmd.Parameters.Add(StratumCode);
+                    }
                     SqlParameter pSPKEY = cmd.CreateParameter();
                     pSPKEY.ParameterName = "@SPKEY";
                     pSPKEY.Value = spkey;
@@ -188,7 +210,13 @@ namespace Webview_IRT.Models
                 msgBody += "Year of Birth: " + randSubjInfo.BRTHDTC + Environment.NewLine;
                 msgBody += "Sex: " + randSubjInfo.SEX + Environment.NewLine;
                 msgBody += "Informed consent date: " + randSubjInfo.ICDTCstr + Environment.NewLine;
-                msgBody += "Platinum Status: " + randSubjInfo.PLATSTAT + Environment.NewLine;
+                msgBody += "Subject has a measurable disease: " + randSubjInfo.measure + Environment.NewLine;
+                if(randSubjInfo.measure == "Yes") // only show if measurable
+                {
+                    msgBody += "Platinum Status: " + randSubjInfo.PLATSTAT + Environment.NewLine;
+                }
+                
+                //msgBody += "Platinum Status: " + randSubjInfo.PLATSTAT + Environment.NewLine;
                 var arm = "";
                 arm = GetARM(connectionString, randSubjInfo.SPKEY.ToString(), randSubjInfo.ROW_KEY.ToString());
                 msgBody += "Treatment: " + arm + Environment.NewLine;

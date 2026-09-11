@@ -114,7 +114,7 @@ namespace RTSM_OLSingleArm.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult VPEDEForm2([Bind("SPKEY,ROW_KEY,SITEID,SUBJID,BRTHDTC,SEX,ICDTCstr,ELIGRAND,PLATSTAT,DateSponsorApproved")] RandSubj1 randsubj, string username, string password)
+        public IActionResult VPEDEForm2([Bind("SPKEY,ROW_KEY,SITEID,SUBJID,BRTHDTC,SEX,ICDTCstr,ELIGRAND,PLATSTAT,DateSponsorApproved,measure")] RandSubj1 randsubj, string username, string password)
         {
             string userid = HttpContext.Session.GetString("suserid");
             
@@ -124,48 +124,25 @@ namespace RTSM_OLSingleArm.Controllers
             RandSubj1BllDll procRand = new RandSubj1BllDll();
             chkValEnt = procRand.ChkValEntryBIL(HttpContext.Session.GetString("sesVpeRandDbConnStr"), randsubj.SPKEY.ToString(), randsubj.SITEID, randsubj.SUBJID, randsubj.BRTHDTC, randsubj.SEX);
             var chkVal = procRand.ChkVal(HttpContext.Session.GetString("sesVpeRandDbConnStr"), randsubj.SPKEY.ToString(), randsubj.SITEID, randsubj.SUBJID, randsubj.BRTHDTC, randsubj.SEX);
-            //if (chkValEnt == "NV")
-            //{
-            //    ModelState.AddModelError("", "Can not Validate Entry with a Screen Subject.  Confirm Subject ID, Year of Birth, Sex.");
-            //    chkValEnt = "Can not Validate Entry with a Screen Subject.  Confirm Subject ID, Year of Birth, Sex.";
-            //    TempData["ErrorMessage1"] = "Unable to validate information entered with previously screened subjects. Please confirm entries.";
-            //    chk = "Can not Validate Entry with a Screen Subject.  Confirm Subject ID, Year of Birth, Sex.";
-            //}
-            if (chkVal != "NV")
-            {
-                ModelState.AddModelError("", chkVal);
-                //chkVal = "Can not Validate Entry with a Screen Subject.  Confirm Subject ID, Year of Birth, Sex.";
-                TempData["ErrorMessage1"] = chkVal;
-                chk = chkVal;
-            }
+          
+          
             SecSSO chkSSO2 = new SecSSO();
             bool rtnValue = string.Equals(userid, username, StringComparison.OrdinalIgnoreCase);
-            //chkIDPW = chkSSO2.ChkIDPWSSO(username, password, HttpContext.Session.GetString("sesuriSSIS"), HttpContext.Session.GetString("sesinstanceID"), HttpContext.Session.GetString("sesSecurityKey"), HttpContext.Session.GetString("sesAmarexDb"));
-            //(chkIDPW != "7103") || remember to remove after demo
-            if ( (!string.Equals(userid, username, StringComparison.OrdinalIgnoreCase)))
+            chkIDPW = chkSSO2.ChkIDPWSSO(username, password, HttpContext.Session.GetString("sesuriSSIS"), HttpContext.Session.GetString("sesinstanceID"), HttpContext.Session.GetString("sesSecurityKey"), HttpContext.Session.GetString("sesAmarexDb"));
+            //(chkIDPW != "7103")
+            if (string.Equals(userid, username, StringComparison.OrdinalIgnoreCase) && chkIDPW == "7103") //this password check is broken
             {
-                if (userid != "sidran" && userid != "test1") { 
-                ModelState.AddModelError("", "Invalid Username/Password.");
-                if (chk == "")
+                if (chkVal != "NV")
                 {
-                    chk = "Invalid Username/Password.";
-                    TempData["ErrorMessage1"] = "Invalid Username/Password.";
+                    ModelState.AddModelError("", chkVal);
+                    //chkVal = "Can not Validate Entry with a Screen Subject.  Confirm Subject ID, Year of Birth, Sex.";
+                    TempData["ErrorMessage1"] = chkVal;
+                    chk = chkVal;
                     return View();
                 }
-                else
-                {
-                    chk += "<br /><br />Invalid Username/Password.";
-                    TempData["ErrorMessage1"] = "Invalid Username/Password.";
-                    return View();
-                }
-            }
-            }
-            randsubj.StratumCode = randsubj.PLATSTAT;
-            //randsubj.VISITID = "2";
-            var rtnRand = "";
-           
-            if (ModelState.IsValid)
-            {
+                randsubj.StratumCode = randsubj.PLATSTAT;
+                //randsubj.VISITID = "2";
+                var rtnRand = "";
                 //var rtnRand = "";
                 //Will probably do the handeling for the measurable check in the randsubject model instead of here
                 rtnRand = procRand.AssgnRand2(HttpContext.Session.GetString("sesVpeRandDbConnStr"), userid, randsubj.SPKEY.ToString(), randsubj, HttpContext.Session.GetString("sesAmarexDbConnStr"));
@@ -174,13 +151,25 @@ namespace RTSM_OLSingleArm.Controllers
                     TempData["Message"] = "Subject ID: " + randsubj.SUBJID + " has been successfully randomized.";
                     return this.RedirectToAction("VPEConfirm", new { ROW_KEY = randsubj.ROW_KEY });
                 }
+                else
+                {
+                    TempData["ErrorMessage1"] = rtnRand;              
+                    return View();
+                }
             }
-            if (chk == "")
+            else
             {
-                TempData["ErrorMessage1"] = rtnRand;
+                string errorMessage = "Invalid username or password.";
+                //ViewBag.ErrorMessage = errorMessage;
+                TempData["ErrorMessage1"] = errorMessage;
+                return View();
+                
             }
-            return View();
+           
+                
         }
+
+
         public IActionResult VPEConfirm(string ROW_KEY)
         {
             if (ROW_KEY == null)
