@@ -223,12 +223,10 @@
 
 <ul class="nav nav-tabs" id="StudyTabs">
 
-    <li class="nav-item" style="font-weight:500;">
-        <a class="nav-link active" data-toggle="tab" href="#rand">Biometrics Kit Lists</a>
-    </li>
+    
 
     <li class="nav-item" style="font-weight:500;">
-        <a class="nav-link" data-toggle="tab" href="#screen">Subject Randomization Lists</a>
+        <a class="nav-link active" data-toggle="tab" href="#screen">Subject Randomization Lists</a>
     </li>
     @*<li class="nav-item" style="font-weight:500;">
             <a class="nav-link" data-toggle="tab" href="#Hide">Removed Lists</a>
@@ -239,70 +237,8 @@
 
 <div class="tab-content">
     <!--Bio Kit-->
-    <div id="rand" class="tab-pane fade show active">
-        <br />
-
-        <button id="myBtn" class="btn" onclick="OpenBioModal()">Upload a file</button>
-        <br />
-        <br />
-
-        <div class="search-table-outter wrapper">
-            <table class="table table-striped" id="aeTable">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th style="display: none;">Upload_KEY</th>
-                        <th style="display: none;">Type</th>
-                        <th>File Name</th>
-                        <th>Email Sent</th>
-                        <th>Password Sent</th>
-                        <th>Uploaded by</th>
-                        <th>Uploaded Date</th>
-
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (var i = 0; i < Model.kitupload.Count(); i++)
-                    {
-
-                    <tr data-child-value="@Model.kitupload[i].EmailAddress">
-                        <td class="details-control"></td>
-                        <td style="display: none;"><input type="hidden" value="@Model.kitupload[i].UPLOAD_KEY"></td>
-                        <td style="display: none;"><input type="hidden"  value="@Model.kitupload[i].TYPEUL"></td>
-                        <td>@Model.kitupload[i].FILENAME</td>
-                        <td>@Model.kitupload[i].EMAILSENT</td>
-                        <td>@Model.kitupload[i].CodeSend</td>
-                        <td>@Model.kitupload[i].ADDUSER</td>
-                        <td>@Model.kitupload[i].ADDDATE</td>
-                        <td>
-
-                            <div class="dropdown" id="tableOptions">
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color:transparent; color:black; border:none; content:none; font-size:large;">
-                                    ⋮
-
-                                </button>
-                                <div class="dropdown-menu" style="background-color:white; align-content:center;">
-
-                                    <form action="Download">
-                                        <input type="submit" class="btn" value="Download" style="border:none; background-color:transparent; color:#e95420;" />
-                                        <input hidden readonly value="@Model.kitupload[i].UPLOAD_KEY" name="UPLOAD_KEY" />
-                                        <br />
-                                    </form>
-                                    @*<a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="OpenHideModal(@Model.kitupload[i].UPLOAD_KEY)">Remove</a>*@
-                                    @*<br />*@
-                                    <a class="btn edit" style="color:#e95420; background-color:transparent; border:none; text-align: left; cursor: pointer;" onclick="SendCodeModal(@Model.kitupload[i].UPLOAD_KEY,'@Model.kitupload[i].FILENAME', '@Model.kitupload[i].TYPEUL')">Send Password</a>
-
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div id="screen" class="tab-pane fade">
+   
+    <div id="screen" class="tab-pane fade show active">
         <!--Rand kit>-->
         <br />
         <button id="myBtn1" class="btn" onclick="OpenRandModal()">Upload a file</button>

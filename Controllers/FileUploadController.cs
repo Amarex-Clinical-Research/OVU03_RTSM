@@ -236,7 +236,7 @@ namespace RTSM_OLSingleArm.Controllers
         }
 
 
-        public IActionResult UploadRand(IFormFile File, string comment, string email, bool Enable) 
+        public IActionResult UploadRand(IFormFile File, string comment, string email, bool Enable)
         {
             Enable = true;
             try
@@ -248,6 +248,7 @@ namespace RTSM_OLSingleArm.Controllers
                 email = email.Replace(",", ";");
                 string[] emails = email.Split(';');
 
+                string checkemails = "";
                 foreach (string emailAddress in emails)
                 {
                     // Trim any leading or trailing spaces from the email address
@@ -256,9 +257,17 @@ namespace RTSM_OLSingleArm.Controllers
                     // Check if the trimmed email matches a valid email pattern
                     if (!IsValidEmailAddress(trimmedEmail))
                     {
-                        TempData["ErrorMessage"] = "Invalid email address format: " + trimmedEmail;
-                        return RedirectToAction("FileUploadHome");
+                        checkemails += trimmedEmail + "; ";
+                        //TempData["ErrorMessage"] = "Invalid email address format: " + trimmedEmail;
+                        //return RedirectToAction("FileUploadHome");
                     }
+                }
+
+                if (checkemails != "")
+                {
+
+                    TempData["ErrorMessage"] = "Invalid email address format: " + checkemails;
+                    return RedirectToAction("FileUploadHome");
                 }
                 if (allowedExtensions.Contains(fileExtension))
                 {
@@ -279,8 +288,8 @@ namespace RTSM_OLSingleArm.Controllers
                         bytes = ms.ToArray();
 
                     }
-                        connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
-                        SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString);
+                    connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
+                    SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString);
 
                     if (Enable)
                     {
@@ -310,10 +319,10 @@ namespace RTSM_OLSingleArm.Controllers
 
                         con.Close();
                         string UserName = GetUserName(HttpContext.Session.GetString("suserid"));
-                        string message = "Protocol: " + StudyName() + "\n";
+                        string message = "Protocol: OUS-002 RTSM_UAT" + "\n";
                         message += "Please find the attached kit list document. For security purpose, this document is password-protected, and you'll receive a follow-up email shortly with the password. If not received within an hour, or for any concerns, please submit a problem report." + "\n" + "\n";
                         message += "Randomization List Released By: " + UserName + "\n" + "FileName: " + File.FileName + "\n" + "\n" + "Addtional Details: " + comment + "\n";
-                        string subject = StudyName() + " - WebView RTSM - Subject Randomization List upload notification";
+                        string subject = "OUS-002 RTSM_UAT - Participant Randomization List upload notification";
                         email = email + ";" + GetEmail(HttpContext.Session.GetString("suserid"));
                         SendEmailWithAttachment(email, subject, message, bytes, File.FileName);
 
@@ -334,7 +343,7 @@ namespace RTSM_OLSingleArm.Controllers
                         ViewBag.ID = cmd.ExecuteScalar();
                         con.Close();
                         TempData["Message"] = "File uploaded";
-                      
+
 
                     }
 
@@ -713,22 +722,47 @@ namespace RTSM_OLSingleArm.Controllers
         {
             try
             {
-                string[] notificationEmail = toEmail.Split(';');
+
+                MailMessage msg = new MailMessage();
+                // msg.IsBodyHtml = true;
                 SmtpClient sc = new SmtpClient("");
-                sc.Host = "192.168.154.30";
+                //msg.ReplyToList.Add(User.FindFirst(ClaimTypes.Email).Value.ToString()); // this makes it so any reply to the email will send to the sender isntead of the donot reply email
+
+                msg.From = new MailAddress("donot-reply@amarexcro.com", "Amarex donot-reply");
+
+                msg.Subject = subject;
+                //string body = "This email is to notify you that the attached edit checks have been programmed for " + name;                                                     //msg.Body = "This email is to inform you of a serious adverse event.";
+                msg.Body = "";
+                sc.Host = "amarexcro-com.mail.protection.outlook.com";
                 sc.UseDefaultCredentials = false;
-                sc.Credentials = new NetworkCredential("CRO\\donot-reply", "wiev246*");
+                sc.Credentials = new NetworkCredential("CRO\\donot-reply", "");
                 sc.EnableSsl = false;
-                //var client = new SmtpClient("your-smtp-server.com");
+
+
+                string[] notificationEmail = toEmail.Split(';');
+                ////SmtpClient sc = new SmtpClient("");
+                ////sc.Host = "192.168.154.30";
+                ////sc.UseDefaultCredentials = false;
+                ////sc.Credentials = new NetworkCredential("CRO\\donot-reply", "wiev246*");
+                ////sc.EnableSsl = false;
+                //SmtpClient sc = new SmtpClient("");
+                //sc.Host = "amarexcro-com.mail.protection.outlook.com";
+                //sc.UseDefaultCredentials = false;
+                //sc.Credentials = new NetworkCredential("CRO\\donot-reply", "");
+                //sc.EnableSsl = false;
+
                 string bodyText = "--------------------------------------------------------------------------------------------------------------------------"
                              + "\n\n"
                              + "This email message, from Amarex LLC, may contain confidential information, intended only for the designated recipient(s). If you are not the designated recipient, you are hereby notified that any disclosure, " +
                                 "copying, distribution, use of, or reliance on, the contents of this e - mail is prohibited.If this message was received in error, please contact the sender by reply email and destroy all copies of the original message.";
-                MailMessage msg = new MailMessage();
-                msg.From = new MailAddress("donot-reply@amarexcro.com", "Amarex donot-reply");
+                //MailMessage msg = new MailMessage();
+                //msg.From = new MailAddress("donot-reply@amarexcro.com", "WebView CTMS");
 
-                msg.Subject = subject;
+                //msg.Subject = subject;
                 msg.Body = body + "\n\n" + bodyText;
+                //msg.Body = "Testing";
+                //msg.IsBodyHtml = true;
+
                 foreach (string email in notificationEmail)
                 {
                     string trimmedEmail = email.Trim(';');
@@ -742,22 +776,28 @@ namespace RTSM_OLSingleArm.Controllers
                     }
                 }
 
+                //msg.To.Add("jacobk@amarexcro.com");
 
                 // Attach the file to the email
                 var attachment = new Attachment(new MemoryStream(attachmentData), attachmentFileName);
-                        msg.Attachments.Add(attachment);
+                msg.Attachments.Add(attachment);
 
-                        // Send the email
-                        sc.Send(msg);
-                    
-                
+                //Send the email
+                //sc.Send(msg);
+                using (var stream = new MemoryStream())
+                {
+                    object obj = new object();
+                    sc.Send(msg);
+                }
+
+
 
                 // Additional logic after sending the email, if needed
             }
             catch (Exception ex)
             {
                 // Handle email sending exceptions
-                TempData["ErrorMessage"] = "An error occurred while sending the email: " + ex.Message;
+                //  TempData["ErrorMessage"] = "An error occurred while sending the email: " + ex.Message;
             }
         }
 
