@@ -189,6 +189,8 @@
                     <th>Year of Birth</th>
                     <th>Sex</th>
                     <th>Informed Consent Date</th>
+                    <th>Measurable Disease</th>
+                    <th>Strat</th>
                     <th>Treatment</th>
                     @*<th>Screened Date</th>*@
                     <th>Status</th>
@@ -218,6 +220,12 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ICDTCstr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.measure)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StratumCode)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ARM)
@@ -256,6 +264,12 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ICDTCstr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.measure)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StratumCode)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ARM)
@@ -318,8 +332,8 @@
             "columnDefs": [
                 { "type": "string", "targets": 0 },
                 { "type": "date", "targets": 3 },
-                { "type": "date", "targets": 4 },
-                { "type": "date", "targets": 7 },
+               
+                { "type": "date", "targets": 9 },
 
 
             ],

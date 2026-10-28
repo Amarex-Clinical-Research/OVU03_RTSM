@@ -16,6 +16,10 @@
 </head>
 <body>
     <script>
+        var AppPath = '@Url.Content("~/")';
+    </script>
+
+    <script>
     $(document).ready(function() {
         var success = @((TempData["Message"] != null).ToString().ToLower());
         if (success == true) {
@@ -47,9 +51,9 @@
         </div>
     </div>
     <header class="bg-dark">
-        <nav class="navbar navbar-expand-lg navbar-light bg-dark"  id="NavBar" >
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark" id="NavBar">
 
-            <a class="navbar-brand bg-dark" asp-area="" asp-controller="Home" asp-action="Index" >
+            <a class="navbar-brand bg-dark" asp-area="" asp-controller="Home" asp-action="Index">
 
                 <img class="bg-dark" src="~/images/AMX_PRODUCTS_WEBVIEW_RTSM_white.png" style="max-height:28px; max-width:140px;">
 
@@ -74,19 +78,19 @@
                     @if (_httpContext.HttpContext.Session.Get("sesVPERAND") != null)
                     {
                         <li class="nav-item">
-                                        @*<a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-person-plus"></i> Randomization\Dispensation </a>
-                            <div class="dropdown-menu bg-dark">
+                            @*<a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown"> <i class="bi bi-person-plus"></i> Randomization\Dispensation </a>
+                                <div class="dropdown-menu bg-dark">
 
-                                <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Rand" asp-action="RandHome"> Randomization</a>
-                                <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="SubsequentDispensation" asp-action="SubsequentDispensationHome">Subsequent Dispensation</a>
-                                <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Replacement" asp-action="IPReplacementHome">Replacement</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Rand" asp-action="RandHome"> Randomization</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="SubsequentDispensation" asp-action="SubsequentDispensationHome">Subsequent Dispensation</a>
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Replacement" asp-action="IPReplacementHome">Replacement</a>
 
 
-                            </div>*@
+                                </div>*@
                             <a class="nav-link text-light" asp-area="" asp-controller="Rand" asp-action="RandHome"><i class="bi bi-person"></i> Randomization</a>
                         </li>
                     }
-                    
+
 
                     @if (_httpContext.HttpContext.Session.Get("sesIPBiometrics") != null)
                     {
@@ -119,23 +123,23 @@
 
 
                     @*@if (_httpContext.HttpContext.Session.Get("sesStudyDocumentLibrary") != null)
-        {*@
+                        {*@
                     <!--<li class="nav-item">
 
-        <a class="nav-link text-light" asp-area="" asp-controller="Audit" asp-action="AuditHome"><i class="bi bi-clock-history"></i> Audit Log(Blinded)</a>
-    </li>-->
+                        <a class="nav-link text-light" asp-area="" asp-controller="Audit" asp-action="AuditHome"><i class="bi bi-clock-history"></i> Audit Log(Blinded)</a>
+                    </li>-->
                     @*}*@
                     <!--<li class="nav-item">
 
-        <a class="nav-link text-light" asp-area="" asp-controller="UnblindedAudit" asp-action="UnblindedAuditHome"><i class="bi bi-clock-history"></i> Audit Log(Unblinded)</a>
-    </li>-->
+                        <a class="nav-link text-light" asp-area="" asp-controller="UnblindedAudit" asp-action="UnblindedAuditHome"><i class="bi bi-clock-history"></i> Audit Log(Unblinded)</a>
+                    </li>-->
 
                     @if ((_httpContext.HttpContext.Session.Get("sesStudyDocumentLibrary") != null))
                     {
                         <li class="nav-item">
-                              
-                             <a class="nav-link text-light" asp-area="" asp-controller="UnblindedAudit" asp-action="UnblindedAuditHome">Audit Log</a>    
-                            
+
+                            <a class="nav-link text-light" asp-area="" asp-controller="UnblindedAudit" asp-action="UnblindedAuditHome"><i class="bi bi-clock-history"></i> Audit Log</a>
+
                         </li>
 
 
@@ -147,34 +151,34 @@
                     </li>
                 </ul>
 
-                    <form class="form-inline my-2 my-lg-0">
+                <form class="form-inline my-2 my-lg-0">
 
-                        <ul class="navbar-nav mr-auto">
-                            <li class="nav-item dropdown">
-                                @if (_httpContext.HttpContext.Session.Get("suserid") != null)
-                                {
-
-                                    <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown" style="color:white; content:none;"><i class="bi bi-person-circle"></i> @_httpContext.HttpContext.Session.GetString("suserid") (Site ID: @_httpContext.HttpContext.Session.GetString("sesCenter")) <span id="demo"></span> </a>
-                                    <div class="dropdown-menu bg-dark">
-
-                                        <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Home" asp-action="MyNotifications">My Notifications</a>
-
-                                    </div>
-
-                                }
-
-                            </li>
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item dropdown">
                             @if (_httpContext.HttpContext.Session.Get("suserid") != null)
                             {
-                                <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="SignOut" data-toggle="tooltip" title="Logout" class="btn" style="background-color:#dc3545; font-size:1rem; height: 42px;"><span class="iconify" data-icon="oi:power-standby"></span></a>
-                                </li>
+
+                                <a class="nav-link dropdown-toggle text-light" href="#" id="navbardrop" data-toggle="dropdown" style="color:white; content:none;"><i class="bi bi-person-circle"></i> @_httpContext.HttpContext.Session.GetString("suserid") (Site ID: @_httpContext.HttpContext.Session.GetString("sesCenter")) <span id="demo"></span> </a>
+                                <div class="dropdown-menu bg-dark">
+
+                                    <a class="dropdown-item text-light bg-dark" asp-area="" asp-controller="Home" asp-action="MyNotifications">My Notifications</a>
+
+                                </div>
 
                             }
 
-                        </ul>
+                        </li>
+                        @if (_httpContext.HttpContext.Session.Get("suserid") != null)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Home" asp-action="SignOut" data-toggle="tooltip" title="Logout" class="btn" style="background-color:#dc3545; font-size:1rem; height: 42px;"><span class="iconify" data-icon="oi:power-standby"></span></a>
+                            </li>
 
-                    </form>
+                        }
+
+                    </ul>
+
+                </form>
 
             </div>
 

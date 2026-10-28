@@ -752,6 +752,12 @@ namespace RTSM_OLSingleArm.Controllers
 
         public void SendEmail(string SendTo, string Subject, string message)
         {
+            SendTo = SendTo.Replace(" ", "");
+            var sendArr = SendTo.Split(";");
+            if (sendArr.Count() > 1)
+            {
+                SendTo = string.Join(";", sendArr.Distinct());
+            }
             connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
             SqlConnection conn = new SqlConnection(connectionString);
 

@@ -10,7 +10,7 @@ $('.flexdatalist').flexdatalist({
     searchContain: true,
     selectionrequired: 1,
     /*data: '/ProjectManagement/GetAllSites'*/
-    data: '/WebView.Test2/ClientSpec/RTSM-TK5/ProjectManagement/GetAllSites'
+    data: AppPath + 'ProjectManagement/GetAllSites'
    
    
 });

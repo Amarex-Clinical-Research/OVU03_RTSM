@@ -57,6 +57,10 @@
             <input asp-for="@subjinfo.STATUS_INFO" name="Status" style="width:500px;" class="CustomInput" readonly />
         </div>
         <div class="form-group">
+            <label>Measurable Disease:</label><br />
+            <input asp-for="@subjinfo.measure" name="measure" style="width:500px;" class="CustomInput" readonly />
+        </div>
+        <div class="form-group">
             <label>Platinum Status:</label><br />
             <input asp-for="@subjinfo.PLATSTAT" name="PLATSTAT" style="width:500px;" class="CustomInput" readonly />
         </div>
@@ -72,10 +76,10 @@
             <label>Sponsor Approval Date (if applicable):</label> <br />
             <input class="CustomInput" type="text" id="datepicker1" asp-for="@subjinfo.DateSponsorApproved" name="DateSponsorApproved" style="width:500px;" readonly />
         </div>
-        <div class="form-group">
+        @*<div class="form-group">
             <label>Stratification:</label> <br />
             <input class="CustomInput" asp-for="@subjinfo.StratumCode" name="StratumCode" style="width:500px;" readonly />
-        </div>
+        </div>*@
         <div class="form-group">
             <label>Randomized By:</label><br />
             <input asp-for="@subjinfo.RANDBY" name="RANDBY" style="width:500px;" class="CustomInput" readonly />

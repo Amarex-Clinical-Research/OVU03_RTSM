@@ -200,7 +200,7 @@ namespace RTSM_OLSingleArm.Controllers
                         message += "Please find the attached kit list document. For security purpose, this document is password-protected, and you'll receive a follow-up email shortly with the password. If not received within an hour, or for any concerns, please submit a problem report." + "\n" + "\n";
                         message += "Kit List Released By: " + UserName + "\n" + "FileName: " + File.FileName + "\n"+ "\n" + "Addtional Details: " + comment + "\n";
                         string subject = StudyName() + " - WebView RTSM - Master kit list upload notification";
-                        email = email + ";" + GetEmail(HttpContext.Session.GetString("suserid"));
+                        //email = email;
                         SendEmailWithAttachment(email, subject, message, bytes, File.FileName);
                         
                         TempData["Message"] = "File sent successfully. Kindly utilize the designated action button to provide the password for the uploaded file.";
@@ -319,11 +319,11 @@ namespace RTSM_OLSingleArm.Controllers
 
                         con.Close();
                         string UserName = GetUserName(HttpContext.Session.GetString("suserid"));
-                        string message = "Protocol: OUS-002 RTSM_UAT" + "\n";
+                        string message = "Protocol: Allarity 2X-1002 RTSM UAT " + "\n";
                         message += "Please find the attached kit list document. For security purpose, this document is password-protected, and you'll receive a follow-up email shortly with the password. If not received within an hour, or for any concerns, please submit a problem report." + "\n" + "\n";
                         message += "Randomization List Released By: " + UserName + "\n" + "FileName: " + File.FileName + "\n" + "\n" + "Addtional Details: " + comment + "\n";
-                        string subject = "OUS-002 RTSM_UAT - Participant Randomization List upload notification";
-                        email = email + ";" + GetEmail(HttpContext.Session.GetString("suserid"));
+                        string subject = "Allarity 2X-1002 RTSM UAT  - Participant Randomization List upload notification";
+                        //email = email;
                         SendEmailWithAttachment(email, subject, message, bytes, File.FileName);
 
                         TempData["Message"] = "File sent successfully. Kindly utilize the designated action button to provide the password for the uploaded file.";
@@ -495,6 +495,12 @@ namespace RTSM_OLSingleArm.Controllers
 
         public void SendEmail(string SendTo, string Subject, string message)
         {
+            SendTo = SendTo.Replace(" ", "");
+            var sendArr = SendTo.Split(";");
+            if (sendArr.Count() > 1)
+            {
+                SendTo = string.Join(";", sendArr.Distinct());
+            }
             connectionString = _configuration.GetConnectionString("VpeRandDbConnStr");
             SqlConnection conn = new SqlConnection(connectionString);
 
@@ -720,6 +726,7 @@ namespace RTSM_OLSingleArm.Controllers
 
         public void SendEmailWithAttachment(string toEmail, string subject, string body, byte[] attachmentData, string attachmentFileName)
         {
+            
             try
             {
 
@@ -870,7 +877,7 @@ namespace RTSM_OLSingleArm.Controllers
             string message = "Protocol: " + StudyName() + "\n" + "\n";
             message += TYPEUL + " list Released By: " + UserName + "\n" + "FileName: " + FILENAME + "\n" + "\n" + "Password: "+ code +"\n" + "Addtional Details: " + comment + "\n";
             string subject = StudyName() + " - WebView RTSM - Master " + TYPEUL + " list password notification";
-            email = email + ";" + GetEmail(HttpContext.Session.GetString("suserid"));
+            //email = email;
             SendEmail(email, subject, message);
             TempData["Message"] = "Password sent for File: " + "'"+FILENAME+"'";
             return RedirectToAction("FileUploadHome");

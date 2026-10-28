@@ -281,8 +281,10 @@ namespace Webview_IRT.Models
                             getscrn.SITEID = reader["SITEID"].ToString();
                             getscrn.SUBJID = reader["SUBJID"].ToString();
                             getscrn.BRTHDTC = reader["BRTHDTC"].ToString();
+                            getscrn.StratumCode = reader["StratumCode"].ToString();
                             getscrn.SEX = reader["SEX"].ToString();
                             getscrn.ICDTCstr = reader["ICDTC"].ToString();
+                            getscrn.measure = reader["Measure"].ToString();
                            // getscrn.SCRNDTCstr = reader["SCRNDTC"].ToString();
                             getscrn.DATERAND = reader["DATE_RAND"].ToString();
                             getscrn.RANDBY = reader["RANDBY"].ToString();
@@ -330,6 +332,7 @@ namespace Webview_IRT.Models
                                 getToRand.DATERAND = reader["DATE_RAND"].ToString();
                                 getToRand.DateSponsorApproved = reader["DateSponsorApproved"].ToString();
                                 getToRand.StratumCode = reader["StratumCode"].ToString();
+                                getToRand.measure = reader["Measure"].ToString();
                                 getToRand.ARM = reader["ARM"].ToString();
                                 getToRand.ARMCD = reader["ARMCD"].ToString();
                             }
@@ -490,7 +493,6 @@ namespace Webview_IRT.Models
             }
             return dt;
         }
-
 
         public string ChkSiteInv(string connectionString, int spkey, string siteid, string arm)
         {
@@ -762,7 +764,12 @@ namespace Webview_IRT.Models
 
         public void SendEmail(string connectionString, string SendTo, string Subject, string message)
         {
-            
+            SendTo = SendTo.Replace(" ", "");
+            var sendArr = SendTo.Split(";");
+            if (sendArr.Count() > 1)
+            {
+                SendTo = string.Join(";", sendArr.Distinct());
+            }
             SqlConnection conn = new SqlConnection(connectionString);
 
             SqlCommand EmailCmd = new SqlCommand("NotifySend2", conn);
